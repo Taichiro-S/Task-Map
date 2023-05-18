@@ -1,0 +1,40 @@
+.customNodeInputWrapper {
+  display: flex;
+  height: 20px;
+  z-index: 1;
+  position: relative;
+}
+
+.customNodeDragHandle {
+  background: transparent;
+  width: 14px;
+  height: 100%;
+  margin-right: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.customNodeInput {
+  border: none;
+  outline: none;
+  border-radius: 1px;
+  font-weight: 700;
+  background-color: transparent;
+  height: 100%;
+  color: rgb(19, 19, 19);
+}
+
+/* .customNodeButton {
+  padding: 2px 2px;
+  border: 1px solid #000;
+  border-radius: 2px;
+  background-color: #fff;
+  color: #000;
+}
+
+.customNodeButtonWrapper {
+  display: flex;
+  height: 20px;
+  z-index: 1;
+  position: relative;
+} */
