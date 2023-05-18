@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import ReactFlow, {
   ConnectionLineType,
   MiniMap,
@@ -12,13 +12,19 @@ import ReactFlow, {
   Node,
   useReactFlow,
   ReactFlowProvider,
+  Edge,
 } from 'reactflow'
 import CustomNode from '@/components/CustomNode'
-import CustomEdge from '@/components/CustomEdge'
+import CustomEdge, {
+  connectionLineStyle,
+  defaultEdgeOptions,
+} from '@/components/CustomEdge'
 import MenuBar from '@/components/MenuBar'
 import { shallow } from 'zustand/shallow'
 import 'reactflow/dist/style.css'
 import useStore, { RFState } from '@/store'
+import { useQueryNode } from '@/hooks/useQueryNode'
+import { useQueryEdge } from '@/hooks/useQueryEdge'
 
 const selector = (state: RFState) => ({
   nodes: state.nodes,
@@ -27,6 +33,7 @@ const selector = (state: RFState) => ({
   onEdgesChange: state.onEdgesChange,
   addChildNode: state.addChildNode,
   addNewEdge: state.addNewEdge,
+  setInitialDataset: state.setInitialDataset,
 })
 
 const nodeTypes = {
@@ -38,9 +45,19 @@ const edgeTypes = {
 }
 
 const nodeOrigin: NodeOrigin = [0.5, 0.5]
-const connectionLineStyle = { stroke: '#808080', strokeWidth: 1 }
-const defaultEdgeOptions = { style: connectionLineStyle, type: 'custom' }
+
 function Flow() {
+  const {
+    data: edgeDatas,
+    error: edgeError,
+    isLoading: edgeIsLoading,
+  } = useQueryEdge()
+  const {
+    data: nodeDatas,
+    error: nodeError,
+    isLoading: nodeIsLoading,
+  } = useQueryNode()
+
   const {
     nodes,
     edges,
@@ -48,12 +65,20 @@ function Flow() {
     onEdgesChange,
     addChildNode,
     addNewEdge,
+    setInitialDataset,
   } = useStore(selector, shallow)
   const connectingNodeId = useRef<string | null>(null)
   const { project } = useReactFlow()
   const onConnectStart: OnConnectStart = useCallback((_, { nodeId }) => {
     connectingNodeId.current = nodeId
   }, [])
+
+  useEffect(() => {
+    if (nodeDatas && edgeDatas) {
+      // console.log(nodeDatas, edgeDatas)
+      setInitialDataset(nodeDatas, edgeDatas)
+    }
+  }, [nodeDatas, edgeDatas])
 
   const store = useStoreApi()
 
@@ -119,7 +144,7 @@ function Flow() {
         const targetNodeId = (event.target as Element).getAttribute(
           'data-nodeid',
         )
-        if (parentNode && targetNodeId) {
+        if (parentNode && targetNodeId && nodes) {
           const childNode = nodes.find((node) => node.id === targetNodeId)
           if (childNode) {
             addNewEdge(parentNode, childNode)

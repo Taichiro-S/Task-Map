@@ -26,7 +26,7 @@ export default function App({ Component, pageProps }: AppProps) {
     } = await supabase.auth.getUser()
     if (!user && router.pathname !== '/') {
       router.push('/login')
-    } else if (user && router.pathname === '/') {
+    } else if (user && router.pathname === '/login') {
       router.push('/')
     }
   }
@@ -36,7 +36,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [])
 
   supabase.auth.onAuthStateChange((event, _) => {
-    if (event === 'SIGNED_IN' && router.pathname === '/') {
+    if (event === 'SIGNED_IN' && router.pathname === '/login') {
       router.push('/')
     } else if (event === 'SIGNED_OUT') {
       router.push('/login')

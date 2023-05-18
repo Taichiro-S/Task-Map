@@ -21,19 +21,16 @@ export type RFState = {
   addNewEdge: (parentNode: Node, childNode: Node) => void
   updateNodeLabel: (nodeId: string, label: string) => void
   addNewNode: () => void
+  setInitialDataset: (nodes: Node[], edges: Edge[]) => void
 }
 
 const useStore = create<RFState>((set, get) => ({
   // The initial state with a single node.
-  nodes: [
-    {
-      id: nanoid(),
-      type: 'custom',
-      data: { label: '' },
-      position: { x: 0, y: 0 },
-    },
-  ],
+  nodes: [],
   edges: [],
+  setInitialDataset: (nodes: Node[], edges: Edge[]) => {
+    set({ nodes: nodes, edges: edges })
+  },
 
   // update the state with the new nodes and edges
   onNodesChange: (changes: NodeChange[]) => {
@@ -60,6 +57,7 @@ const useStore = create<RFState>((set, get) => ({
       id: nanoid(),
       source: parentNode.id,
       target: newNode.id,
+      type: 'custom',
     }
 
     set({
@@ -82,10 +80,12 @@ const useStore = create<RFState>((set, get) => ({
   },
 
   addNewEdge: (parentNode: Node, childNode: Node) => {
+    if (parentNode.id === childNode.id) return
     const newEdge = {
       id: nanoid(),
       source: parentNode.id,
       target: childNode.id,
+      type: 'custom',
     }
     if (
       get().edges.some(
