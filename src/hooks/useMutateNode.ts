@@ -1,7 +1,7 @@
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import useStore from '@/store'
 import { supabase } from '@/utils/supabase'
-import { NodeData } from '@/types/types'
+import { NodeData, NoteData } from '@/types/types'
 import { Node, NodeChange, applyNodeChanges } from 'reactflow'
 import { nanoid } from 'nanoid'
 export const useMutateNode = () => {
@@ -99,18 +99,41 @@ export const useMutateNode = () => {
             node_nanoid: node.id,
             user_id: user_id,
             type: node.type,
+            color: node.data.color,
           }
         },
       )
 
       // Upsert nodes
-      const { data, error } = await supabase
+      const { data: updatedNodeDatas, error: nodesError } = await supabase
         .from('nodes')
         .upsert(nodeDatas, { onConflict: 'node_nanoid' })
         .select('*')
 
-      if (error) {
-        throw new Error(`${error.message}: ${error.details}`)
+      if (nodesError) {
+        throw new Error(`${nodesError.message}: ${nodesError.details}`)
+      }
+
+      const notes = useStore.getState().notes
+
+      const noteDatas: Omit<NoteData, 'id' | 'created_at'>[] = notes.map(
+        (note) => {
+          return {
+            node_nanoid: note.node_nanoid,
+            user_id: user_id,
+            content: note.content,
+          }
+        },
+      )
+
+      // Upsert notes
+      const { data: updatedNoteDatas, error: NoteError } = await supabase
+        .from('notes')
+        .upsert(noteDatas, { onConflict: 'node_nanoid' })
+        .select('*')
+
+      if (NoteError) {
+        throw new Error(`${NoteError.message}: ${NoteError.details}`)
       }
 
       // Fetch all nodes in the database for this user
@@ -122,7 +145,6 @@ export const useMutateNode = () => {
       if (fetchError) {
         throw new Error(`${fetchError.message}: ${fetchError.details}`)
       }
-
       // Find the nodes that exist in the database but not in the current state
       const nodesToDelete = allNodes.filter(
         (dbNode) => !nodes.find((node) => node.id === dbNode.node_nanoid),
@@ -140,11 +162,14 @@ export const useMutateNode = () => {
         }
       }
 
-      if (!data) {
+      if (!updatedNodeDatas) {
         throw new Error('No nodes found')
       }
+      if (!updatedNoteDatas) {
+        throw new Error('No notes found')
+      }
 
-      return data
+      return { updatedNodeDatas, updatedNoteDatas }
     },
     onSuccess: (res: any) => {
       // queryClient.invalidateQueries({ queryKey: ['nodes'] })

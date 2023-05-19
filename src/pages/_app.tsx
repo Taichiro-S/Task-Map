@@ -24,7 +24,7 @@ export default function App({ Component, pageProps }: AppProps) {
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    if (!user && router.pathname !== '/') {
+    if (!user && router.pathname === '/') {
       router.push('/login')
     } else if (user && router.pathname === '/login') {
       router.push('/')

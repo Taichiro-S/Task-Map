@@ -14,6 +14,7 @@ export type NodeData = {
   user_id: string | undefined
   node_nanoid: string
   type: string | undefined
+  color: string | undefined
 }
 
 export type EdgeData = {
@@ -26,3 +27,13 @@ export type EdgeData = {
   type: string | undefined
   label: string
 }
+
+export type NoteData = {
+  id: string
+  created_at: string
+  user_id: string | undefined
+  node_nanoid: string
+  content: string
+}
+
+export type NewNote = Omit<NoteData, 'id' | 'created_at' | 'user_id'>

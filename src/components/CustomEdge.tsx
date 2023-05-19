@@ -1,5 +1,5 @@
 import useStore from '@/store'
-import { ChangeEvent, useLayoutEffect, useRef, useState } from 'react'
+import { ChangeEvent, memo, useLayoutEffect, useRef, useState } from 'react'
 import {
   EdgeText,
   BaseEdge,
@@ -10,7 +10,7 @@ import {
 import { charLengthCalc } from '@/utils/charLengthCalc'
 import EdgeInput from './EdgeInput'
 
-export default function CustomEdge(props: EdgeProps) {
+const CustomEdge = (props: EdgeProps) => {
   // console.log('edge')
   const updateEdgeLabel = useStore((state) => state.updateEdgeLabel)
   const { sourceX, sourceY, targetX, targetY, data, selected, id } = props
@@ -21,7 +21,6 @@ export default function CustomEdge(props: EdgeProps) {
     targetX,
     targetY,
   })
-  console
   return (
     <>
       <BaseEdge path={edgePath} {...props} />
@@ -43,5 +42,6 @@ export default function CustomEdge(props: EdgeProps) {
   )
 }
 
+export default memo(CustomEdge)
 export const connectionLineStyle = { stroke: '#808080', strokeWidth: 1 }
 export const defaultEdgeOptions = { style: connectionLineStyle, type: 'custom' }
