@@ -13,6 +13,8 @@ import ReactFlow, {
   useReactFlow,
   ReactFlowProvider,
   Edge,
+  updateEdge,
+  addEdge,
 } from 'reactflow'
 import CustomNode from '@/components/CustomNode'
 import CustomEdge, {
@@ -25,6 +27,8 @@ import 'reactflow/dist/style.css'
 import useStore, { RFState } from '@/store'
 import { useQueryNode } from '@/hooks/useQueryNode'
 import { useQueryEdge } from '@/hooks/useQueryEdge'
+import { Layout } from '@/components/Layout'
+import { Spinner } from '@/components/Spinner'
 
 const selector = (state: RFState) => ({
   nodes: state.nodes,
@@ -47,6 +51,7 @@ const edgeTypes = {
 const nodeOrigin: NodeOrigin = [0.5, 0.5]
 
 function Flow() {
+  // console.log('flow')
   const {
     data: edgeDatas,
     error: edgeError,
@@ -154,31 +159,44 @@ function Flow() {
     },
     [getChildNodePosition],
   )
+  const onEdgeUpdate = useCallback(
+    (oldEdge, newConnection) =>
+      setEdges((els) => updateEdge(oldEdge, newConnection, els)),
+    [],
+  )
+  if (nodeError || edgeError) {
+    return <div>Error</div>
+  }
+  if (nodeIsLoading || edgeIsLoading) {
+    return <Spinner />
+  }
 
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-        onConnectStart={onConnectStart}
-        onConnectEnd={onConnectEnd}
-        nodeOrigin={nodeOrigin}
-        connectionLineStyle={connectionLineStyle}
-        defaultEdgeOptions={defaultEdgeOptions}
-        connectionLineType={ConnectionLineType.Straight}
-        fitView
-      >
-        <Controls showInteractive={false} />
-        <Panel position="top-left">My New Map</Panel>
-        <MiniMap nodeBorderRadius={2} position="top-right" />
-        <Background variant="dots" gap={12} size={1} />
-      </ReactFlow>
-      <MenuBar />
-    </div>
+    <Layout title="Flow">
+      <div style={{ width: '100vw', height: '100vh' }}>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          onConnectStart={onConnectStart}
+          onConnectEnd={onConnectEnd}
+          nodeOrigin={nodeOrigin}
+          connectionLineStyle={connectionLineStyle}
+          defaultEdgeOptions={defaultEdgeOptions}
+          connectionLineType={ConnectionLineType.Straight}
+          fitView
+        >
+          <Controls showInteractive={false} />
+          <Panel position="top-left">My New Map</Panel>
+          <MiniMap nodeBorderRadius={2} position="top-right" />
+          <Background variant="dots" gap={12} size={1} />
+        </ReactFlow>
+        <MenuBar />
+      </div>
+    </Layout>
   )
 }
 

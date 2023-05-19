@@ -24,4 +24,5 @@ export type EdgeData = {
   created_at: string
   edge_nanoid: string
   type: string | undefined
+  label: string
 }

@@ -69,6 +69,7 @@ export const useMutateEdge = () => {
             user_id: user_id,
             edge_nanoid: edge.id,
             type: edge.type,
+            label: edge.data.label,
           }
         },
       )

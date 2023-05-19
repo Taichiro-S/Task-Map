@@ -19,6 +19,7 @@ export const useQueryEdge = () => {
         source: edgeData.source_node_id,
         target: edgeData.target_node_id,
         type: edgeData.type,
+        data: { label: edgeData.label },
       }
     })
 

@@ -7,32 +7,32 @@ import { nanoid } from 'nanoid'
 export const useMutateNode = () => {
   const queryClient = useQueryClient()
 
-  const addNewNodeMutation: any = useMutation({
-    mutationFn: async () => {
-      const newNode = {
-        id: nanoid(),
-        type: 'custom',
-        data: { label: '' },
-        position: { x: 0, y: 0 },
-      }
-      const previousNodes = queryClient.getQueryData<Node[]>(['nodes'])
-      if (previousNodes) {
-        queryClient.setQueryData(['nodes'], [...previousNodes, newNode])
-      }
-    },
-  })
+  // const addNewNodeMutation: any = useMutation({
+  //   mutationFn: async () => {
+  //     const newNode = {
+  //       id: nanoid(),
+  //       type: 'custom',
+  //       data: { label: '' },
+  //       position: { x: 0, y: 0 },
+  //     }
+  //     const previousNodes = queryClient.getQueryData<Node[]>(['nodes'])
+  //     if (previousNodes) {
+  //       queryClient.setQueryData(['nodes'], [...previousNodes, newNode])
+  //     }
+  //   },
+  // })
 
-  const onNodesChange: any = useMutation({
-    mutationFn: async (changes: NodeChange[]) => {
-      const previousNodes = queryClient.getQueryData<Node[]>(['nodes'])
-      if (previousNodes) {
-        queryClient.setQueryData(
-          ['nodes'],
-          applyNodeChanges(changes, previousNodes),
-        )
-      }
-    },
-  })
+  // const onNodesChange: any = useMutation({
+  //   mutationFn: async (changes: NodeChange[]) => {
+  //     const previousNodes = queryClient.getQueryData<Node[]>(['nodes'])
+  //     if (previousNodes) {
+  //       queryClient.setQueryData(
+  //         ['nodes'],
+  //         applyNodeChanges(changes, previousNodes),
+  //       )
+  //     }
+  //   },
+  // })
 
   // const createNodeMutation: any = useMutation(
   //   async (newNode: Omit<NodeData, 'id' | 'created_at'>) => {
@@ -155,8 +155,8 @@ export const useMutateNode = () => {
   })
 
   return {
-    addNewNodeMutation,
-    onNodesChange,
+    // addNewNodeMutation,
+    // onNodesChange,
     // createNodeMutation,
     // updateNodeMutation,
     // deleteNodeMutation,
