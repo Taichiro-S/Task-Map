@@ -1,21 +1,9 @@
-import React, { useEffect } from 'react'
-import {
-  useCallback,
-  ChangeEvent,
-  useState,
-  useRef,
-  useLayoutEffect,
-} from 'react'
-import { Handle, NodeProps, Position } from 'reactflow'
-import useStore from '@/store'
-import {
-  TrashIcon,
-  PencilSquareIcon,
-  ArrowTopRightOnSquareIcon,
-} from '@heroicons/react/24/solid'
-import { charLengthCalc } from '@/utils/charLengthCalc'
+import React, { ChangeEvent } from 'react'
+import { NodeInputProps } from 'types/types'
+import useStore from 'store'
+import { charLengthCalc } from 'utils/charLengthCalc'
 
-const NodeInput = (props: any) => {
+const NodeInput = (props: NodeInputProps) => {
   const { label, id } = props
   const updateNodeLabel = useStore((state) => state.updateNodeLabel)
   const setNodesUnselected = useStore((state) => state.setNodesUnselected)

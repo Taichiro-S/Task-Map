@@ -1,4 +1,4 @@
-import useStore from '@/store'
+import useStore from 'store'
 import { ChangeEvent, useLayoutEffect, useRef, useState } from 'react'
 import {
   EdgeText,
@@ -7,7 +7,7 @@ import {
   getStraightPath,
   EdgeLabelRenderer,
 } from 'reactflow'
-import { charLengthCalc } from '@/utils/charLengthCalc'
+import { charLengthCalc } from 'utils/charLengthCalc'
 
 export default function EdgeInput(props: EdgeProps) {
   // console.log('edge')

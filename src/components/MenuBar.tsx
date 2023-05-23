@@ -1,8 +1,8 @@
-import useStore, { RFState } from '@/store'
-import { useMutateNode } from '@/hooks/useMutateNode'
-import { useMutateEdge } from '@/hooks/useMutateEdge'
+import useStore, { RFState } from 'store'
+import { useMutateNode } from 'hooks/useMutateNode'
+import { useMutateEdge } from 'hooks/useMutateEdge'
 import { useEffect, useState, DragEvent } from 'react'
-import { supabase } from '@/utils/supabase'
+import { supabase } from 'utils/supabase'
 import Link from 'next/link'
 
 const MenuBar = (userId: any) => {

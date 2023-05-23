@@ -1,9 +1,10 @@
 export function charLengthCalc(
-  str: any,
+  str: string | number,
   printableASCIIWidth: number,
   japaneseWidth: number,
   emptyWidth: number,
 ) {
+  str = String(str)
   const printableASCII = str.match(/[\x20-\x7E]/g) || []
   const japaneseChars =
     str.match(

@@ -25,27 +25,27 @@ import ReactFlow, {
   BackgroundVariant,
 } from 'reactflow'
 // import OnLoadParams from 'reactflow'
-import CustomNode from '@/components/CustomNode'
-import GroupingNode from '@/components/GroupingNode'
+import CustomNode from 'components/CustomNode'
+import GroupingNode from 'components/GroupingNode'
 import CustomEdge, {
   connectionLineStyle,
   defaultEdgeOptions,
-} from '@/components/CustomEdge'
-import MenuBar from '@/components/MenuBar'
-import Note from '@/components/Note'
+} from 'components/CustomEdge'
+import MenuBar from 'components/MenuBar'
+import Note from 'components/Note'
 import { shallow } from 'zustand/shallow'
 import 'reactflow/dist/style.css'
-import useStore, { RFState } from '@/store'
-import { useQueryNode } from '@/hooks/useQueryNode'
-import { useQueryEdge } from '@/hooks/useQueryEdge'
-import { useQueryNote } from '@/hooks/useQueryNote'
+import useStore, { RFState } from 'store'
+import { useQueryNode } from 'hooks/useQueryNode'
+import { useQueryEdge } from 'hooks/useQueryEdge'
+import { useQueryNote } from 'hooks/useQueryNote'
 
-import { Layout } from '@/components/Layout'
-import { Spinner } from '@/components/Spinner'
-import { supabase } from '@/utils/supabase'
+import { Layout } from 'components/Layout'
+import { Spinner } from 'components/Spinner'
+import { supabase } from 'utils/supabase'
 import { useRouter } from 'next/router'
-import { useQueryUser } from '@/hooks/useQueryUser'
-import ResizableNode from '@/components/ResizableNode'
+import { useQueryUser } from 'hooks/useQueryUser'
+import ResizableNode from 'components/ResizableNode'
 const selector = (state: RFState) => ({
   nodes: state.nodes,
   edges: state.edges,

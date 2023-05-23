@@ -4,8 +4,8 @@ import { Handle, NodeProps, NodeToolbar, Position } from 'reactflow'
 import NodeInput from './NodeInput'
 import CustomNodeToolBarTop from './CustomNodeToolBarTop'
 import CustomNodeToolBarBottom from './CustomNodeToolBarBottom'
-import useStore from '@/store'
-import { statusList } from '@/config/statusList'
+import useStore from 'store'
+import { statusList } from 'config/statusList'
 import {
   CheckCircleIcon,
   NoSymbolIcon,

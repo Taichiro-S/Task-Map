@@ -1,8 +1,9 @@
 import React from 'react'
-import useStore from '@/store'
-import { charLengthCalc } from '@/utils/charLengthCalc'
+import useStore from 'store'
+import { charLengthCalc } from 'utils/charLengthCalc'
+import { NodeInputProps } from 'types/types'
 
-const NodeInput = (props: any) => {
+const GroupNodeInput = (props: NodeInputProps) => {
   const { label, id } = props
   const updateNodeLabel = useStore((state) => state.updateNodeLabel)
   const inputWidth = charLengthCalc(label, 8, 12, 30)
@@ -18,4 +19,4 @@ const NodeInput = (props: any) => {
   )
 }
 
-export default NodeInput
+export default GroupNodeInput

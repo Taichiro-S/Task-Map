@@ -1,4 +1,4 @@
-import useStore from '@/store'
+import useStore from 'store'
 import { ChangeEvent, memo, useLayoutEffect, useRef, useState } from 'react'
 import { EdgeText, BaseEdge, EdgeProps, getStraightPath } from 'reactflow'
 import EdgeInput from './EdgeInput'

@@ -12,7 +12,7 @@ import {
 import LooksIcon from '@mui/icons-material/Looks'
 import { NodeResizer } from '@reactflow/node-resizer'
 import '@reactflow/node-resizer/dist/style.css'
-import useStore from '@/store'
+import useStore from 'store'
 import GroupNodeInput from './GroupNodeInput'
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
 import PanToolIcon from '@mui/icons-material/PanTool'

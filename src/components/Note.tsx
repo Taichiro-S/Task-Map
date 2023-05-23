@@ -1,5 +1,5 @@
 import React from 'react'
-import useStore from '@/store'
+import useStore from 'store'
 import { ChevronDoubleRightIcon } from '@heroicons/react/24/outline'
 
 const Note = () => {

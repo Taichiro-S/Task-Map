@@ -46,5 +46,10 @@ export type GroupData = {
   group_nanoid: string
 }
 
+export type NodeInputProps = {
+  label: string
+  id: string
+}
+
 export type NewNote = Omit<NoteData, 'id' | 'created_at' | 'user_id'>
 export type NewGroup = Omit<GroupData, 'id' | 'created_at' | 'user_id'>

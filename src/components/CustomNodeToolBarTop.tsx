@@ -1,7 +1,7 @@
 import React, { memo } from 'react'
 import { NodeProps, NodeToolbar, Position } from 'reactflow'
-import useStore from '@/store'
-import { nodeColorList } from '@/config/nodeColorList'
+import useStore from 'store'
+import { nodeColorList } from 'config/nodeColorList'
 
 const CustomNodeToolBarTop = (props: NodeProps) => {
   const { data, id, selected } = props

@@ -13,8 +13,8 @@ import {
 } from 'reactflow'
 import { create } from 'zustand'
 import { nanoid } from 'nanoid'
-import { NewNote, NoteData, GroupData } from '@/types/types'
-import { nodeColorList } from '@/config/nodeColorList'
+import { NewNote, NoteData, GroupData } from 'types/types'
+import { nodeColorList } from 'config/nodeColorList'
 
 export type RFState = {
   nodes: Node[]
