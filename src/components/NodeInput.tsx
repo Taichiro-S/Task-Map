@@ -16,27 +16,22 @@ import {
 import { charLengthCalc } from '@/utils/charLengthCalc'
 
 const NodeInput = (props: any) => {
-  //   console.log('input')
   const { label, id } = props
-  const inputRef = useRef<HTMLInputElement | null>(null)
   const updateNodeLabel = useStore((state) => state.updateNodeLabel)
-  //   useLayoutEffect(() => {
-  //     if (inputRef.current) {
-  //       inputRef.current.style.width = charLengthCalc(label, 10, 17)
-  //     }
-  //   }, [label])
+  const setNodesUnselected = useStore((state) => state.setNodesUnselected)
+
   const inputWidth = charLengthCalc(label, 10, 17, 50)
 
   return (
     <div>
       <input
         defaultValue={label}
-        className="nodrag customNodeInput"
+        className="nodrag border-none outline-none rounded-sm font-bold bg-transparent h-full text-[#131313]"
         onChange={(e: ChangeEvent<HTMLInputElement>) =>
           updateNodeLabel(id, e.target.value)
         }
-        // ref={inputRef}
         style={{ width: inputWidth }}
+        onClick={() => setNodesUnselected()}
       />
     </div>
   )

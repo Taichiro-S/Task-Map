@@ -34,6 +34,17 @@ export type NoteData = {
   user_id: string | undefined
   node_nanoid: string
   content: string
+  status: string
+}
+
+export type GroupData = {
+  id: string
+  created_at: string
+  user_id: string | undefined
+  name: string
+  color: string
+  group_nanoid: string
 }
 
 export type NewNote = Omit<NoteData, 'id' | 'created_at' | 'user_id'>
+export type NewGroup = Omit<GroupData, 'id' | 'created_at' | 'user_id'>

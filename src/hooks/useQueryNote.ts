@@ -23,6 +23,7 @@ export const useQueryNote = (user_id: string | undefined) => {
         node_nanoid: note.node_nanoid,
         content: note.content,
         created_at: note.created_at,
+        status: note.status,
       }
     })
     return notes as NoteData[]

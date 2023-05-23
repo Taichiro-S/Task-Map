@@ -6,13 +6,13 @@
   font-weight: 700;
 } */
 
-.react-flow__handle.target {
+/* .react-flow__handle.target {
   top: 50%;
   pointer-events: none;
   opacity: 0;
-}
+} */
 
-.react-flow__handle.source {
+/* .react-flow__handle.source {
   opacity: 0;
   top: 0;
   left: 0;
@@ -22,4 +22,4 @@
   width: 100%;
   border-radius: 2px;
   border: none;
-}
+} */

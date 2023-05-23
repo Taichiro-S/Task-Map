@@ -1,6 +1,4 @@
 import '@/styles/globals.css'
-import '@/styles/customNode.css'
-import '@/styles/reactflow.css'
 import type { AppProps } from 'next/app'
 import { useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'

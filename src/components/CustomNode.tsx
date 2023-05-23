@@ -1,30 +1,36 @@
-import {
-  useCallback,
-  ChangeEvent,
-  useState,
-  useRef,
-  useLayoutEffect,
-  memo,
-} from 'react'
+import { memo } from 'react'
 import { Handle, NodeProps, NodeToolbar, Position } from 'reactflow'
-import useStore from '@/store'
-import {
-  TrashIcon,
-  PencilSquareIcon,
-  ArrowTopRightOnSquareIcon,
-} from '@heroicons/react/24/solid'
-import NodeInput from './NodeInput'
-import CustomNodeToolBar from './CustomNodeToolBar'
 
-// import _ from 'lodash'
+import NodeInput from './NodeInput'
+import CustomNodeToolBarTop from './CustomNodeToolBarTop'
+import CustomNodeToolBarBottom from './CustomNodeToolBarBottom'
+import useStore from '@/store'
+import { statusList } from '@/config/statusList'
+import {
+  CheckCircleIcon,
+  NoSymbolIcon,
+  PauseCircleIcon,
+  PlayCircleIcon,
+  HandRaisedIcon,
+  ExclamationCircleIcon,
+} from '@heroicons/react/24/outline'
 
 const CustomNode = (props: NodeProps) => {
   // console.log('node')
   const { id, data, selected } = props
-  const nodeColor = data.color || 'white'
+  const { notes } = useStore()
+  const nodeColor = data.color || '#ffffff'
+  const note = notes.find((note) => note.node_nanoid === id)
+  const noteStatusColorCode = statusList.find(
+    (status) => status.statusName === note?.status,
+  )?.statusColorCode
+  const noteStatusDisplay = statusList.find(
+    (status) => status.statusName === note?.status,
+  )?.statusDisplay
   return (
     <>
-      <CustomNodeToolBar {...props} />
+      <CustomNodeToolBarTop {...props} />
+      <CustomNodeToolBarBottom {...props} />
       <div
         className={
           selected
@@ -33,12 +39,41 @@ const CustomNode = (props: NodeProps) => {
         }
       >
         <div
-          className={`rounded-full border-2 border-stone-300 px-2 py-1 justify-center items-center`}
+          className={`rounded-full  border-2 border-stone-300 px-2 py-1 justify-center items-center`}
           style={{ backgroundColor: nodeColor }}
         >
-          <div className="customNodeInputWrapper">
-            <div className="customNodeDragHandle">
-              {/* icon taken from grommet https://icons.grommet.io */}
+          {note?.status === 'doing' && (
+            <PlayCircleIcon
+              className={`h-4 w-4 text-white leading-none rounded-full absolute -translate-y-3/2 -translate-x-4 left-auto top-0`}
+              style={{ backgroundColor: noteStatusColorCode }}
+            />
+          )}
+          {note?.status === 'done' && (
+            <CheckCircleIcon
+              className={`h-4 w-4 text-white leading-none rounded-full absolute -translate-y-3/2 -translate-x-4 left-auto top-0`}
+              style={{ backgroundColor: noteStatusColorCode }}
+            />
+          )}
+          {note?.status === 'waiting' && (
+            <HandRaisedIcon
+              className={`h-4 w-4 text-white leading-none rounded-full absolute -translate-y-3/2 -translate-x-4 float-left top-0`}
+              style={{ backgroundColor: noteStatusColorCode }}
+            />
+          )}
+          {note?.status === 'pending' && (
+            <PauseCircleIcon
+              className={`h-4 w-4 text-white leading-none rounded-full absolute -translate-y-3/2 -translate-x-4 left-auto top-0`}
+              style={{ backgroundColor: noteStatusColorCode }}
+            />
+          )}
+          {note?.status === 'FYA' && (
+            <ExclamationCircleIcon
+              className={`h-4 w-4 text-white leading-none rounded-full absolute -translate-y-3/2 -translate-x-4 left-auto top-0`}
+              style={{ backgroundColor: noteStatusColorCode }}
+            />
+          )}
+          <div className="flex h-5 relative z-10">
+            <div className="bg-transparent w-3.5 h-full mr-1 flex items-center">
               <svg viewBox="0 0 24 24">
                 <path
                   fill="#333"
@@ -49,19 +84,32 @@ const CustomNode = (props: NodeProps) => {
               </svg>
             </div>
             <NodeInput label={data.label} id={id} />
-            {/* <input
-            defaultValue={data.label}
-            className="nodrag customNodeInput"
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              updateNodeLabel(id, e.target.value)
-            }
-            ref={inputRef}
-            // onChange={handleChange}
-          /> */}
-            {/* <ArrowTopRightOnSquareIcon className="h-6 w-6 text-gray-500" /> */}
           </div>
-          <Handle type="target" position={Position.Top} />
-          <Handle type="source" position={Position.Bottom} />
+          <Handle
+            style={{
+              top: '50%',
+              pointerEvents: 'none',
+              opacity: 0,
+            }}
+            type="target"
+            position={Position.Top}
+          />
+          <Handle
+            // className="handleSource"
+            style={{
+              opacity: 0,
+              top: 0,
+              left: 0,
+              transform: 'none',
+              background: '#ffffff',
+              height: '100%',
+              width: '100%',
+              borderRadius: '2px',
+              border: 'none',
+            }}
+            type="source"
+            position={Position.Bottom}
+          />
         </div>
       </div>
     </>

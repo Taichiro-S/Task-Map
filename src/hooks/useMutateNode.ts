@@ -122,6 +122,7 @@ export const useMutateNode = () => {
             node_nanoid: note.node_nanoid,
             user_id: user_id,
             content: note.content,
+            status: note.status,
           }
         },
       )

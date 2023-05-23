@@ -1,4 +1,10 @@
-import React, { use, useCallback, useEffect, useRef, useState } from 'react'
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  DragEvent,
+} from 'react'
 import ReactFlow, {
   ConnectionLineType,
   MiniMap,
@@ -15,8 +21,12 @@ import ReactFlow, {
   Edge,
   updateEdge,
   addEdge,
+  XYPosition,
+  BackgroundVariant,
 } from 'reactflow'
+// import OnLoadParams from 'reactflow'
 import CustomNode from '@/components/CustomNode'
+import GroupingNode from '@/components/GroupingNode'
 import CustomEdge, {
   connectionLineStyle,
   defaultEdgeOptions,
@@ -35,20 +45,32 @@ import { Spinner } from '@/components/Spinner'
 import { supabase } from '@/utils/supabase'
 import { useRouter } from 'next/router'
 import { useQueryUser } from '@/hooks/useQueryUser'
-
+import ResizableNode from '@/components/ResizableNode'
 const selector = (state: RFState) => ({
   nodes: state.nodes,
   edges: state.edges,
+  isNodeDragged: state.isNodeDragged,
   editedNoteId: state.editedNoteId,
   onNodesChange: state.onNodesChange,
   onEdgesChange: state.onEdgesChange,
   addChildNode: state.addChildNode,
   addNewEdge: state.addNewEdge,
+  addNewNode: state.addNewNode,
   setInitialDataset: state.setInitialDataset,
+  setIsNodeDragged: state.setIsNodeDragged,
+  addNewGroupNode: state.addNewGroupNode,
+  updateGroupNodeColor: state.updateGroupNodeColor,
+  setNodeParent: state.setNodeParent,
+  setNodesUnselected: state.setNodesUnselected,
+  updateNodeZIndex: state.updateNodeZIndex,
+  reArrangeNodes: state.reArrangeNodes,
+  setEdgesUnselected: state.setEdgesUnselected,
 })
 
 const nodeTypes = {
   custom: CustomNode,
+  grouping: GroupingNode,
+  resizable: ResizableNode,
 }
 
 const edgeTypes = {
@@ -82,12 +104,21 @@ function Flow() {
   const {
     nodes,
     edges,
+    isNodeDragged,
     editedNoteId,
     onNodesChange,
     onEdgesChange,
     addChildNode,
     addNewEdge,
     setInitialDataset,
+    setIsNodeDragged,
+    addNewGroupNode,
+    setNodeParent,
+    addNewNode,
+    setNodesUnselected,
+    updateNodeZIndex,
+    reArrangeNodes,
+    setEdgesUnselected,
   } = useStore(selector, shallow)
   const connectingNodeId = useRef<string | null>(null)
   const { project } = useReactFlow()
@@ -147,14 +178,78 @@ function Flow() {
     }
   }
 
+  const onNodeDragStart = () => {
+    setIsNodeDragged(true)
+  }
+
+  const onNodeDragStop = (event: MouseEvent | TouchEvent, node: Node) => {
+    console.log(nodes)
+    const nodeX = node.position.x
+    const nodeY = node.position.y
+    const groupinNodes = nodes.filter((n) => n.type === 'grouping')
+    for (const gNode of groupinNodes) {
+      if (node.parentNode && node.parentNode === gNode.id) {
+        if (
+          0 < nodeX &&
+          nodeX < gNode.width! &&
+          0 < nodeY &&
+          nodeY < gNode.height!
+        ) {
+          console.log('already in group')
+        } else {
+          console.log('getout')
+          setNodeParent(node.id, '')
+        }
+      } else if (node.parentNode && node.parentNode !== gNode.id) {
+        console.log('node.parentnode', node.parentNode)
+      } else if (!node.parentNode) {
+        const rightEdge = gNode.position.x + gNode.width!
+        const leftEdge = gNode.position.x
+        const topEdge = gNode.position.y
+        const bottomEdge = gNode.position.y + gNode.height!
+        if (
+          nodeX > leftEdge &&
+          nodeX < rightEdge &&
+          nodeY > topEdge &&
+          nodeY < bottomEdge
+        ) {
+          console.log('getin')
+          setNodeParent(node.id, gNode.id)
+        }
+      }
+    }
+    if (node.type === 'grouping') {
+      reArrangeNodes(node)
+    }
+  }
+
+  const onNodeDrag = (event: MouseEvent | TouchEvent, node: Node) => {
+    if (node.type === 'grouping') {
+      updateNodeZIndex(node.id, 0)
+      nodes.map((n) => {
+        if (n.type === 'custom') {
+          updateNodeZIndex(n.id, 10)
+        }
+      })
+    }
+  }
+
+  const onNodeClick = (node: Node) => {
+    if (isNodeDragged) {
+      setIsNodeDragged(false)
+      node.selected = false
+    }
+  }
+
   const onConnectEnd: OnConnectEnd = useCallback(
     (event) => {
       const { nodeInternals } = store.getState()
       const targetIsPane = (event.target as Element).classList.contains(
         'react-flow__pane',
       )
-
       if (targetIsPane && connectingNodeId.current) {
+        const nodeType = nodeInternals.get(connectingNodeId.current)?.type
+        if (nodeType === 'grouping') return
         const parentNode = nodeInternals.get(connectingNodeId.current)
         const childNodePosition = getChildNodePosition(event, parentNode)
 
@@ -163,6 +258,16 @@ function Flow() {
         }
       } else if (!targetIsPane && connectingNodeId.current) {
         const parentNode = nodeInternals.get(connectingNodeId.current)
+        const targetTypeisGroup = (event.target as Element).classList.contains(
+          'grouping-node',
+        )
+        if (parentNode && targetTypeisGroup) {
+          const childNodePosition = getChildNodePosition(event, parentNode)
+          if (parentNode && childNodePosition) {
+            addChildNode(parentNode, childNodePosition)
+          }
+        }
+
         const targetNodeId = (event.target as Element).getAttribute(
           'data-nodeid',
         )
@@ -177,6 +282,75 @@ function Flow() {
     [getChildNodePosition],
   )
 
+  const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
+  const [reactFlowInstance, setReactFlowInstance] = useState<any>(null) // TODO: 型を指定する
+  const onDragOver = useCallback((event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    event.dataTransfer.dropEffect = 'move'
+  }, [])
+
+  const onDrop = useCallback(
+    (event: DragEvent<HTMLDivElement>) => {
+      event.preventDefault()
+      const reactFlowBounds = reactFlowWrapper.current?.getBoundingClientRect()
+      const type: string = event.dataTransfer.getData('application/reactflow')
+
+      // check if the dropped element is valid
+      if (typeof type === 'undefined' || !type) {
+        return
+      }
+
+      if (reactFlowBounds && reactFlowInstance) {
+        const position: XYPosition = reactFlowInstance.project({
+          x: event.clientX - reactFlowBounds.left,
+          y: event.clientY - reactFlowBounds.top,
+        })
+        let node: Node | null = null
+        if (type === 'grouping') {
+          node = addNewGroupNode(position)
+        } else if (type === 'custom') {
+          node = addNewNode(position)
+        }
+        if (node === null || node === undefined) return
+        const nodeX = node.position.x
+        const nodeY = node.position.y
+        const groupingNodes = nodes.filter((n) => n.type === 'grouping')
+        for (const gNode of groupingNodes) {
+          if (node.parentNode && node.parentNode === gNode.id) {
+            if (
+              0 < nodeX &&
+              nodeX < gNode.width! &&
+              0 < nodeY &&
+              nodeY < gNode.height!
+            ) {
+              console.log('already in group')
+            } else {
+              console.log('getout')
+              setNodeParent(node.id, '')
+            }
+          } else if (node.parentNode && node.parentNode !== n.id) {
+            console.log('node.parentnode', node.parentNode)
+          } else if (!node.parentNode) {
+            const rightEdge = gNode.position.x + gNode.width!
+            const leftEdge = gNode.position.x
+            const topEdge = gNode.position.y
+            const bottomEdge = gNode.position.y + gNode.height!
+            if (
+              nodeX > leftEdge &&
+              nodeX < rightEdge &&
+              nodeY > topEdge &&
+              nodeY < bottomEdge
+            ) {
+              console.log('getin')
+              setNodeParent(node.id, gNode.id)
+            }
+          }
+        }
+      }
+    },
+    [reactFlowInstance],
+  )
+
   if (
     'UserNotFound' in
     [
@@ -186,7 +360,6 @@ function Flow() {
       noteError?.message,
     ]
   ) {
-    console.log(userIdError?.message)
     router.push('/login')
     return null
   }
@@ -197,7 +370,11 @@ function Flow() {
 
   return (
     <Layout title="Flow">
-      <div style={{ width: '100vw', height: '100vh' }}>
+      <div
+        style={{ width: '100vw', height: '100vh' }}
+        className="reactflow-wrapper"
+        ref={reactFlowWrapper}
+      >
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -207,19 +384,27 @@ function Flow() {
           edgeTypes={edgeTypes}
           onConnectStart={onConnectStart}
           onConnectEnd={onConnectEnd}
-          nodeOrigin={nodeOrigin}
+          onNodeDragStart={onNodeDragStart}
+          // nodeOrigin={nodeOrigin}
+
           connectionLineStyle={connectionLineStyle}
           defaultEdgeOptions={defaultEdgeOptions}
           connectionLineType={ConnectionLineType.Straight}
           fitView
+          onNodeClick={onNodeClick}
+          onInit={setReactFlowInstance}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          onNodeDragStop={onNodeDragStop}
+          onNodeDrag={onNodeDrag}
         >
           <Controls showInteractive={false} />
           <Panel position="top-left">My New Map</Panel>
           <MiniMap nodeBorderRadius={2} position="top-right" />
-          <Background variant="dots" gap={12} size={1} />
+          <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         </ReactFlow>
         <MenuBar userId={userId} />
-        {editedNoteId !== '' && <Note />}
+        {/* {editedNoteId !== '' && <Note />} */}
       </div>
     </Layout>
   )

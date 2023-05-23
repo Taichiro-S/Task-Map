@@ -23,6 +23,7 @@ export const useQueryNode = (user_id: string | undefined) => {
         type: nodeData.type,
         position: { x: nodeData.position_X, y: nodeData.position_Y },
         data: { label: nodeData.label, color: nodeData.color },
+        parentNode: nodeData.group_nanoid,
       }
     })
 

@@ -13,7 +13,6 @@ export default function EdgeInput(props: EdgeProps) {
   // console.log('edge')
   const updateEdgeLabel = useStore((state) => state.updateEdgeLabel)
   const { sourceX, sourceY, targetX, targetY, data, selected, id } = props
-  const inputRef = useRef<HTMLInputElement | null>(null)
   const [edgePath, labelX, labelY] = getStraightPath({
     sourceX,
     sourceY: sourceY - 20,
@@ -52,9 +51,6 @@ export default function EdgeInput(props: EdgeProps) {
               onMouseDown={(e) => {
                 e.stopPropagation()
               }}
-              ref={inputRef}
-              autoFocus
-              // className="nodrag nopan"
             />
           </div>
         </EdgeLabelRenderer>

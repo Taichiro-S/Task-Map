@@ -1,11 +1,11 @@
-.customNodeInputWrapper {
+/* .customNodeInputWrapper {
   display: flex;
   height: 20px;
   z-index: 1;
   position: relative;
-}
+} */
 
-.customNodeDragHandle {
+/* .customNodeDragHandle {
   background: transparent;
   width: 14px;
   height: 100%;
@@ -22,7 +22,25 @@
   background-color: transparent;
   height: 100%;
   color: rgb(19, 19, 19);
+} */
+
+/* .handleTarget {
+  top: 50%;
+  pointer-events: none;
+  opacity: 0;
 }
+
+.handleSource {
+  opacity: 0;
+  top: 0;
+  left: 0;
+  transform: none;
+  background: #ffffff;
+  height: 100%;
+  width: 100%;
+  border-radius: 2px;
+  border: none;
+} */
 
 /* .customNodeButton {
   padding: 2px 2px;

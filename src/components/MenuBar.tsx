@@ -1,33 +1,32 @@
 import useStore, { RFState } from '@/store'
 import { useMutateNode } from '@/hooks/useMutateNode'
 import { useMutateEdge } from '@/hooks/useMutateEdge'
-import { useMutateNote } from '@/hooks/useMutateNote'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, DragEvent } from 'react'
 import { supabase } from '@/utils/supabase'
 import Link from 'next/link'
 
 const MenuBar = (userId: any) => {
   const { saveNodeMutation } = useMutateNode()
   const { saveEdgeMutation } = useMutateEdge()
-  const { saveNoteMutation } = useMutateNote()
-
+  const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType: string) => {
+    event.dataTransfer.setData('application/reactflow', nodeType)
+    event.dataTransfer.effectAllowed = 'move'
+  }
   const addNewNode = useStore((state) => state.addNewNode)
 
   return (
     <div className="w-1/2 h-1/10 bg-white absolute bottom-20 right-20 z-50 rounded-2xl drop-shadow-md">
-      <span>MenuBar</span>
-      <button
+      {/* <button
         className="w-10 h-10 bg-blue-500 rounded-full text-white"
-        onClick={() => addNewNode()}
+        onClick={() => addNewNode({ x: 0, y: 0 })}
       >
         +
-      </button>
+      </button> */}
       <button
         className="w-10 h-10 bg-blue-500  text-white"
         onClick={() => {
           saveNodeMutation.mutate(userId.userId)
           saveEdgeMutation.mutate(userId.userId)
-          //   saveNoteMutation.mutate(userId.userId)
         }}
       >
         Save
@@ -35,6 +34,20 @@ const MenuBar = (userId: any) => {
       <Link href="/login">
         <span className="cursor-pointer hover:text-blue-600">ログイン</span>
       </Link>
+      <div
+        className="dndnode input"
+        onDragStart={(event) => onDragStart(event, 'custom')}
+        draggable
+      >
+        Normal Node
+      </div>
+      <div
+        className="dndnode input"
+        onDragStart={(event) => onDragStart(event, 'grouping')}
+        draggable
+      >
+        Groupin Node
+      </div>
     </div>
   )
 }
