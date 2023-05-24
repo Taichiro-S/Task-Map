@@ -1,19 +1,16 @@
 import {
   Edge,
-  EdgeChange,
   Node,
-  NodeChange,
   OnNodesChange,
   OnEdgesChange,
   applyNodeChanges,
   applyEdgeChanges,
   XYPosition,
-  MarkerType,
   Position,
 } from 'reactflow'
 import { create } from 'zustand'
 import { nanoid } from 'nanoid'
-import { NewNote, NoteData, GroupData } from 'types/types'
+import { NewNote, NoteData } from 'types/types'
 import { nodeColorList } from 'config/nodeColorList'
 
 export type RFState = {
@@ -38,9 +35,9 @@ export type RFState = {
   updateNodeColor: (nodeId: string, color: string) => void
   setEditedNoteId: (nodeNanoId: string) => void
   resetEditedNoteId: () => void
-  updateNoteContent: (nodeNanoId: string, content: string) => void
+  updateNodeMemo: (nodeNanoId: string, memo: string) => void
   setIsNodeDragged: (isNodeDragged: boolean) => void
-  updateStatus: (nodeNanoId: string, status: string) => void
+  updateNodeStatus: (nodeNanoId: string, status: string) => void
   addNewGroupNode: (position: XYPosition) => Node
   updateGroupNodeColor: (groupNodeId: string, color: string) => void
   updateEdgeAnimation: (edgeId: string) => void
@@ -51,11 +48,12 @@ export type RFState = {
   ) => void
   setNodeParent: (nodeId: string, groupNodeId: string) => void
   setNodesUnselected: () => void
+  setNodeSelection: (nodeId: string, selected: boolean) => void
   setEdgesUnselected: () => void
 
   updateNodeZIndex: (nodeId: string, zIndex: number) => void
   reArrangeNodes: (node: Node) => void
-  // changeSelected: (nodeId: string) => void
+  setParentNodeOnNodeResize: (groupingNodeId: string) => void
 }
 
 const useStore = create<RFState>((set, get) => ({
@@ -69,7 +67,7 @@ const useStore = create<RFState>((set, get) => ({
       return {
         node_nanoid: noteData.node_nanoid,
         content: noteData.content,
-        status: noteData.status,
+        title: noteData.title,
       }
     })
     set({ nodes: nodes, edges: edges, notes: notes })
@@ -81,13 +79,13 @@ const useStore = create<RFState>((set, get) => ({
   resetEditedNoteId: () => {
     set({ editedNoteId: '' })
   },
-  updateNoteContent: (nodeNanoId, content) => {
+  updateNodeMemo: (nodeNanoId, memo) => {
     set({
-      notes: get().notes.map((note) => {
-        if (note.node_nanoid === nodeNanoId) {
-          note.content = content
+      nodes: get().nodes.map((node) => {
+        if (node.id === nodeNanoId) {
+          node.data.memo = memo
         }
-        return note
+        return node
       }),
     })
   },
@@ -108,11 +106,15 @@ const useStore = create<RFState>((set, get) => ({
       type: 'custom',
       data: {
         label: '',
-        toolbarPosition: Position.Top,
         color: nodeColorList[0].colorCode,
+        width: 0,
+        height: 0,
+        memo: '',
+        status: '',
+        toolbarPosition: Position.Top,
       },
       position: position,
-      // parentNode: parentNode.id,
+      parentNode: '',
       zIndex: 10,
     }
 
@@ -127,18 +129,9 @@ const useStore = create<RFState>((set, get) => ({
       markerEnd: 'arrowclosed',
     }
 
-    const newNote = {
-      node_nanoid: newNode.id,
-      content: '',
-      status: '',
-    }
-
-    console.log('newNote', newNote)
-
     set({
       nodes: [...get().nodes, newNode],
       edges: [...get().edges, newEdge],
-      notes: [...get().notes, newNote],
     })
     return newNode
   },
@@ -207,20 +200,19 @@ const useStore = create<RFState>((set, get) => ({
       type: 'custom',
       data: {
         label: '',
-        toolbarPosition: Position.Top,
         color: nodeColorList[0].colorCode,
+        width: 0,
+        height: 0,
+        memo: '',
+        status: '',
+        toolbarPosition: Position.Top,
       },
       position: position,
       zIndex: 10,
-    }
-    const newNote = {
-      node_nanoid: newNode.id,
-      content: '',
-      status: '',
+      parentNode: '',
     }
     set({
       nodes: [...get().nodes, newNode],
-      notes: [...get().notes, newNote],
     })
     return newNode
   },
@@ -234,13 +226,13 @@ const useStore = create<RFState>((set, get) => ({
     set({ isNodeDragged: isNodeDragged })
   },
 
-  updateStatus: (nodeNanoId, status) => {
+  updateNodeStatus: (nodeNanoId, status) => {
     set({
-      notes: get().notes.map((note) => {
-        if (note.node_nanoid === nodeNanoId) {
-          note.status = status
+      nodes: get().nodes.map((node) => {
+        if (node.id === nodeNanoId) {
+          node.data.status = status
         }
-        return note
+        return node
       }),
     })
   },
@@ -250,13 +242,17 @@ const useStore = create<RFState>((set, get) => ({
       type: 'grouping',
       data: {
         label: 'New Group',
+        width: 300,
+        height: 200,
+        memo: '',
+        status: '',
+        toolbarPosition: Position.Top,
         color: nodeColorList[0].colorCode,
-        width: '300px',
-        height: '200px',
       },
       position: position,
       dragHandle: '.grouping-node-drag-handle',
       zIndex: 0,
+      parentNode: '',
     }
     set({
       nodes: [newGroupNode, ...get().nodes],
@@ -297,25 +293,31 @@ const useStore = create<RFState>((set, get) => ({
     set({
       nodes: get().nodes.map((node) => {
         if (node.id === nodeId) {
-          const parentNode = get().nodes.find((n) => n.id === parentId)
-          if (parentNode) {
-            console.log('parentNode', parentNode)
+          const newParentNode = get().nodes.find((n) => n.id === parentId)
+          const oldParentNode = get().nodes.find(
+            (n) => n.id === node.parentNode,
+          )
+          if (newParentNode && oldParentNode) {
             // Convert child node position to relative position to the parent node
             node.position = {
-              x: node.position.x - parentNode.position.x,
-              y: node.position.y - parentNode.position.y,
+              x:
+                node.position.x +
+                oldParentNode.position.x -
+                newParentNode.position.x,
+              y:
+                node.position.y +
+                oldParentNode.position.y -
+                newParentNode.position.y,
             }
             node.parentNode = parentId
-          } else {
-            const oldParentNode = get().nodes.find(
-              (n) => n.id === node.parentNode,
-            )
-            console.log(
-              'no parentNode',
-              parentId,
-              node.parentNode,
-              oldParentNode,
-            )
+            console.log(node)
+          } else if (newParentNode && !oldParentNode) {
+            node.position = {
+              x: node.position.x - newParentNode.position.x,
+              y: node.position.y - newParentNode.position.y,
+            }
+            node.parentNode = parentId
+          } else if (!newParentNode && oldParentNode) {
             if (oldParentNode) {
               node.position = {
                 x: node.position.x + oldParentNode.position.x,
@@ -324,6 +326,16 @@ const useStore = create<RFState>((set, get) => ({
               node.parentNode = parentId
             }
           }
+        }
+        return node
+      }),
+    })
+  },
+  setNodeSelection: (nodeId, selected) => {
+    set({
+      nodes: get().nodes.map((node) => {
+        if (node.id === nodeId) {
+          node.selected = selected
         }
         return node
       }),
@@ -358,21 +370,57 @@ const useStore = create<RFState>((set, get) => ({
   },
 
   reArrangeNodes: (node) => {
-    // Remove the dragged node from the array
     let nodesCopy = [...get().nodes]
     const draggedNodeIndex = nodesCopy.findIndex((n) => n.id === node.id)
     nodesCopy.splice(draggedNodeIndex, 1)
 
-    // Find the index of the last grouping node in the array
-    const lastGroupNodeIndex = nodesCopy.reduce(
+    // Initialize the insertion index as the index of the last grouping node
+    let insertionIndex = nodesCopy.reduce(
       (acc, cur, index) => (cur.type === 'grouping' ? index : acc),
       -1,
     )
 
-    // Insert the dragged node after the last grouping node
-    nodesCopy.splice(lastGroupNodeIndex + 1, 0, node)
+    for (const groupingNode of nodesCopy) {
+      if (groupingNode.type === 'grouping' && groupingNode.parentNode) {
+        const parentNodeIndex = nodesCopy.findIndex(
+          (n) => n.id === groupingNode.parentNode,
+        )
+        if (parentNodeIndex > insertionIndex) {
+          insertionIndex = parentNodeIndex
+        }
+      }
+    }
+
+    nodesCopy.splice(insertionIndex + 1, 0, node)
     set({
       nodes: nodesCopy,
+    })
+  },
+  setParentNodeOnNodeResize: (groupingNodeId) => {
+    set({
+      nodes: get().nodes.map((node) => {
+        if (node.parentNode === groupingNodeId && node.type === 'custom') {
+          const nodeX: number = node.position.x
+          const nodeY: number = node.position.y
+          const parentNode = get().nodes.find((n) => n.id === groupingNodeId)
+          if (!parentNode) return node
+          const rightEdge: number = parentNode.data.width
+          const bottomEdge: number = parentNode.data.height
+          if (
+            nodeX > rightEdge ||
+            nodeY > bottomEdge ||
+            0 > nodeX ||
+            0 > nodeY
+          ) {
+            node.position = {
+              x: node.position.x + parentNode.position.x,
+              y: node.position.y + parentNode.position.y,
+            }
+            node.parentNode = ''
+          }
+        }
+        return node
+      }),
     })
   },
 

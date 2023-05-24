@@ -16,12 +16,6 @@ const MenuBar = (userId: any) => {
 
   return (
     <div className="w-1/2 h-1/10 bg-white absolute bottom-20 right-20 z-50 rounded-2xl drop-shadow-md">
-      {/* <button
-        className="w-10 h-10 bg-blue-500 rounded-full text-white"
-        onClick={() => addNewNode({ x: 0, y: 0 })}
-      >
-        +
-      </button> */}
       <button
         className="w-10 h-10 bg-blue-500  text-white"
         onClick={() => {
@@ -31,9 +25,6 @@ const MenuBar = (userId: any) => {
       >
         Save
       </button>
-      <Link href="/login">
-        <span className="cursor-pointer hover:text-blue-600">ログイン</span>
-      </Link>
       <div
         className="dndnode input"
         onDragStart={(event) => onDragStart(event, 'custom')}

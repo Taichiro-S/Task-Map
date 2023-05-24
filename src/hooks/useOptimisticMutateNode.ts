@@ -1,7 +1,7 @@
 import { useQueryClient, useMutation } from '@tanstack/react-query'
-import useStore from '@/store'
-import { supabase } from '@/utils/supabase'
-import { NodeData } from '@/types/types'
+import useStore from 'store'
+import { supabase } from 'utils/supabase'
+import { NodeData } from 'types/types'
 
 export const useOptimisticMutateNode = () => {
   const queryClient = useQueryClient()

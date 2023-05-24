@@ -1,15 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
-import { supabase } from '@/utils/supabase'
-import { NoteData } from '@/types/types'
-export const useQueryNote = (user_id: string | undefined) => {
+import { supabase } from 'utils/supabase'
+import { NoteData } from 'types/types'
+export const useQueryNote = (userId: string | undefined) => {
   const getNotes = async () => {
-    if (!user_id) {
+    if (!userId) {
       throw new Error('UserNotFound')
     }
     const { data, error } = await supabase
       .from('notes')
       .select('*')
-      .eq('user_id', user_id)
+      .eq('user_id', userId)
     if (error) {
       throw new Error(`${error.message}: ${error.details}`)
     }
@@ -23,14 +23,14 @@ export const useQueryNote = (user_id: string | undefined) => {
         node_nanoid: note.node_nanoid,
         content: note.content,
         created_at: note.created_at,
-        status: note.status,
+        title: note.title,
       }
     })
     return notes as NoteData[]
   }
 
-  return useQuery<NoteData[], Error>(['notes', user_id], getNotes, {
+  return useQuery<NoteData[], Error>(['notes', userId], getNotes, {
     staleTime: Infinity,
-    enabled: !!user_id,
+    enabled: !!userId,
   })
 }

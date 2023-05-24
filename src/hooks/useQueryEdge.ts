@@ -1,18 +1,16 @@
 import { useQuery } from '@tanstack/react-query'
-import { supabase } from '@/utils/supabase'
-import { EdgeData } from '@/types/types'
+import { supabase } from 'utils/supabase'
 import { Edge } from 'reactflow'
-import { useRouter } from 'next/router'
 
-export const useQueryEdge = (user_id: string | undefined) => {
+export const useQueryEdge = (userId: string | undefined) => {
   const getEdges = async () => {
-    if (!user_id) {
+    if (!userId) {
       throw new Error('UserNotFound')
     }
     const { data, error } = await supabase
       .from('edges')
       .select('*')
-      .eq('user_id', user_id)
+      .eq('user_id', userId)
 
     if (error) {
       throw new Error(`${error.message}: ${error.details}`)
@@ -27,14 +25,16 @@ export const useQueryEdge = (user_id: string | undefined) => {
         target: edgeData.target_node_id,
         type: edgeData.type,
         data: { label: edgeData.label },
+        animated: edgeData.animated,
+        zIndex: 5,
       }
     })
 
     return edges as Edge[]
   }
 
-  return useQuery<Edge[], Error>(['edges', user_id], getEdges, {
+  return useQuery<Edge[], Error>(['edges', userId], getEdges, {
     staleTime: Infinity,
-    enabled: !!user_id,
+    enabled: !!userId,
   })
 }

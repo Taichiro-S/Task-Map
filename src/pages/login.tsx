@@ -3,6 +3,7 @@ import { CheckBadgeIcon, ShieldCheckIcon } from '@heroicons/react/24/solid'
 import type { NextPage } from 'next'
 import { useMutateAuth } from '../hooks/useMutateAuth'
 import { Layout } from '../components/Layout'
+import Header from 'components/Header'
 
 const Auth: NextPage = () => {
   const [isLogin, setIsLogin] = useState(true)
@@ -25,6 +26,7 @@ const Auth: NextPage = () => {
   return (
     <Layout title="Auth">
       <ShieldCheckIcon className="mb-6 h-12 w-12 text-pink-500" />
+      <Header />
       <form onSubmit={handleSubmit}>
         <div>
           <input

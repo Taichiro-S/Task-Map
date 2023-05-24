@@ -1,10 +1,14 @@
-import '@/styles/globals.css'
+import 'styles/globals.css'
 import type { AppProps } from 'next/app'
 import { useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useRouter } from 'next/router'
 import { supabase } from '../utils/supabase'
+
+if (process.env.NEXT_PUBLIC_ENV === 'development') {
+  require('../mocks')
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {

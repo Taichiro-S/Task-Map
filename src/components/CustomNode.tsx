@@ -8,7 +8,6 @@ import useStore from 'store'
 import { statusList } from 'config/statusList'
 import {
   CheckCircleIcon,
-  NoSymbolIcon,
   PauseCircleIcon,
   PlayCircleIcon,
   HandRaisedIcon,
@@ -18,15 +17,13 @@ import {
 const CustomNode = (props: NodeProps) => {
   // console.log('node')
   const { id, data, selected } = props
-  const { notes } = useStore()
+  const nodes = useStore((state) => state.nodes)
   const nodeColor = data.color || '#ffffff'
-  const note = notes.find((note) => note.node_nanoid === id)
+  const node = nodes.find((n) => n.id === id)
+  if (!node) return null
   const noteStatusColorCode = statusList.find(
-    (status) => status.statusName === note?.status,
+    (status) => status.statusName === node.data.status,
   )?.statusColorCode
-  const noteStatusDisplay = statusList.find(
-    (status) => status.statusName === note?.status,
-  )?.statusDisplay
   return (
     <>
       <CustomNodeToolBarTop {...props} />
@@ -42,31 +39,31 @@ const CustomNode = (props: NodeProps) => {
           className={`rounded-full  border-2 border-stone-300 px-2 py-1 justify-center items-center`}
           style={{ backgroundColor: nodeColor }}
         >
-          {note?.status === 'doing' && (
+          {node.data.status === 'doing' && (
             <PlayCircleIcon
               className={`h-4 w-4 text-white leading-none rounded-full absolute -translate-y-3/2 -translate-x-4 left-auto top-0`}
               style={{ backgroundColor: noteStatusColorCode }}
             />
           )}
-          {note?.status === 'done' && (
+          {node.data.status === 'done' && (
             <CheckCircleIcon
               className={`h-4 w-4 text-white leading-none rounded-full absolute -translate-y-3/2 -translate-x-4 left-auto top-0`}
               style={{ backgroundColor: noteStatusColorCode }}
             />
           )}
-          {note?.status === 'waiting' && (
+          {node.data.status === 'waiting' && (
             <HandRaisedIcon
               className={`h-4 w-4 text-white leading-none rounded-full absolute -translate-y-3/2 -translate-x-4 float-left top-0`}
               style={{ backgroundColor: noteStatusColorCode }}
             />
           )}
-          {note?.status === 'pending' && (
+          {node.data.status === 'pending' && (
             <PauseCircleIcon
               className={`h-4 w-4 text-white leading-none rounded-full absolute -translate-y-3/2 -translate-x-4 left-auto top-0`}
               style={{ backgroundColor: noteStatusColorCode }}
             />
           )}
-          {note?.status === 'FYA' && (
+          {node.data.status === 'FYA' && (
             <ExclamationCircleIcon
               className={`h-4 w-4 text-white leading-none rounded-full absolute -translate-y-3/2 -translate-x-4 left-auto top-0`}
               style={{ backgroundColor: noteStatusColorCode }}

@@ -5,13 +5,13 @@ import useStore from 'store'
 import { statusList } from 'config/statusList'
 const CustomNodeToolBarBottom = (props: NodeProps) => {
   const { data, id, selected } = props
-  const { notes } = useStore()
+  const nodes = useStore((state) => state.nodes)
 
   const { isNodeDragged } = useStore()
-  const updateNoteContent = useStore((state) => state.updateNoteContent)
-  const updateStatus = useStore((state) => state.updateStatus)
-  const note = notes.find((note) => note.node_nanoid === id)
-  if (!note) return null
+  const updateNodeMemo = useStore((state) => state.updateNodeMemo)
+  const updateNodeStatus = useStore((state) => state.updateNodeStatus)
+  const node = nodes.find((node) => node.id === id)
+  if (!node) throw new Error('node not found')
   return (
     <NodeToolbar
       isVisible={isNodeDragged ? false : selected}
@@ -27,14 +27,14 @@ const CustomNodeToolBarBottom = (props: NodeProps) => {
               </div>
               <ul className="flex flex-row justify-center  items-center">
                 {statusList.map((status) =>
-                  note.status === status.statusName ? (
+                  node.data.status === status.statusName ? (
                     <li key={status.id} className="mr-1 last:mr-0">
                       <span className="block border-2 border-stone-800 rounded-lg">
                         <button
                           className="block rounded-md font-mono font-bold text-sm p-1"
                           style={{ backgroundColor: status.statusColorCode }}
                           onClick={(e) => {
-                            updateStatus(id, '')
+                            updateNodeStatus(id, '')
                           }}
                         >
                           {status.statusDisplay}
@@ -50,7 +50,7 @@ const CustomNodeToolBarBottom = (props: NodeProps) => {
                             backgroundColor: status.statusColorCode,
                           }}
                           onClick={(e) => {
-                            updateStatus(id, status.statusName)
+                            updateNodeStatus(id, status.statusName)
                           }}
                         >
                           {status.statusDisplay}
@@ -69,9 +69,9 @@ const CustomNodeToolBarBottom = (props: NodeProps) => {
         </div>
         <textarea
           className="w-full h-5/6 bg-gray-100 rounded-md p-2 text-center font-mono font-bold text-sm"
-          value={note.content}
+          value={node.data.memo}
           onChange={(e) => {
-            updateNoteContent(note.node_nanoid, e.target.value)
+            updateNodeMemo(node.id, e.target.value)
           }}
           onMouseDown={(e) => {
             e.preventDefault()

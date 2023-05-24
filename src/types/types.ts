@@ -1,10 +1,3 @@
-export type NodeDataType = {
-  label: string
-  description: string
-  color: string
-  completed: boolean
-}
-
 export type NodeData = {
   id: string
   created_at: string
@@ -14,7 +7,13 @@ export type NodeData = {
   user_id: string | undefined
   node_nanoid: string
   type: string | undefined
-  color: string | undefined
+  color: string
+  parent_node_id: string | undefined
+  width: number
+  height: number
+  index_in_nodes_array: number
+  memo: string
+  status: string
 }
 
 export type EdgeData = {
@@ -26,6 +25,7 @@ export type EdgeData = {
   edge_nanoid: string
   type: string | undefined
   label: string
+  animated: boolean | undefined
 }
 
 export type NoteData = {
@@ -34,16 +34,24 @@ export type NoteData = {
   user_id: string | undefined
   node_nanoid: string
   content: string
-  status: string
+  title: string
 }
 
-export type GroupData = {
+export type WorkspaceData = {
   id: string
   created_at: string
   user_id: string | undefined
-  name: string
-  color: string
-  group_nanoid: string
+  title: string
+}
+
+export type CommentData = {
+  id: string
+  created_at: string
+  updated_at: string
+  user_id: string | undefined
+  workspace_id: string
+  node_nanoid: string | undefined
+  content: string
 }
 
 export type NodeInputProps = {
@@ -52,4 +60,3 @@ export type NodeInputProps = {
 }
 
 export type NewNote = Omit<NoteData, 'id' | 'created_at' | 'user_id'>
-export type NewGroup = Omit<GroupData, 'id' | 'created_at' | 'user_id'>

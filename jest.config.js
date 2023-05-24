@@ -24,7 +24,7 @@ const config = {
   }, {}),
 
   testEnvironment: 'jsdom',
-
+  //   testEnvironment: 'node',
   testMatch: ['**/*.test.js', '**/*.test.ts', '**/*.test.tsx'],
 
   // @testing-library/react を使うためセットアップスクリプト( 後述 )

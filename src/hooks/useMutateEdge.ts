@@ -1,66 +1,66 @@
 import { useQueryClient, useMutation } from '@tanstack/react-query'
-import useStore from '@/store'
-import { supabase } from '@/utils/supabase'
-import { EdgeData } from '@/types/types'
+import useStore from 'store'
+import { supabase } from 'utils/supabase'
+import { EdgeData } from 'types/types'
 
 export const useMutateEdge = () => {
   const queryClient = useQueryClient()
 
-  const createEdgeMutation: any = useMutation(
-    async (newEdge: Omit<EdgeData, 'id' | 'created_at'>) => {
-      const previousEdges = queryClient.getQueryData<
-        Omit<EdgeData, 'id' | 'created_at'>[]
-      >(['edges'])
-      if (previousEdges) {
-        queryClient.setQueryData(['edges'], [...previousEdges, newEdge])
-        // localStorage.setItem(
-        //   'edges',
-        //   JSON.stringify(queryClient.getQueryData(['edges'])),
-        // )
-      }
-    },
-  )
+  // const createEdgeMutation: any = useMutation(
+  //   async (newEdge: Omit<EdgeData, 'id' | 'created_at'>) => {
+  //     const previousEdges = queryClient.getQueryData<
+  //       Omit<EdgeData, 'id' | 'created_at'>[]
+  //     >(['edges'])
+  //     if (previousEdges) {
+  //       queryClient.setQueryData(['edges'], [...previousEdges, newEdge])
+  //       // localStorage.setItem(
+  //       //   'edges',
+  //       //   JSON.stringify(queryClient.getQueryData(['edges'])),
+  //       // )
+  //     }
+  //   },
+  // )
 
-  const updateEdgeMutation = useMutation(
-    async (updatedEdge: Omit<EdgeData, 'id' | 'created_at'>) => {
-      const previousEdges = queryClient.getQueryData<
-        Omit<EdgeData, 'id' | 'created_at'>[]
-      >(['edges'])
-      if (previousEdges) {
-        queryClient.setQueryData(
-          ['edges'],
-          previousEdges.map((edge) =>
-            edge.edge_nanoid === updatedEdge.edge_nanoid ? updatedEdge : edge,
-          ),
-        )
-        // localStorage.setItem(
-        //   'edges',
-        //   JSON.stringify(queryClient.getQueryData(['edges'])),
-        // )
-      }
-    },
-  )
+  // const updateEdgeMutation = useMutation(
+  //   async (updatedEdge: Omit<EdgeData, 'id' | 'created_at'>) => {
+  //     const previousEdges = queryClient.getQueryData<
+  //       Omit<EdgeData, 'id' | 'created_at'>[]
+  //     >(['edges'])
+  //     if (previousEdges) {
+  //       queryClient.setQueryData(
+  //         ['edges'],
+  //         previousEdges.map((edge) =>
+  //           edge.edge_nanoid === updatedEdge.edge_nanoid ? updatedEdge : edge,
+  //         ),
+  //       )
+  //       // localStorage.setItem(
+  //       //   'edges',
+  //       //   JSON.stringify(queryClient.getQueryData(['edges'])),
+  //       // )
+  //     }
+  //   },
+  // )
 
-  const deleteEdgeMutation = useMutation(async (edge_nanoid: string) => {
-    const previousEdges = queryClient.getQueryData<
-      Omit<EdgeData, 'id' | 'created_at'>[]
-    >(['edges'])
-    if (previousEdges) {
-      queryClient.setQueryData(
-        ['edges'],
-        previousEdges.filter((edge) => edge.edge_nanoid !== edge_nanoid),
-      )
-      // localStorage.setItem(
-      //   'edges',
-      //   JSON.stringify(queryClient.getQueryData(['edges'])),
-      // )
-    }
-  })
+  // const deleteEdgeMutation = useMutation(async (edge_nanoid: string) => {
+  //   const previousEdges = queryClient.getQueryData<
+  //     Omit<EdgeData, 'id' | 'created_at'>[]
+  //   >(['edges'])
+  //   if (previousEdges) {
+  //     queryClient.setQueryData(
+  //       ['edges'],
+  //       previousEdges.filter((edge) => edge.edge_nanoid !== edge_nanoid),
+  //     )
+  //     // localStorage.setItem(
+  //     //   'edges',
+  //     //   JSON.stringify(queryClient.getQueryData(['edges'])),
+  //     // )
+  //   }
+  // })
 
   const saveEdgeMutation = useMutation({
     mutationFn: async (user_id: string | undefined) => {
       const edges = useStore.getState().edges
-      console.log('storeEdges', edges)
+      // console.log('storeEdges', edges)
       const edgeDatas: Omit<EdgeData, 'id' | 'created_at'>[] = edges.map(
         (edge) => {
           return {
@@ -70,6 +70,7 @@ export const useMutateEdge = () => {
             edge_nanoid: edge.id,
             type: edge.type,
             label: edge.data.label,
+            animated: edge.animated,
           }
         },
       )
@@ -123,9 +124,9 @@ export const useMutateEdge = () => {
   })
 
   return {
-    createEdgeMutation,
-    updateEdgeMutation,
-    deleteEdgeMutation,
+    // createEdgeMutation,
+    // updateEdgeMutation,
+    // deleteEdgeMutation,
     saveEdgeMutation,
   }
 }

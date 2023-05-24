@@ -1,7 +1,7 @@
 import { useQueryClient, useMutation } from '@tanstack/react-query'
-import useStore from '@/store'
-import { supabase } from '@/utils/supabase'
-import { NodeData, NoteData } from '@/types/types'
+import useStore from 'store'
+import { supabase } from 'utils/supabase'
+import { NodeData, NoteData } from 'types/types'
 import { Node, NodeChange, applyNodeChanges } from 'reactflow'
 import { nanoid } from 'nanoid'
 export const useMutateNode = () => {
@@ -88,7 +88,7 @@ export const useMutateNode = () => {
   const saveNodeMutation = useMutation({
     mutationFn: async (user_id: string | undefined) => {
       const nodes = useStore.getState().nodes
-      console.log('storeNodes', nodes)
+      // console.log('storeNodes', nodes)
 
       const nodeDatas: Omit<NodeData, 'id' | 'created_at'>[] = nodes.map(
         (node) => {
@@ -96,10 +96,16 @@ export const useMutateNode = () => {
             label: node.data.label,
             position_X: node.position.x,
             position_Y: node.position.y,
-            node_nanoid: node.id,
             user_id: user_id,
+            node_nanoid: node.id,
             type: node.type,
             color: node.data.color,
+            parent_node_id: node.parentNode,
+            index_in_nodes_array: nodes.indexOf(node),
+            height: node.data.height,
+            width: node.data.width,
+            memo: node.data.memo,
+            status: node.data.status,
           }
         },
       )
@@ -114,37 +120,14 @@ export const useMutateNode = () => {
         throw new Error(`${nodesError.message}: ${nodesError.details}`)
       }
 
-      const notes = useStore.getState().notes
-
-      const noteDatas: Omit<NoteData, 'id' | 'created_at'>[] = notes.map(
-        (note) => {
-          return {
-            node_nanoid: note.node_nanoid,
-            user_id: user_id,
-            content: note.content,
-            status: note.status,
-          }
-        },
-      )
-
-      // Upsert notes
-      const { data: updatedNoteDatas, error: NoteError } = await supabase
-        .from('notes')
-        .upsert(noteDatas, { onConflict: 'node_nanoid' })
-        .select('*')
-
-      if (NoteError) {
-        throw new Error(`${NoteError.message}: ${NoteError.details}`)
-      }
-
       // Fetch all nodes in the database for this user
-      const { data: allNodes, error: fetchError } = await supabase
+      const { data: allNodes, error: nodefetchError } = await supabase
         .from('nodes')
         .select('*')
         .eq('user_id', user_id)
 
-      if (fetchError) {
-        throw new Error(`${fetchError.message}: ${fetchError.details}`)
+      if (nodefetchError) {
+        throw new Error(`${nodefetchError.message}: ${nodefetchError.details}`)
       }
       // Find the nodes that exist in the database but not in the current state
       const nodesToDelete = allNodes.filter(
@@ -153,24 +136,23 @@ export const useMutateNode = () => {
 
       // Delete the nodes from the database
       for (const nodeToDelete of nodesToDelete) {
-        const { error: deleteError } = await supabase
+        const { error: nodeDeleteError } = await supabase
           .from('nodes')
           .delete()
           .match({ node_nanoid: nodeToDelete.node_nanoid, user_id: user_id })
 
-        if (deleteError) {
-          throw new Error(`${deleteError.message}: ${deleteError.details}`)
+        if (nodeDeleteError) {
+          throw new Error(
+            `${nodeDeleteError.message}: ${nodeDeleteError.details}`,
+          )
         }
       }
 
       if (!updatedNodeDatas) {
         throw new Error('No nodes found')
       }
-      if (!updatedNoteDatas) {
-        throw new Error('No notes found')
-      }
 
-      return { updatedNodeDatas, updatedNoteDatas }
+      return updatedNodeDatas
     },
     onSuccess: (res: any) => {
       // queryClient.invalidateQueries({ queryKey: ['nodes'] })
@@ -181,11 +163,6 @@ export const useMutateNode = () => {
   })
 
   return {
-    // addNewNodeMutation,
-    // onNodesChange,
-    // createNodeMutation,
-    // updateNodeMutation,
-    // deleteNodeMutation,
     saveNodeMutation,
   }
 }

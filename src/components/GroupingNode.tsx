@@ -1,21 +1,16 @@
-import { memo, useEffect, useState } from 'react'
+import { memo } from 'react'
 import {
-  Handle,
   NodeProps,
-  NodeToolbar,
   NodeResizeControl,
-  Position,
   ResizeDragEvent,
   ResizeParamsWithDirection,
   ControlPosition,
+  ResizeParams,
 } from 'reactflow'
-import LooksIcon from '@mui/icons-material/Looks'
-import { NodeResizer } from '@reactflow/node-resizer'
 import '@reactflow/node-resizer/dist/style.css'
 import useStore from 'store'
 import GroupNodeInput from './GroupNodeInput'
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
-import PanToolIcon from '@mui/icons-material/PanTool'
 const GroupingNode = (props: NodeProps) => {
   const setNodesUnselected = useStore((state) => state.setNodesUnselected)
   const setEdgesUnselected = useStore((state) => state.setEdgesUnselected)
@@ -32,21 +27,12 @@ const GroupingNode = (props: NodeProps) => {
     'bottom',
   ]
   const resizeGroupingNode = useStore((state) => state.resizeGroupingNode)
-  // const updateNodeZIndex = useStore((state) => state.updateNodeZIndex)
-
-  // useEffect(() => {
-  //   if (selected) {
-  //     // Increase zIndex while node is selected (being dragged)
-  //     updateNodeZIndex(id, 0)
-  //   } else {
-  //     // Reset zIndex after dragging
-  //     updateNodeZIndex(id, data.zIndex)
-  //   }
-  // }, [selected])
+  const setParentNodeOnNodeResize = useStore(
+    (state) => state.setParentNodeOnNodeResize,
+  )
   return (
     <>
       <DragIndicatorIcon className="grouping-node-drag-handle text-white  bg-fuchsia-600 bg-opacity-40 rounded-l-lg border-y-2 border-l-2 border-slate-300 relative top-7 -left-6" />
-      {/* <span className="grouping-node-drag-handle block w-full h-1 rounded-md bg-slate-400 relative top-1 " /> */}
 
       <div
         className={
@@ -55,8 +41,8 @@ const GroupingNode = (props: NodeProps) => {
             : 'border-2 rounded-lg border-slate-300 relative justify-center items-center bg-fuchsia-300 bg-opacity-40 nodrag grouping-node'
         }
         style={{
-          width: data.width,
-          height: data.height,
+          width: `${data.width}px`,
+          height: `${data.height}px`,
           zIndex: 0,
         }}
         onClick={() => {
@@ -81,10 +67,11 @@ const GroupingNode = (props: NodeProps) => {
             ) => {
               resizeGroupingNode(id, params.width, params.height)
             }}
-          ></NodeResizeControl>
+            onResizeEnd={(event: ResizeDragEvent, params: ResizeParams) => {
+              setParentNodeOnNodeResize(id)
+            }}
+          />
         ))}
-        <Handle type="target" position={Position.Left} />
-        <Handle type="source" position={Position.Right} />
       </div>
     </>
   )
