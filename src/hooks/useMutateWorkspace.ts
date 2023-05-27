@@ -3,6 +3,7 @@ import { supabase } from 'utils/supabase'
 import { WorkspaceData, NewWorkspace } from 'types/types'
 import { toast } from 'react-toastify'
 import { toastSettings } from 'utils/authToast'
+import router from 'next/router'
 
 export const useMutateWorkspace = () => {
   const queryClient = useQueryClient()
@@ -24,41 +25,80 @@ export const useMutateWorkspace = () => {
         errorToast('ワークスペースの作成に失敗しました')
         throw new Error('Error creating workspace')
       }
+      return data
     },
-    onSuccess: (res: any) => {
-      const previousWorkspace = queryClient.getQueryData<WorkspaceData[]>(['workspace'])
-      if (previousWorkspace) {
-        console.log(res)
-        queryClient.setQueryData(['workspace'], [...previousWorkspace, res[0]])
-        successToast('ワークスペースを作成しました')
-      }
+    onSuccess: async (res: any, variables: any) => {
+      console.log(res, variables)
+      await queryClient.invalidateQueries({ queryKey: ['workspaces'] })
+      const updatedorkspace = queryClient.getQueryData<WorkspaceData[]>(['workspaces'])
+      console.log(updatedorkspace)
+      successToast('ワークスペースを作成しました')
+      // router.reload()
     },
     onError: (error: Error) => {
       throw new Error('Failed to create workspace', error)
     },
   })
 
-  // const updateCommentMutation = useMutation(async (updatedComment: Omit<WorkspaceData, 'created_at'>) => {
-  //   const previousComments = queryClient.getQueryData<WorkspaceData[]>(['comments'])
-  //   if (previousComments) {
-  //     queryClient.setQueryData(
-  //       ['comments'],
-  //       previousComments.map((comment) => (comment.id === updatedComment.id ? updatedComment : comment)),
-  //     )
-  //   }
-  // })
+  const updateWorkspaceMutation: any = useMutation({
+    mutationFn: async ({ updatedWorkspace, id }: { updatedWorkspace: NewWorkspace; id: string }) => {
+      const { data, error } = await supabase
+        .from('workspaces')
+        .update({ title: updatedWorkspace.title, description: updatedWorkspace.description })
+        .eq('id', id)
+        .select()
+      if (error) {
+        errorToast('ワークスペースの更新に失敗しました')
+        throw new Error('Error updating workspace')
+      }
+      if (!data) {
+        errorToast('ワークスペースの更新に失敗しました')
+        throw new Error('Error updating workspace')
+      }
+      return data
+    },
+    onSuccess: async (res: any, variables: any) => {
+      console.log(res, variables)
+      await queryClient.invalidateQueries({ queryKey: ['workspaces'] })
+      const updatedorkspace = queryClient.getQueryData<WorkspaceData[]>(['workspaces'])
+      console.log(updatedorkspace)
+      successToast('ワークスペースを更新しました')
+      // router.reload()
+    },
+    onError: (error: Error) => {
+      throw new Error('Failed to update workspace', error)
+    },
+  })
 
-  // const deleteCommentMutation = useMutation(async (comment_nanoid: string) => {
-  //   const previousComments = queryClient.getQueryData<Omit<WorkspaceData, 'id' | 'created_at'>[]>(['comments'])
-  //   if (previousComments) {
-  //     queryClient.setQueryData(
-  //       ['comments'],
-  //       previousComments.filter((comment) => comment.id !== id),
-  //     )
-  //   }
-  // })
+  const deleteWorkspaceMutation = useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      const { data, error } = await supabase.from('workspaces').delete().eq('id', id)
+      if (error) {
+        errorToast('ワークスペースの削除に失敗しました')
+        throw new Error('Error deleting workspace')
+      }
+      if (!data) {
+        errorToast('ワークスペースの削除に失敗しました')
+        throw new Error('Error deleting workspace')
+      }
+      return data
+    },
+    onSuccess: async (res: any, variables: any) => {
+      console.log(res, variables)
+      await queryClient.invalidateQueries({ queryKey: ['workspaces'] })
+      const updatedorkspace = queryClient.getQueryData<WorkspaceData[]>(['workspaces'])
+      console.log(updatedorkspace)
+      successToast('ワークスペースを削除しました')
+      // router.reload()
+    },
+    onError: (error: Error) => {
+      throw new Error('Failed to delete workspace', error)
+    },
+  })
 
   return {
     createWorkspaceMutation,
+    updateWorkspaceMutation,
+    deleteWorkspaceMutation,
   }
 }

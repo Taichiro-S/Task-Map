@@ -49,6 +49,7 @@ export type WorkspaceData = {
 }
 
 export type NewWorkspace = Omit<WorkspaceData, 'id' | 'created_at' | 'updated_at' | 'user_id'>
+export type EditedWorkspace = Omit<WorkspaceData, 'created_at' | 'updated_at' | 'user_id'>
 
 export type CommentData = {
   id: string

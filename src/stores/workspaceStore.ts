@@ -1,20 +1,20 @@
-import { NewWorkspace } from 'types/types'
+import { EditedWorkspace } from 'types/types'
 import { create } from 'zustand'
 
 export type RFState = {
-  newWorkspace: NewWorkspace
-  setNewWorkspace: (newWorkspace: NewWorkspace) => void
-  resetNewWorkspace: () => void
+  editedWorkspace: EditedWorkspace
+  setEditedWorkspace: (editedWorkspace: EditedWorkspace) => void
+  resetEditedWorkspace: () => void
 }
 
 const useStore = create<RFState>((set, get) => ({
-  newWorkspace: {
+  editedWorkspace: {
+    id: '',
     title: '',
     description: '',
   },
-  setNewWorkspace: (newWorkspace) =>
-    set({ newWorkspace: { title: newWorkspace.title, description: newWorkspace.description } }),
-  resetNewWorkspace: () => set({ newWorkspace: { title: '', description: '' } }),
+  setEditedWorkspace: (workspaceData) => set({ editedWorkspace: workspaceData }),
+  resetEditedWorkspace: () => set({ editedWorkspace: { id: '', title: '', description: '' } }),
 }))
 
 export default useStore

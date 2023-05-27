@@ -40,7 +40,7 @@ const Dashboard: NextPage = () => {
               </li>
             ))}
           </ul>
-          <WorkspaceFormDialog user={sessionUser} />
+          <WorkspaceFormDialog workspaceData={undefined} isDelete={false} />
         </div>
       </Layout>
     </div>
