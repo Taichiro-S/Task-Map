@@ -1,72 +1,112 @@
-import {
-  useCallback,
-  ChangeEvent,
-  useState,
-  useRef,
-  useLayoutEffect,
-} from 'react'
+import { FC, memo } from 'react'
 import { Handle, NodeProps, Position } from 'reactflow'
-import { NodeDataType } from '@/types/types'
-import useStore from '@/store'
+import { NodeInput, CustomNodeToolBarTop, CustomNodeToolBarBottom } from 'components'
+import useStore from 'stores/flowStore'
+import { statusList } from 'constants/statusList'
 import {
-  TrashIcon,
-  PencilSquareIcon,
-  ArrowTopRightOnSquareIcon,
-} from '@heroicons/react/24/solid'
+  CheckCircleIcon,
+  PauseCircleIcon,
+  PlayCircleIcon,
+  HandRaisedIcon,
+  ExclamationCircleIcon,
+} from '@heroicons/react/24/outline'
 
-type EventNodeProps = {
-  id: string
-  data: NodeDataType
-  selected: boolean
-}
-
-export default function CustomNode({ id, data, selected }: EventNodeProps) {
-  const inputRef = useRef<HTMLInputElement | null>(null)
-  const updateNodeLabel = useStore((state) => state.updateNodeLabel)
-
-  useLayoutEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.style.width =
-        data.label.length * 10 < 30 ? ' 30px' : `${data.label.length * 10}px`
-    }
-  }, [data.label.length])
+const CustomNode: FC<NodeProps> = (props) => {
+  // console.log('node')
+  const { id, data, selected } = props
+  const nodes = useStore((state) => state.nodes)
+  const nodeColor = data.color || '#ffffff'
+  const node = nodes.find((n) => n.id === id)
+  if (!node) return null
+  const noteStatusColorCode = statusList.find((status) => status.statusName === node.data.status)?.statusColorCode
   return (
-    <div
-      className={
-        selected
-          ? 'border-2 border-blue-400 p-1 relative justify-center items-center'
-          : 'border-2 border-transparent p-1 relative justify-center items-center'
-      }
-    >
+    <>
+      <CustomNodeToolBarTop {...props} />
+      <CustomNodeToolBarBottom {...props} />
       <div
-        className={`rounded-full bg-white border-2 px-2 py-1 justify-center items-center`}
-        style={{ borderColor: data.color }}
+        className={
+          selected
+            ? 'border-2 rounded-full  border-blue-400  relative justify-center items-center'
+            : 'border-2 rounded-full border-transparent  relative justify-center items-center'
+        }
       >
-        <div className="customNodeInputWrapper">
-          <div className="customNodeDragHandle">
-            {/* icon taken from grommet https://icons.grommet.io */}
-            <svg viewBox="0 0 24 24">
-              <path
-                fill="#333"
-                stroke="#333"
-                strokeWidth="1"
-                d="M15 5h2V3h-2v2zM7 5h2V3H7v2zm8 8h2v-2h-2v2zm-8 0h2v-2H7v2zm8 8h2v-2h-2v2zm-8 0h2v-2H7v2z"
-              />
-            </svg>
+        <div
+          className={`rounded-full  border-2 border-stone-300 px-2 py-1 justify-center items-center`}
+          style={{ backgroundColor: nodeColor }}
+        >
+          {node.data.status === 'doing' && (
+            <PlayCircleIcon
+              className={`h-4 w-4 text-white leading-none rounded-full absolute -translate-y-3/2 -translate-x-4 left-auto top-0`}
+              style={{ backgroundColor: noteStatusColorCode }}
+            />
+          )}
+          {node.data.status === 'done' && (
+            <CheckCircleIcon
+              className={`h-4 w-4 text-white leading-none rounded-full absolute -translate-y-3/2 -translate-x-4 left-auto top-0`}
+              style={{ backgroundColor: noteStatusColorCode }}
+            />
+          )}
+          {node.data.status === 'waiting' && (
+            <HandRaisedIcon
+              className={`h-4 w-4 text-white leading-none rounded-full absolute -translate-y-3/2 -translate-x-4 float-left top-0`}
+              style={{ backgroundColor: noteStatusColorCode }}
+            />
+          )}
+          {node.data.status === 'pending' && (
+            <PauseCircleIcon
+              className={`h-4 w-4 text-white leading-none rounded-full absolute -translate-y-3/2 -translate-x-4 left-auto top-0`}
+              style={{ backgroundColor: noteStatusColorCode }}
+            />
+          )}
+          {node.data.status === 'FYA' && (
+            <ExclamationCircleIcon
+              className={`h-4 w-4 text-white leading-none rounded-full absolute -translate-y-3/2 -translate-x-4 left-auto top-0`}
+              style={{ backgroundColor: noteStatusColorCode }}
+            />
+          )}
+          <div className="flex h-5 relative z-10">
+            <div className="bg-transparent w-3.5 h-full mr-1 flex items-center">
+              <svg viewBox="0 0 24 24">
+                <path
+                  fill="#333"
+                  stroke="#333"
+                  strokeWidth="1"
+                  d="M15 5h2V3h-2v2zM7 5h2V3H7v2zm8 8h2v-2h-2v2zm-8 0h2v-2H7v2zm8 8h2v-2h-2v2zm-8 0h2v-2H7v2z"
+                />
+              </svg>
+            </div>
+            <NodeInput label={data.label} id={id} />
+            <span>{data.status}</span>
           </div>
-          <input
-            defaultValue={data.label}
-            className="nodrag customNodeInput"
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              updateNodeLabel(id, e.target.value)
-            }
-            ref={inputRef}
+          <Handle
+            style={{
+              top: '50%',
+              pointerEvents: 'none',
+              opacity: 0,
+            }}
+            type="target"
+            position={Position.Top}
           />
-          <ArrowTopRightOnSquareIcon className="h-6 w-6 text-gray-500" />
+          <Handle
+            // className="handleSource"
+            style={{
+              opacity: 0,
+              top: 0,
+              left: 0,
+              transform: 'none',
+              background: '#ffffff',
+              height: '100%',
+              width: '100%',
+              borderRadius: '2px',
+              border: 'none',
+            }}
+            type="source"
+            position={Position.Bottom}
+          />
         </div>
-        <Handle type="target" position={Position.Top} />
-        <Handle type="source" position={Position.Bottom} />
       </div>
-    </div>
+    </>
   )
 }
+
+export default memo(CustomNode)
