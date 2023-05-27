@@ -3,16 +3,20 @@ import { supabase } from 'utils/supabase'
 import { CommentData } from 'types/types'
 export const useQueryComment = (workspaceId: string) => {
   const getComments = async () => {
+    if (!workspaceId) {
+      throw new Error('workspaceId undefined')
+    }
     const { data, error } = await supabase
       .from('workspaces')
       .select('*')
       .eq('workspace_id', workspaceId)
-    if (error) {
-      throw new Error(`${error.message}: ${error.details}`)
-    }
     if (!data) {
-      throw new Error('No notes found')
+      throw new Error('Failed to fetch commentData')
     }
+    if (error) {
+      throw new Error('Error fetching commentData')
+    }
+
     const comments = data.map((comment) => {
       return {
         id: comment.id,

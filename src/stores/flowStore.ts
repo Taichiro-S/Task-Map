@@ -11,7 +11,7 @@ import {
 import { create } from 'zustand'
 import { nanoid } from 'nanoid'
 import { NewNote, NoteData } from 'types/types'
-import { nodeColorList } from 'config/nodeColorList'
+import { nodeColorList } from 'constants/nodeColorList'
 
 export type RFState = {
   nodes: Node[]
@@ -53,7 +53,14 @@ export type RFState = {
 
   updateNodeZIndex: (nodeId: string, zIndex: number) => void
   reArrangeNodes: (node: Node) => void
-  setParentNodeOnNodeResize: (groupingNodeId: string) => void
+  setParentNodeOnNodeResizeEnd: (
+    childeNodes: Node[],
+    parentNodeId: string,
+  ) => void
+  setParentNodeOnNodeResizeStart: (
+    childNodes: Node[],
+    parentNodeId: string,
+  ) => void
 }
 
 const useStore = create<RFState>((set, get) => ({
@@ -396,27 +403,18 @@ const useStore = create<RFState>((set, get) => ({
       nodes: nodesCopy,
     })
   },
-  setParentNodeOnNodeResize: (groupingNodeId) => {
+  setParentNodeOnNodeResizeStart: (childNodes, parentNodeId) => {
+    const oldParentNode = get().nodes.find((n) => n.id === parentNodeId)
+    if (!oldParentNode) return
     set({
       nodes: get().nodes.map((node) => {
-        if (node.parentNode === groupingNodeId && node.type === 'custom') {
-          const nodeX: number = node.position.x
-          const nodeY: number = node.position.y
-          const parentNode = get().nodes.find((n) => n.id === groupingNodeId)
-          if (!parentNode) return node
-          const rightEdge: number = parentNode.data.width
-          const bottomEdge: number = parentNode.data.height
-          if (
-            nodeX > rightEdge ||
-            nodeY > bottomEdge ||
-            0 > nodeX ||
-            0 > nodeY
-          ) {
-            node.position = {
-              x: node.position.x + parentNode.position.x,
-              y: node.position.y + parentNode.position.y,
-            }
+        for (const childNode of childNodes) {
+          if (node.id === childNode.id) {
             node.parentNode = ''
+            node.position = {
+              x: node.position.x + oldParentNode.position.x,
+              y: node.position.y + oldParentNode.position.y,
+            }
           }
         }
         return node
@@ -424,16 +422,37 @@ const useStore = create<RFState>((set, get) => ({
     })
   },
 
-  // changeSelected: (nodeId) => {
-  //   set({
-  //     nodes: get().nodes.map((node) => {
-  //       if (node.id === nodeId) {
-  //         node.selected = !node.selected
-  //       }
-  //       return node
-  //     }),
-  //   })
-  // },
+  setParentNodeOnNodeResizeEnd: (childeNodes, parentNodeId) => {
+    set({
+      nodes: get().nodes.map((node) => {
+        for (const childNode of childeNodes) {
+          if (node.id === childNode.id && node.type === 'custom') {
+            const nodeX: number = node.position.x
+            const nodeY: number = node.position.y
+            const parentNode = get().nodes.find((n) => n.id === parentNodeId)
+            if (!parentNode) return node
+            const rightEdge = parentNode.position.x + parentNode.width!
+            const leftEdge = parentNode.position.x
+            const topEdge = parentNode.position.y
+            const bottomEdge = parentNode.position.y + parentNode.height!
+            if (
+              nodeX < rightEdge &&
+              nodeX > leftEdge &&
+              nodeY < bottomEdge &&
+              nodeY > topEdge
+            ) {
+              node.position = {
+                x: node.position.x - parentNode.position.x,
+                y: node.position.y - parentNode.position.y,
+              }
+              node.parentNode = parentNodeId
+            }
+          }
+        }
+        return node
+      }),
+    })
+  },
 }))
 
 export default useStore

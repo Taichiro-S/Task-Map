@@ -1,5 +1,5 @@
 import { useQueryClient, useMutation } from '@tanstack/react-query'
-import useStore from 'store'
+import useStore from 'stores/flowStore'
 import { supabase } from 'utils/supabase'
 import { NodeData } from 'types/types'
 
@@ -20,9 +20,7 @@ export const useOptimisticMutateNode = () => {
         return { previousNodes }
       },
       onSuccess: (res: any) => {
-        const previousNodes = queryClient.getQueryData<
-          Omit<NodeData, 'id' | 'created_at'>[]
-        >(['nodes'])
+        const previousNodes = queryClient.getQueryData<Omit<NodeData, 'id' | 'created_at'>[]>(['nodes'])
         if (previousNodes) {
           queryClient.setQueryData(['nodes'], [...previousNodes, newNode])
           // localStorage.setItem(
@@ -34,30 +32,22 @@ export const useOptimisticMutateNode = () => {
     },
   )
 
-  const updateNodeMutation = useMutation(
-    async (updatedNode: Omit<NodeData, 'id' | 'created_at'>) => {
-      const previousNodes = queryClient.getQueryData<
-        Omit<NodeData, 'id' | 'created_at'>[]
-      >(['nodes'])
-      if (previousNodes) {
-        queryClient.setQueryData(
-          ['nodes'],
-          previousNodes.map((node) =>
-            node.node_nanoid === updatedNode.node_nanoid ? updatedNode : node,
-          ),
-        )
-        // localStorage.setItem(
-        //   'nodes',
-        //   JSON.stringify(queryClient.getQueryData(['nodes'])),
-        // )
-      }
-    },
-  )
+  const updateNodeMutation = useMutation(async (updatedNode: Omit<NodeData, 'id' | 'created_at'>) => {
+    const previousNodes = queryClient.getQueryData<Omit<NodeData, 'id' | 'created_at'>[]>(['nodes'])
+    if (previousNodes) {
+      queryClient.setQueryData(
+        ['nodes'],
+        previousNodes.map((node) => (node.node_nanoid === updatedNode.node_nanoid ? updatedNode : node)),
+      )
+      // localStorage.setItem(
+      //   'nodes',
+      //   JSON.stringify(queryClient.getQueryData(['nodes'])),
+      // )
+    }
+  })
 
   const deleteNodeMutation = useMutation(async (node_nanoid: string) => {
-    const previousNodes = queryClient.getQueryData<
-      Omit<NodeData, 'id' | 'created_at'>[]
-    >(['nodes'])
+    const previousNodes = queryClient.getQueryData<Omit<NodeData, 'id' | 'created_at'>[]>(['nodes'])
     if (previousNodes) {
       queryClient.setQueryData(
         ['nodes'],
@@ -72,9 +62,7 @@ export const useOptimisticMutateNode = () => {
 
   const saveNodeMutation = useMutation(
     async () => {
-      const nodes = queryClient.getQueryData<
-        Omit<NodeData, 'id' | 'created_at'>[]
-      >(['nodes'])
+      const nodes = queryClient.getQueryData<Omit<NodeData, 'id' | 'created_at'>[]>(['nodes'])
       console.log(nodes)
     },
     {

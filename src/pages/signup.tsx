@@ -1,26 +1,28 @@
+import { useState, FormEvent } from 'react'
 import { useForm } from 'react-hook-form'
+import { CheckBadgeIcon, ShieldCheckIcon } from '@heroicons/react/24/solid'
 import type { NextPage } from 'next'
 import { useMutateAuth } from 'hooks/useMutateAuth'
-import { Layout } from 'components'
-import { loginUserData } from 'types/types'
+import { Layout, Header } from 'components'
+import { signupUserData } from 'types/types'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { loginSchema } from 'schema/loginSchema'
-import { TextField, Checkbox, FormControlLabel, Button, Card } from '@mui/material'
+import { signupSchema } from 'schema/signupSchema'
+import { TextField, Button, Card } from '@mui/material'
 import Link from 'next/link'
 
-const Login: NextPage = () => {
-  const { loginMutation } = useMutateAuth()
+const Signup: NextPage = () => {
+  const { registerMutation } = useMutateAuth()
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<loginUserData>({
+  } = useForm<signupUserData>({
     mode: 'onChange',
-    resolver: yupResolver(loginSchema),
+    resolver: yupResolver(signupSchema),
   })
-  const onSubmit = async (data: loginUserData) => {
-    console.log('login', data)
-    loginMutation.mutate({ email: data.email, password: data.password })
+  const onSubmit = async (data: signupUserData) => {
+    console.log('signup', data)
+    registerMutation.mutate({ email: data.email, password: data.password })
   }
   return (
     <>
@@ -47,16 +49,23 @@ const Login: NextPage = () => {
               />
             </div>
             <div className="m-2">
-              <FormControlLabel control={<Checkbox {...register('remember')} value="on" />} label="Remember me" />
+              <TextField
+                id="repassword"
+                label="Repassword"
+                type="password"
+                {...register('repassword')}
+                helperText={errors?.repassword?.message || 'パスワードを再入力してください'}
+                error={!!errors?.repassword}
+              />
             </div>
             <div className="m-2 ">
-              <Button type="submit">ログイン</Button>
+              <Button type="submit">登録</Button>
             </div>
           </form>
           <div className="m-2">
-            <span className="text-sm text-neutral-600">
-              アカウントをお持ちでない方は
-              <Link href="/signup">
+            <span>
+              アカウントをお持ちの方は
+              <Link href="/login">
                 <span className="text-blue-300 hover:text-blue-600">こちら</span>
               </Link>
             </span>
@@ -67,4 +76,4 @@ const Login: NextPage = () => {
   )
 }
 
-export default Login
+export default Signup

@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { FC, memo, use, useEffect, useState } from 'react'
 import {
   NodeProps,
   NodeResizeControl,
@@ -6,16 +6,49 @@ import {
   ResizeParamsWithDirection,
   ControlPosition,
   ResizeParams,
+  Node,
 } from 'reactflow'
 import '@reactflow/node-resizer/dist/style.css'
-import useStore from 'store'
-import GroupNodeInput from './GroupNodeInput'
+import useStore from 'stores/flowStore'
+import { GroupingNodeInput } from 'components'
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
-const GroupingNode = (props: NodeProps) => {
+
+const GroupingNode: FC<NodeProps> = (props) => {
+  const { id, data, selected } = props
+  const [childNodes, setChildNodes] = useState<Node[]>([])
+  const [prevChildNodes, setPrevChildNodes] = useState<Node[]>([])
+  const [isResizing, setIsResizing] = useState<boolean>(false)
+  const [resizeStart, setResizeStart] = useState<boolean>(false)
+  const [resizeCount, setResizeCount] = useState<number>(0)
+
+  useEffect(() => {
+    const nodes = useStore.getState().nodes
+    const child = nodes.filter((node) => node.parentNode === id)
+    setChildNodes(child)
+  }, [isResizing])
+  useEffect(() => {
+    const nodes = useStore.getState().nodes
+    const child = nodes.filter((node) => node.parentNode === id)
+    setPrevChildNodes(child)
+  }, [resizeCount])
+  useEffect(() => {
+    if (resizeStart) {
+      // console.log('resize start')
+      // console.log(childNodes)
+      setParentNodeOnNodeResizeStart(childNodes, id)
+      setResizeStart(false)
+    } else {
+      // console.log('resize end')
+      // console.log(prevChildNodes)
+      setParentNodeOnNodeResizeEnd(prevChildNodes, id)
+    }
+  }, [childNodes])
   const setNodesUnselected = useStore((state) => state.setNodesUnselected)
   const setEdgesUnselected = useStore((state) => state.setEdgesUnselected)
+  const setParentNodeOnNodeResizeStart = useStore((state) => state.setParentNodeOnNodeResizeStart)
+  const resizeGroupingNode = useStore((state) => state.resizeGroupingNode)
+  const setParentNodeOnNodeResizeEnd = useStore((state) => state.setParentNodeOnNodeResizeEnd)
 
-  const { id, data, selected } = props
   const resizePositions: ControlPosition[] = [
     'top-left',
     'top-right',
@@ -26,10 +59,7 @@ const GroupingNode = (props: NodeProps) => {
     'top',
     'bottom',
   ]
-  const resizeGroupingNode = useStore((state) => state.resizeGroupingNode)
-  const setParentNodeOnNodeResize = useStore(
-    (state) => state.setParentNodeOnNodeResize,
-  )
+
   return (
     <>
       <DragIndicatorIcon className="grouping-node-drag-handle text-white  bg-fuchsia-600 bg-opacity-40 rounded-l-lg border-y-2 border-l-2 border-slate-300 relative top-7 -left-6" />
@@ -50,7 +80,7 @@ const GroupingNode = (props: NodeProps) => {
           setNodesUnselected()
         }}
       >
-        <GroupNodeInput label={data.label} id={id} />
+        <GroupingNodeInput label={data.label} id={id} />
         {resizePositions.map((position) => (
           <NodeResizeControl
             key={position}
@@ -61,14 +91,17 @@ const GroupingNode = (props: NodeProps) => {
               background: 'transparent',
               border: 'none',
             }}
-            onResize={(
-              event: ResizeDragEvent,
-              params: ResizeParamsWithDirection,
-            ) => {
+            onResizeStart={(event: ResizeDragEvent, params: ResizeParams) => {
+              setIsResizing(true)
+              setResizeStart(true)
+              setResizeCount((prev) => prev + 1)
+            }}
+            onResize={(event: ResizeDragEvent, params: ResizeParamsWithDirection) => {
               resizeGroupingNode(id, params.width, params.height)
             }}
             onResizeEnd={(event: ResizeDragEvent, params: ResizeParams) => {
-              setParentNodeOnNodeResize(id)
+              setIsResizing(false)
+              setParentNodeOnNodeResizeEnd(childNodes, id)
             }}
           />
         ))}

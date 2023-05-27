@@ -37,12 +37,18 @@ export type NoteData = {
   title: string
 }
 
+export type NewNote = Omit<NoteData, 'id' | 'created_at' | 'user_id'>
+
 export type WorkspaceData = {
   id: string
   created_at: string
+  updated_at: string
   user_id: string | undefined
   title: string
+  description: string
 }
+
+export type NewWorkspace = Omit<WorkspaceData, 'id' | 'created_at' | 'updated_at' | 'user_id'>
 
 export type CommentData = {
   id: string
@@ -54,9 +60,23 @@ export type CommentData = {
   content: string
 }
 
+export type NewComment = Omit<CommentData, 'id' | 'created_at' | 'updated_at' | 'user_id'>
+
 export type NodeInputProps = {
   label: string
   id: string
 }
 
-export type NewNote = Omit<NoteData, 'id' | 'created_at' | 'user_id'>
+export type signupUserData = {
+  email: string
+  password: string
+  repassword: string
+  showPassword: boolean
+}
+
+export type loginUserData = {
+  email: string
+  password: string
+  remember?: string
+  showPassword: boolean
+}

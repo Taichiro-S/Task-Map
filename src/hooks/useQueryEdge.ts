@@ -1,22 +1,22 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from 'utils/supabase'
 import { Edge } from 'reactflow'
+import { User } from '@supabase/supabase-js'
 
-export const useQueryEdge = (userId: string | undefined) => {
+export const useQueryEdge = (user: User | null | undefined) => {
   const getEdges = async () => {
-    if (!userId) {
-      throw new Error('UserNotFound')
+    if (!user || user === null) {
+      throw new Error('User is not logged in')
     }
     const { data, error } = await supabase
       .from('edges')
       .select('*')
-      .eq('user_id', userId)
-
-    if (error) {
-      throw new Error(`${error.message}: ${error.details}`)
-    }
+      .eq('user_id', user.id)
     if (!data) {
-      throw new Error('No edges found')
+      throw new Error('Failed to fetch edgeData')
+    }
+    if (error) {
+      throw new Error('Error fetching edgeData')
     }
     const edges = data.map((edgeData) => {
       return {
@@ -33,8 +33,8 @@ export const useQueryEdge = (userId: string | undefined) => {
     return edges as Edge[]
   }
 
-  return useQuery<Edge[], Error>(['edges', userId], getEdges, {
+  return useQuery<Edge[], Error>(['edges', user], getEdges, {
     staleTime: Infinity,
-    enabled: !!userId,
+    enabled: !!user,
   })
 }

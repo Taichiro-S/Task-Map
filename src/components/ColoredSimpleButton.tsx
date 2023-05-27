@@ -2,7 +2,7 @@ import { FC, useState } from 'react'
 type Props = {
   color: string
 }
-export const ColoredSimpleButton: FC<Props> = (props) => {
+const ColoredSimpleButton: FC<Props> = (props) => {
   const [state, setState] = useState(false)
   const handleClick = () => {
     setState((prevState) => !prevState)
@@ -13,3 +13,5 @@ export const ColoredSimpleButton: FC<Props> = (props) => {
     </button>
   )
 }
+
+export default ColoredSimpleButton

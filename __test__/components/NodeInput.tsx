@@ -1,6 +1,6 @@
 import { render, fireEvent, screen } from '@testing-library/react'
-import GroupNodeInput from 'components/GroupNodeInput'
-import useStore from 'store'
+import GroupNodeInput from 'components/GroupingNodeInput'
+import useStore from 'stores/flowStore'
 import { charLengthCalc } from 'utils/charLengthCalc'
 
 jest.mock('store')
@@ -10,9 +10,7 @@ describe('GroupNodeInput', () => {
   test('renders input field correctly and calls updateNodeLabel on change', () => {
     const mockLabel = 'Node 1'
     const mockId = 'node1'
-    const mockCharLengthCalc = charLengthCalc as jest.MockedFunction<
-      typeof charLengthCalc
-    >
+    const mockCharLengthCalc = charLengthCalc as jest.MockedFunction<typeof charLengthCalc>
     mockCharLengthCalc.mockReturnValue('50px')
 
     const mockUseStore = useStore as jest.MockedFunction<typeof useStore>

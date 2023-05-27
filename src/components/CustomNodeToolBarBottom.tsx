@@ -1,9 +1,9 @@
-import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid'
-import React, { memo } from 'react'
+import React, { FC, memo } from 'react'
 import { NodeProps, NodeToolbar, Position } from 'reactflow'
-import useStore from 'store'
-import { statusList } from 'config/statusList'
-const CustomNodeToolBarBottom = (props: NodeProps) => {
+import useStore from 'stores/flowStore'
+import { statusList } from 'constants/statusList'
+
+const CustomNodeToolBarBottom: FC<NodeProps> = (props) => {
   const { data, id, selected } = props
   const nodes = useStore((state) => state.nodes)
 

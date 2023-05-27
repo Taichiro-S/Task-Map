@@ -1,12 +1,6 @@
 import { useCallback, useRef } from 'react'
-import {
-  OnConnectEnd,
-  Node,
-  useStoreApi,
-  useReactFlow,
-  OnConnectStart,
-} from 'reactflow'
-import useStore, { RFState } from 'store'
+import { OnConnectEnd, Node, useStoreApi, useReactFlow, OnConnectStart } from 'reactflow'
+import useStore, { RFState } from 'stores/flowStore'
 import { shallow } from 'zustand/shallow'
 
 const selector = (state: RFState) => ({
@@ -18,23 +12,14 @@ const selector = (state: RFState) => ({
 export const useNodeConnect = () => {
   const connectingNodeId = useRef<string | null>(null)
   const { project } = useReactFlow()
-  const { setNodeParent, addNewEdge, addChildNode } = useStore(
-    selector,
-    shallow,
-  )
+  const { setNodeParent, addNewEdge, addChildNode } = useStore(selector, shallow)
 
-  const handleNodeConnectStart: OnConnectStart = useCallback(
-    (_, { nodeId }) => {
-      connectingNodeId.current = nodeId
-    },
-    [],
-  )
+  const handleNodeConnectStart: OnConnectStart = useCallback((_, { nodeId }) => {
+    connectingNodeId.current = nodeId
+  }, [])
 
   const store = useStoreApi()
-  const getChildNodePosition = (
-    event: MouseEvent | TouchEvent,
-    parentNode?: Node,
-  ) => {
+  const getChildNodePosition = (event: MouseEvent | TouchEvent, parentNode?: Node) => {
     const { domNode } = store.getState()
 
     if (
@@ -76,13 +61,8 @@ export const useNodeConnect = () => {
   const handleNodeConnectEnd: OnConnectEnd = useCallback(
     (event) => {
       const { nodeInternals } = store.getState()
-      const targetIsPane = (event.target as Element).classList.contains(
-        'react-flow__pane',
-      )
-      const getChildNodePosition = (
-        event: MouseEvent | TouchEvent,
-        parentNode?: Node,
-      ) => {
+      const targetIsPane = (event.target as Element).classList.contains('react-flow__pane')
+      const getChildNodePosition = (event: MouseEvent | TouchEvent, parentNode?: Node) => {
         const { domNode } = store.getState()
 
         if (
@@ -132,16 +112,12 @@ export const useNodeConnect = () => {
         }
       } else if (!targetIsPane && connectingNodeId.current) {
         const parentNode = nodeInternals.get(connectingNodeId.current)
-        const targetTypeisGroup = (event.target as Element).classList.contains(
-          'grouping-node',
-        )
+        const targetTypeisGroup = (event.target as Element).classList.contains('grouping-node')
         if (parentNode && targetTypeisGroup) {
           const childNodePosition = getChildNodePosition(event, parentNode)
           if (parentNode && childNodePosition) {
             const node: Node = addChildNode(parentNode, childNodePosition)
-            const groupinNodes = useStore
-              .getState()
-              .nodes.filter((n) => n.type === 'grouping')
+            const groupinNodes = useStore.getState().nodes.filter((n) => n.type === 'grouping')
             type NodeCandidate = {
               node: Node
               index: number
@@ -157,12 +133,7 @@ export const useNodeConnect = () => {
                 const leftEdge = gNode.position.x
                 const topEdge = gNode.position.y
                 const bottomEdge = gNode.position.y + gNode.height!
-                if (
-                  nodeX > leftEdge &&
-                  nodeX < rightEdge &&
-                  nodeY > topEdge &&
-                  nodeY < bottomEdge
-                ) {
+                if (nodeX > leftEdge && nodeX < rightEdge && nodeY > topEdge && nodeY < bottomEdge) {
                   let index = useStore.getState().nodes.indexOf(gNode)
                   parentGroupingNodeCandidates.push({
                     node: gNode,
@@ -171,8 +142,8 @@ export const useNodeConnect = () => {
                 }
               }
               if (parentGroupingNodeCandidates.length !== 0) {
-                const parentNode = parentGroupingNodeCandidates.reduce(
-                  (max, current) => (max.index > current.index ? max : current),
+                const parentNode = parentGroupingNodeCandidates.reduce((max, current) =>
+                  max.index > current.index ? max : current,
                 )
                 if (parentNode) {
                   setNodeParent(node.id, parentNode.node.id)
@@ -183,9 +154,7 @@ export const useNodeConnect = () => {
           }
         }
 
-        const targetNodeId = (event.target as Element).getAttribute(
-          'data-nodeid',
-        )
+        const targetNodeId = (event.target as Element).getAttribute('data-nodeid')
         const nodes = useStore.getState().nodes
         if (parentNode && targetNodeId && nodes) {
           const childNode = nodes.find((node) => node.id === targetNodeId)

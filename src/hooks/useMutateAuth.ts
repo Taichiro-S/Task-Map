@@ -1,72 +1,104 @@
-import { useState } from 'react'
 import { supabase } from '../utils/supabase'
-import { useMutation } from '@tanstack/react-query'
-import toast from 'react-hot-toast'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/router'
+import { toastSettings } from 'utils/authToast'
+import {
+  LOGIN_SUCCESS,
+  INVALID_LOGIN_CREDENTIALS,
+  LOGIN_ERROR,
+  SIGNUP_SUCCESS,
+  USER_ALREADY_REGISTERED,
+  SIGNUP_ERROR,
+  LOGOUT_SUCCESS,
+  LOGOUT_ERROR,
+} from 'constants/authMessages'
 
 export const useMutateAuth = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-
-  const reset = () => {
-    setEmail('')
-    setPassword('')
+  const router = useRouter()
+  const queryClient = useQueryClient()
+  const successToast = (message: string) => {
+    toast.success(message, toastSettings)
   }
-  const authSuccessToast = (toastMessage: string) => toast.success(toastMessage)
-  const authErrorToast = (toastMessage: string) => toast.error(toastMessage)
+  const errorToast = (message: string) => {
+    toast.error(message, toastSettings)
+  }
 
   const loginMutation = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.auth.signInWithPassword({
+    mutationFn: async ({ email, password }: { email: string; password: string }) => {
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
-      if (error) throw new Error(error.message)
+      if (error) {
+        if (error.message.includes('Invalid login credentials')) {
+          errorToast(INVALID_LOGIN_CREDENTIALS)
+        } else {
+          errorToast(LOGIN_ERROR)
+        }
+        throw new Error('Failed to login', error)
+      }
+      if (!data) {
+        errorToast(LOGIN_ERROR)
+        throw new Error('Failed to login')
+      }
     },
-    onSuccess: () => {
-      authSuccessToast('ログインしました')
-      reset()
+    onSuccess: async (_, variables: { email: string; password: string }) => {
+      const user = (await supabase.auth.getUser()).data.user
+      queryClient.setQueryData(['sessionUser'], user)
+      successToast(LOGIN_SUCCESS)
+      router.push('/')
     },
     onError: (error: Error) => {
-      authErrorToast('ログインに失敗しました')
-      console.log(error.message)
-      reset()
+      throw new Error('Failed to login', error)
     },
   })
 
   const registerMutation = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.auth.signUp({ email, password })
-      if (error) throw new Error(error.message)
+    mutationFn: async ({ email, password }: { email: string; password: string }) => {
+      const { data, error } = await supabase.auth.signUp({ email, password })
+      if (error) {
+        if (error.message.includes('User already registered')) {
+          errorToast(USER_ALREADY_REGISTERED)
+        } else {
+          errorToast(SIGNUP_ERROR)
+        }
+        throw new Error('Failed to register')
+      }
+      if (!data) {
+        errorToast(SIGNUP_ERROR)
+        throw new Error('Failed to register')
+      }
     },
-    onSuccess: () => {
-      authSuccessToast('ユーザ登録しました')
-      reset()
+    onSuccess: async () => {
+      const user = (await supabase.auth.getUser()).data.user
+      queryClient.setQueryData(['sessionUser'], user)
+      successToast(SIGNUP_SUCCESS)
+      router.push('/')
     },
     onError: (error: Error) => {
-      authErrorToast('登録に失敗しました')
-      reset()
+      throw new Error('Failed to register', error)
     },
   })
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
       const { error } = await supabase.auth.signOut()
-      if (error) throw new Error(error.message)
+      if (error) {
+        errorToast(LOGOUT_ERROR)
+        throw new Error('Failed to logout', error)
+      }
     },
     onSuccess: () => {
-      authSuccessToast('ログアウトしました')
-      reset()
+      queryClient.setQueryData(['sessionUser'], null)
+      successToast(LOGOUT_SUCCESS)
+      router.push('/login')
     },
     onError: (error: Error) => {
-      alert(error.message)
+      throw new Error('Failed to logout', error)
     },
   })
-
   return {
-    email,
-    setEmail,
-    password,
-    setPassword,
     loginMutation,
     registerMutation,
     logoutMutation,

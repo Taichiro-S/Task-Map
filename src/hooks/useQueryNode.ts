@@ -1,21 +1,22 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from 'utils/supabase'
 import { Node } from 'reactflow'
+import { User } from '@supabase/supabase-js'
 
-export const useQueryNode = (userId: string | undefined) => {
+export const useQueryNode = (user: User | null | undefined) => {
   const getNodes = async () => {
-    if (!userId) {
-      throw new Error('UserNotFound')
+    if (!user || user === null) {
+      throw new Error('User is not logged in')
     }
     const { data, error } = await supabase
       .from('nodes')
       .select('*')
-      .eq('user_id', userId)
-    if (error) {
-      throw new Error(`${error.message}: ${error.details}`)
-    }
+      .eq('user_id', user.id)
     if (!data) {
-      throw new Error('No nodes found')
+      throw new Error('Failed to fetch nodeData')
+    }
+    if (error) {
+      throw new Error('Error fetching nodeData')
     }
     const nodes = data.map((nodeData) => {
       return {
@@ -42,8 +43,8 @@ export const useQueryNode = (userId: string | undefined) => {
     return sortedNodes as Node[]
   }
 
-  return useQuery<Node[], Error>(['nodes', userId], getNodes, {
+  return useQuery<Node[], Error>(['nodes', user], getNodes, {
     staleTime: Infinity,
-    enabled: !!userId,
+    enabled: !!user,
   })
 }

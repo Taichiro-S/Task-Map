@@ -1,11 +1,8 @@
-import { memo } from 'react'
-import { Handle, NodeProps, NodeToolbar, Position } from 'reactflow'
-
-import NodeInput from './NodeInput'
-import CustomNodeToolBarTop from './CustomNodeToolBarTop'
-import CustomNodeToolBarBottom from './CustomNodeToolBarBottom'
-import useStore from 'store'
-import { statusList } from 'config/statusList'
+import { FC, memo } from 'react'
+import { Handle, NodeProps, Position } from 'reactflow'
+import { NodeInput, CustomNodeToolBarTop, CustomNodeToolBarBottom } from 'components'
+import useStore from 'stores/flowStore'
+import { statusList } from 'constants/statusList'
 import {
   CheckCircleIcon,
   PauseCircleIcon,
@@ -14,16 +11,14 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/24/outline'
 
-const CustomNode = (props: NodeProps) => {
+const CustomNode: FC<NodeProps> = (props) => {
   // console.log('node')
   const { id, data, selected } = props
   const nodes = useStore((state) => state.nodes)
   const nodeColor = data.color || '#ffffff'
   const node = nodes.find((n) => n.id === id)
   if (!node) return null
-  const noteStatusColorCode = statusList.find(
-    (status) => status.statusName === node.data.status,
-  )?.statusColorCode
+  const noteStatusColorCode = statusList.find((status) => status.statusName === node.data.status)?.statusColorCode
   return (
     <>
       <CustomNodeToolBarTop {...props} />
@@ -81,6 +76,7 @@ const CustomNode = (props: NodeProps) => {
               </svg>
             </div>
             <NodeInput label={data.label} id={id} />
+            <span>{data.status}</span>
           </div>
           <Handle
             style={{

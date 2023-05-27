@@ -1,12 +1,11 @@
-import useStore from 'store'
-import { ChangeEvent, memo, useLayoutEffect, useRef, useState } from 'react'
+import useStore from 'stores/flowStore'
+import { FC, memo } from 'react'
 import { EdgeText, BaseEdge, EdgeProps, getStraightPath } from 'reactflow'
-import EdgeInput from './EdgeInput'
+import { EdgeInput } from 'components'
 
-const CustomEdge = (props: EdgeProps) => {
+const CustomEdge: FC<EdgeProps> = (props) => {
   // console.log('edge')
   const updateEdgeAnimation = useStore((state) => state.updateEdgeAnimation)
-  const updateEdgeLabel = useStore((state) => state.updateEdgeLabel)
   const { sourceX, sourceY, targetX, targetY, data, selected, id } = props
   const [edgePath, labelX, labelY] = getStraightPath({
     sourceX,
@@ -26,8 +25,7 @@ const CustomEdge = (props: EdgeProps) => {
         labelBgPadding={[2, 4]}
         labelBgBorderRadius={2}
         style={{
-          display:
-            selected || !data.label || data.label == '' ? 'none' : 'block',
+          display: selected || !data.label || data.label == '' ? 'none' : 'block',
         }}
       />
       <EdgeInput {...props} />
@@ -36,5 +34,3 @@ const CustomEdge = (props: EdgeProps) => {
 }
 
 export default memo(CustomEdge)
-export const connectionLineStyle = { stroke: '#808080', strokeWidth: 1 }
-export const defaultEdgeOptions = { style: connectionLineStyle, type: 'custom' }

@@ -1,5 +1,6 @@
 import React from 'react'
 import axios from 'axios'
+import { Layout, Header } from 'components'
 
 const Mocktest = () => {
   const apiClient = axios.create({
@@ -44,9 +45,18 @@ const Mocktest = () => {
   }
   return (
     <div>
-      <button onClick={() => login()}>ログイン</button>
-      <button onClick={() => logout()}>ログアウト</button>
-      <button onClick={() => getUser()}>ユーザ取得</button>
+      <Header />
+      <Layout title="Mocktest">
+        <button className="cursor-pointer hover:text-emerald-400" onClick={() => login()}>
+          ログイン
+        </button>
+        <button className="cursor-pointer hover:text-red-400" onClick={() => logout()}>
+          ログアウト
+        </button>
+        <button className="cursor-pointer hover:text-blue-400" onClick={() => getUser()}>
+          ユーザ取得
+        </button>
+      </Layout>
     </div>
   )
 }

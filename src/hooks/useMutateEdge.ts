@@ -1,5 +1,5 @@
 import { useQueryClient, useMutation } from '@tanstack/react-query'
-import useStore from 'store'
+import useStore from 'stores/flowStore'
 import { supabase } from 'utils/supabase'
 import { EdgeData } from 'types/types'
 
@@ -61,40 +61,30 @@ export const useMutateEdge = () => {
     mutationFn: async (user_id: string | undefined) => {
       const edges = useStore.getState().edges
       // console.log('storeEdges', edges)
-      const edgeDatas: Omit<EdgeData, 'id' | 'created_at'>[] = edges.map(
-        (edge) => {
-          return {
-            source_node_id: edge.source,
-            target_node_id: edge.target,
-            user_id: user_id,
-            edge_nanoid: edge.id,
-            type: edge.type,
-            label: edge.data.label,
-            animated: edge.animated,
-          }
-        },
-      )
-      const { data, error } = await supabase
-        .from('edges')
-        .upsert(edgeDatas, { onConflict: 'edge_nanoid' })
-        .select('*')
+      const edgeDatas: Omit<EdgeData, 'id' | 'created_at'>[] = edges.map((edge) => {
+        return {
+          source_node_id: edge.source,
+          target_node_id: edge.target,
+          user_id: user_id,
+          edge_nanoid: edge.id,
+          type: edge.type,
+          label: edge.data.label,
+          animated: edge.animated,
+        }
+      })
+      const { data, error } = await supabase.from('edges').upsert(edgeDatas, { onConflict: 'edge_nanoid' }).select('*')
       if (error) {
         throw new Error(`${error.message}: ${error.details}`)
       }
       // Fetch all nodes in the database for this user
-      const { data: allEdges, error: fetchError } = await supabase
-        .from('edges')
-        .select('*')
-        .eq('user_id', user_id)
+      const { data: allEdges, error: fetchError } = await supabase.from('edges').select('*').eq('user_id', user_id)
 
       if (fetchError) {
         throw new Error(`${fetchError.message}: ${fetchError.details}`)
       }
 
       // Find the edges that exist in the database but not in the current state
-      const edgesToDelete = allEdges.filter(
-        (dbEdge) => !edges.find((edge) => edge.id === dbEdge.edge_nanoid),
-      )
+      const edgesToDelete = allEdges.filter((dbEdge) => !edges.find((edge) => edge.id === dbEdge.edge_nanoid))
 
       // Delete the edges from the database
       for (const edgeToDelete of edgesToDelete) {

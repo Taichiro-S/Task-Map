@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  DragEvent,
-} from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ReactFlow, {
   ConnectionLineType,
   MiniMap,
@@ -12,32 +6,16 @@ import ReactFlow, {
   Background,
   Panel,
   NodeOrigin,
-  OnConnectStart,
-  OnConnectEnd,
-  useStoreApi,
-  Node,
-  useReactFlow,
   ReactFlowProvider,
-  Edge,
-  updateEdge,
-  addEdge,
-  XYPosition,
   BackgroundVariant,
   ConnectionMode,
 } from 'reactflow'
-// import OnLoadParams from 'reactflow'
-import CustomNode from 'components/CustomNode'
-import GroupingNode from 'components/GroupingNode'
-import CustomEdge, {
-  connectionLineStyle,
-  defaultEdgeOptions,
-} from 'components/CustomEdge'
-import MenuBar from 'components/MenuBar'
+import { connectionLineStyle, defaultEdgeOptions } from 'utils/edgeSettings'
 import { shallow } from 'zustand/shallow'
 import 'reactflow/dist/style.css'
-import useStore, { RFState } from 'store'
+import useStore, { RFState } from 'stores/flowStore'
 import {
-  useQueryUser,
+  useQuerySessionUser,
   useQueryNode,
   useQueryEdge,
   useNodeDrag,
@@ -45,13 +23,8 @@ import {
   useQueryNote,
   useNodeConnect,
 } from 'hooks/index'
-
-import { Layout } from 'components/Layout'
-import { Spinner } from 'components/Spinner'
+import { CustomNode, GroupingNode, Layout, Spinner, Header, MenuBar, CustomEdge } from 'components'
 import { useRouter } from 'next/router'
-import ResizableNode from 'components/ResizableNode'
-import Header from 'components/Header'
-import { Toaster } from 'react-hot-toast'
 
 const selector = (state: RFState) => ({
   nodes: state.nodes,
@@ -64,7 +37,6 @@ const selector = (state: RFState) => ({
 const nodeTypes = {
   custom: CustomNode,
   grouping: GroupingNode,
-  resizable: ResizableNode,
 }
 
 const edgeTypes = {
@@ -78,69 +50,49 @@ function Flow() {
   const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
   const reactFlowBounds = reactFlowWrapper.current?.getBoundingClientRect()
   const [reactFlowInstance, setReactFlowInstance] = useState<any>(null) // TODO: 型を指定する
-  const {
-    data: userId,
-    error: userIdError,
-    isLoading: userIdIsLoading,
-  } = useQueryUser()
-  const {
-    data: edgeDatas,
-    error: edgeError,
-    isLoading: edgeIsLoading,
-  } = useQueryEdge(userId)
-  const {
-    data: nodeDatas,
-    error: nodeError,
-    isLoading: nodeIsLoading,
-  } = useQueryNode(userId)
-  const {
-    data: noteDatas,
-    error: noteError,
-    isLoading: noteIsLoading,
-  } = useQueryNote(userId)
-  const { nodes, edges, onNodesChange, onEdgesChange, setInitialDataset } =
-    useStore(selector, shallow)
-  const {
-    handleNodeClick,
-    handleNodeDragStart,
-    handleNodeDragOver,
-    handleNodeDragStop,
-  } = useNodeDrag()
+  const { data: sessionUser, error: sessionUserError, isLoading: sessionUserIsLoading } = useQuerySessionUser()
+  const { data: edgeDatas, error: edgeError, isLoading: edgeIsLoading } = useQueryEdge(sessionUser)
+  const { data: nodeDatas, error: nodeError, isLoading: nodeIsLoading } = useQueryNode(sessionUser)
+  const { data: noteDatas, error: noteError, isLoading: noteIsLoading } = useQueryNote(sessionUser)
+
+  const { nodes, edges, onNodesChange, onEdgesChange, setInitialDataset } = useStore(selector, shallow)
+  const { handleNodeClick, handleNodeDragStart, handleNodeDragOver, handleNodeDragStop } = useNodeDrag()
   const { handleNodeDrop } = useNodeDrop(reactFlowInstance, reactFlowBounds)
   const { handleNodeConnectStart, handleNodeConnectEnd } = useNodeConnect()
+
+  useEffect(() => {
+    if (!sessionUser && !sessionUserIsLoading) {
+      console.log('sessionUser', sessionUser)
+      router.push('/login')
+    }
+  }, [sessionUser, sessionUserIsLoading, router])
 
   useEffect(() => {
     if (nodeDatas && edgeDatas && noteDatas) {
       setInitialDataset(nodeDatas, edgeDatas, noteDatas)
     }
-  }, [nodeDatas, edgeDatas, noteDatas])
+  }, [nodeDatas, edgeDatas, noteDatas, setInitialDataset])
 
-  if (
-    'UserNotFound' in
-    [
-      userIdError?.message,
-      edgeError?.message,
-      nodeError?.message,
-      noteError?.message,
-    ]
-  ) {
-    router.push('/login')
-    return null
+  if (sessionUserError || edgeError || nodeError || noteError) {
+    return (
+      <Layout title="Flow">
+        <p>サーバーエラー</p>
+      </Layout>
+    )
   }
 
-  if (userIdIsLoading || nodeIsLoading || edgeIsLoading || noteIsLoading) {
-    return <Spinner />
+  if (sessionUserIsLoading || nodeIsLoading || edgeIsLoading || noteIsLoading) {
+    return (
+      <Layout title="Flow">
+        <Spinner />
+      </Layout>
+    )
   }
 
   return (
     <Layout title="Flow">
-      <Toaster />
-      <div
-        style={{ width: '100vw', height: '100vh' }}
-        className="reactflow-wrapper"
-        ref={reactFlowWrapper}
-      >
-        <Header />
+      <div style={{ width: '100vw', height: '100vh' }} className="reactflow-wrapper" ref={reactFlowWrapper}>
+        {/* <Header /> */}
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -161,7 +113,6 @@ function Flow() {
           onDrop={handleNodeDrop}
           onDragOver={handleNodeDragOver}
           onNodeDragStop={handleNodeDragStop}
-          // onNodeDrag={onNodeDrag}
           connectionMode={ConnectionMode.Loose}
         >
           <Controls showInteractive={false} />
@@ -169,7 +120,7 @@ function Flow() {
           <MiniMap nodeBorderRadius={2} position="top-right" />
           <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         </ReactFlow>
-        <MenuBar userId={userId} />
+        <MenuBar user={sessionUser} />
         {/* {editedNoteId !== '' && <Note />} */}
       </div>
     </Layout>

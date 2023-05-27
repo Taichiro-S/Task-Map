@@ -1,20 +1,19 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from 'utils/supabase'
 import { NoteData } from 'types/types'
-export const useQueryNote = (userId: string | undefined) => {
+import { User } from '@supabase/supabase-js'
+
+export const useQueryNote = (user: User | null | undefined) => {
   const getNotes = async () => {
-    if (!userId) {
-      throw new Error('UserNotFound')
+    if (!user || user === null) {
+      throw new Error('User is not logged in')
     }
-    const { data, error } = await supabase
-      .from('notes')
-      .select('*')
-      .eq('user_id', userId)
-    if (error) {
-      throw new Error(`${error.message}: ${error.details}`)
-    }
+    const { data, error } = await supabase.from('notes').select('*').eq('user_id', user.id)
     if (!data) {
-      throw new Error('No notes found')
+      throw new Error('Failed to fetch commentData')
+    }
+    if (error) {
+      throw new Error('Error fetching commentData')
     }
     const notes = data.map((note) => {
       return {
@@ -29,8 +28,8 @@ export const useQueryNote = (userId: string | undefined) => {
     return notes as NoteData[]
   }
 
-  return useQuery<NoteData[], Error>(['notes', userId], getNotes, {
+  return useQuery<NoteData[], Error>(['notes', user], getNotes, {
     staleTime: Infinity,
-    enabled: !!userId,
+    enabled: !!user,
   })
 }

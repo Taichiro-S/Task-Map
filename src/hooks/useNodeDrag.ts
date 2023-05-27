@@ -1,6 +1,6 @@
 import { useState, MouseEvent, TouchEvent, useCallback, DragEvent } from 'react'
 import { Node } from 'reactflow'
-import useStore, { RFState } from 'store'
+import useStore, { RFState } from 'stores/flowStore'
 import { shallow } from 'zustand/shallow'
 
 const selector = (state: RFState) => ({
@@ -11,10 +11,7 @@ const selector = (state: RFState) => ({
 
 export const useNodeDrag = () => {
   const [isNodeDragged, setIsNodeDragged] = useState<boolean>(false)
-  const { setNodeSelection, reArrangeNodes, setNodeParent } = useStore(
-    selector,
-    shallow,
-  )
+  const { setNodeSelection, reArrangeNodes, setNodeParent } = useStore(selector, shallow)
 
   const handleNodeClick = (event: MouseEvent | TouchEvent, node: Node) => {
     // console.log('node clicked')
@@ -46,9 +43,7 @@ export const useNodeDrag = () => {
       reArrangeNodes(node)
       return
     }
-    const groupingNodes = useStore
-      .getState()
-      .nodes.filter((n) => n.type === 'grouping')
+    const groupingNodes = useStore.getState().nodes.filter((n) => n.type === 'grouping')
     // console.log('all groupingNodes', groupingNodes)
     type NodeCandidate = {
       node: Node
@@ -67,12 +62,10 @@ export const useNodeDrag = () => {
           groupingNode.height === null
         )
           continue
-        const rightEdgeOfGroupingNode =
-          groupingNode.position.x + groupingNode.width
+        const rightEdgeOfGroupingNode = groupingNode.position.x + groupingNode.width
         const leftEdgeOfGroupingNode = groupingNode.position.x
         const topEdgeOfGroupingNode = groupingNode.position.y
-        const bottomEdgeOfGroupingNode =
-          groupingNode.position.y + groupingNode.height
+        const bottomEdgeOfGroupingNode = groupingNode.position.y + groupingNode.height
         if (
           nodePositionXFromPane > leftEdgeOfGroupingNode &&
           nodePositionXFromPane < rightEdgeOfGroupingNode &&
@@ -121,9 +114,7 @@ export const useNodeDrag = () => {
             })
           }
         } else {
-          const oldParentNode = useStore
-            .getState()
-            .nodes.find((n) => n.id === node.parentNode)
+          const oldParentNode = useStore.getState().nodes.find((n) => n.id === node.parentNode)
           if (!oldParentNode) return
           if (
             groupingNode.width === undefined ||
@@ -132,16 +123,12 @@ export const useNodeDrag = () => {
             groupingNode.height === null
           )
             continue
-          const nodePositionXFromOldParentNode =
-            node.position.x + oldParentNode.position.x
-          const nodePositionYFromOldParentNode =
-            node.position.y + oldParentNode.position.y
-          const rightEdgeOfGroupingNode =
-            groupingNode.position.x + groupingNode.width
+          const nodePositionXFromOldParentNode = node.position.x + oldParentNode.position.x
+          const nodePositionYFromOldParentNode = node.position.y + oldParentNode.position.y
+          const rightEdgeOfGroupingNode = groupingNode.position.x + groupingNode.width
           const leftEdgeOfGroupingNode = groupingNode.position.x
           const topEdgeOfGroupingNode = groupingNode.position.y
-          const bottomEdgeOfGroupingNode =
-            groupingNode.position.y + groupingNode.height
+          const bottomEdgeOfGroupingNode = groupingNode.position.y + groupingNode.height
           if (
             nodePositionXFromOldParentNode > leftEdgeOfGroupingNode &&
             nodePositionXFromOldParentNode < rightEdgeOfGroupingNode &&

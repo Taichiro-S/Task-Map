@@ -1,6 +1,5 @@
 import React from 'react'
-import { ColoredSimpleButton } from 'components/ColoredSimpleButton'
-import { SimpleButton } from 'components/SimpleButton'
+import { ColoredSimpleButton, SimpleButton } from 'components'
 
 const Buttons = () => {
   return (

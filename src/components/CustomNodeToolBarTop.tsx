@@ -1,9 +1,9 @@
-import React, { memo } from 'react'
+import React, { FC, memo } from 'react'
 import { NodeProps, NodeToolbar, Position } from 'reactflow'
-import useStore from 'store'
-import { nodeColorList } from 'config/nodeColorList'
+import useStore from 'stores/flowStore'
+import { nodeColorList } from 'constants/nodeColorList'
 
-const CustomNodeToolBarTop = (props: NodeProps) => {
+const CustomNodeToolBarTop: FC<NodeProps> = (props) => {
   const { data, id, selected } = props
   const updateColor = useStore((state) => state.updateNodeColor)
   const { isNodeDragged } = useStore()
