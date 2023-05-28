@@ -16,18 +16,22 @@ import { nodeColorList } from 'constants/nodeColorList'
 export type RFState = {
   nodes: Node[]
   edges: Edge[]
+  notes: NewNote[]
   onNodesChange: OnNodesChange
   onEdgesChange: OnEdgesChange
+  editedNoteId: string
   isNodeDragged: boolean
   addChildNode: (parentNode: Node, position: XYPosition) => Node
   addNewEdge: (parentNode: Node, childNode: Node) => void
   updateNodeLabel: (nodeId: string, label: string) => void
   updateEdgeLabel: (edgeId: string, label: string) => void
   addNewNode: (position: XYPosition) => Node
-  setInitialFlow: (nodes: Node[], edges: Edge[]) => void
+  setInitialFlow: (nodes: Node[], edges: Edge[], noteDatas: NoteData[]) => void
   resetFlow: () => void
   removeElement: (element: Node | Edge) => void
   updateNodeColor: (nodeId: string, color: string) => void
+  setEditedNoteId: (nodeNanoId: string) => void
+  resetEditedNoteId: () => void
   updateNodeMemo: (nodeNanoId: string, memo: string) => void
   setIsNodeDragged: (isNodeDragged: boolean) => void
   updateNodeStatus: (nodeNanoId: string, status: string) => void
@@ -48,16 +52,30 @@ export type RFState = {
 const useStore = create<RFState>((set, get) => ({
   nodes: [],
   edges: [],
+  notes: [],
   editedNoteId: '',
   isNodeDragged: false,
-  setInitialFlow: (nodes, edges) => {
-    set({ nodes: nodes, edges: edges })
+  setInitialFlow: (nodes, edges, noteDatas) => {
+    const notes = noteDatas.map((noteData) => {
+      return {
+        node_nanoid: noteData.node_nanoid,
+        content: noteData.content,
+        title: noteData.title,
+      }
+    })
+    set({ nodes: nodes, edges: edges, notes: notes })
   },
 
   resetFlow: () => {
-    set({ nodes: [], edges: [] })
+    set({ nodes: [], edges: [], notes: [] })
   },
 
+  setEditedNoteId: (nodeNanoId) => {
+    set({ editedNoteId: nodeNanoId })
+  },
+  resetEditedNoteId: () => {
+    set({ editedNoteId: '' })
+  },
   updateNodeMemo: (nodeNanoId, memo) => {
     set({
       nodes: get().nodes.map((node) => {

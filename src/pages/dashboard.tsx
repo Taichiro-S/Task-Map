@@ -1,17 +1,35 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { Layout, Spinner, WorkspaceFormDialog, WorkspaceCard } from 'components'
 import { useQuerySessionUser, useQueryWorkspace, useMutateWorkspace } from 'hooks'
 import { NextPage } from 'next'
 import router from 'next/router'
 import React, { useEffect } from 'react'
+import useStore, { RFState } from 'stores/flowStore'
+import shallow from 'zustand/shallow'
+
+const selector = (state: RFState) => ({
+  resetFlow: state.resetFlow,
+})
 
 const Dashboard: NextPage = () => {
+  const queryClient = useQueryClient()
   const { data: sessionUser, error: sessionUserError, isLoading: sessionUserIsLoading } = useQuerySessionUser()
   const { data: workspaceDatas, error: workspaceError, isLoading: workspaceIsLoading } = useQueryWorkspace(sessionUser)
+  const { resetFlow } = useStore(selector, shallow)
   useEffect(() => {
     if (!sessionUser && !sessionUserIsLoading) {
+      console.log('sessionUser', sessionUser)
       router.push('/login')
     }
   }, [sessionUser, sessionUserIsLoading, router])
+
+  useEffect(() => {
+    queryClient.removeQueries({ queryKey: ['nodes'], exact: true })
+    queryClient.removeQueries({ queryKey: ['edges'], exact: true })
+    queryClient.removeQueries({ queryKey: ['notes'], exact: true })
+    resetFlow()
+    console.log('nodes', useStore.getState().nodes)
+  }, [])
 
   if (sessionUserIsLoading || workspaceIsLoading) {
     return (

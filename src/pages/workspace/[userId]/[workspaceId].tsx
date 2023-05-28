@@ -1,9 +1,6 @@
+import { NextPage } from 'next'
 import React, { useEffect, useRef, useState } from 'react'
-import ReactFlow, { MiniMap, Controls, Background, Panel, NodeOrigin, ReactFlowProvider } from 'reactflow'
-import { shallow } from 'zustand/shallow'
-import 'reactflow/dist/style.css'
-import useStore, { RFState } from 'stores/flowStore'
-import { useQuerySessionUser, useNodeDrag, useNodeDrop, useNodeConnect } from 'hooks/index'
+import ReactFlow, { MiniMap, Controls, Background, Panel, ReactFlowProvider } from 'reactflow'
 import {
   nodeTypes,
   nodeOrigin,
@@ -17,37 +14,121 @@ import {
   miniMapSettings,
   panelSettings,
 } from 'utils/reactflow'
-import { CustomNode, GroupingNode, Layout, MenuBar, CustomEdge } from 'components'
+import { shallow } from 'zustand/shallow'
+import 'reactflow/dist/style.css'
+import useStore, { RFState } from 'stores/flowStore'
+import {
+  useQuerySessionUser,
+  useQueryNode,
+  useQueryEdge,
+  useNodeDrag,
+  useNodeDrop,
+  useNodeConnect,
+  useQueryWorkspace,
+} from 'hooks'
+import { Layout, Spinner, MenuBar } from 'components'
 import { useRouter } from 'next/router'
+import { useQueryClient } from '@tanstack/react-query'
 
 const selector = (state: RFState) => ({
   nodes: state.nodes,
   edges: state.edges,
   onNodesChange: state.onNodesChange,
   onEdgesChange: state.onEdgesChange,
+  setInitialFlow: state.setInitialFlow,
+  resetFlow: state.resetFlow,
 })
 
-function Flow() {
+const Flow = () => {
   const router = useRouter()
+  const queryClient = useQueryClient()
+  const userId = router.query.userId as string
+  const workspaceId = router.query.workspaceId as string
   const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
   const reactFlowBounds = reactFlowWrapper.current?.getBoundingClientRect()
   const [reactFlowInstance, setReactFlowInstance] = useState<any>(null) // TODO: 型を指定する
   const { data: sessionUser, error: sessionUserError, isLoading: sessionUserIsLoading } = useQuerySessionUser()
-
-  const { nodes, edges, onNodesChange, onEdgesChange } = useStore(selector, shallow)
+  const {
+    data: edgeDatas,
+    error: edgeError,
+    isLoading: edgeIsLoading,
+    refetch: refetchEdge,
+  } = useQueryEdge(sessionUser, workspaceId)
+  const {
+    data: nodeDatas,
+    error: nodeError,
+    isLoading: nodeIsLoading,
+    refetch: refetchNode,
+  } = useQueryNode(sessionUser, workspaceId)
+  const {
+    data: workspaceDatas,
+    error: workspaceError,
+    isLoading: workspaceIsLoading,
+    refetch: refetchWorkspace,
+  } = useQueryWorkspace(sessionUser)
+  const { nodes, edges, onNodesChange, onEdgesChange, setInitialFlow, resetFlow } = useStore(selector, shallow)
   const { handleNodeClick, handleNodeDragStart, handleNodeDragOver, handleNodeDragStop } = useNodeDrag()
   const { handleNodeDrop } = useNodeDrop(reactFlowInstance, reactFlowBounds)
   const { handleNodeConnectStart, handleNodeConnectEnd } = useNodeConnect()
 
+  // console.log('userId', userId, 'workspaceId', workspaceId)
+  // console.log(sessionUser, workspaceId)
+
   useEffect(() => {
-    if (sessionUser && !sessionUserIsLoading) {
+    if (!sessionUser && !sessionUserIsLoading) {
+      router.push('/login')
+    } else if (sessionUser && sessionUser.id !== userId) {
       router.push('/dashboard')
     }
   }, [sessionUser, sessionUserIsLoading, router])
 
+  useEffect(() => {
+    if (nodeDatas && edgeDatas) {
+      resetFlow()
+      setInitialFlow(nodeDatas, edgeDatas)
+      console.log(nodeDatas)
+    }
+  }, [nodeDatas, edgeDatas, setInitialFlow])
+
+  const workspaceTitle = useRef<string | null>(null)
+
+  useEffect(() => {
+    if (workspaceDatas) {
+      workspaceTitle.current = workspaceDatas.find((workspace) => workspace.id === workspaceId)!.title
+    }
+  }, [])
+
+  useEffect(() => {
+    refetchNode()
+    refetchEdge()
+  }, [router.asPath])
+  // useEffect(() => {
+  //   if (!userId || !workspaceId) {
+  //     // router.push('/dashboard')
+  //   }
+  // }, [userId, workspaceId])
+
+  if (sessionUserError || edgeError || nodeError) {
+    console.log(sessionUserError, edgeError, nodeError)
+    return (
+      <Layout title="Flow">
+        <p>サーバーエラー</p>
+      </Layout>
+    )
+  }
+
+  if (sessionUserIsLoading || nodeIsLoading || edgeIsLoading) {
+    return (
+      <Layout title="Flow">
+        <Spinner />
+      </Layout>
+    )
+  }
+
   return (
     <Layout title="Flow">
       <div style={{ width: '100vw', height: '90vh' }} className="reactflow-wrapper" ref={reactFlowWrapper}>
+        {/* <Header /> */}
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -75,6 +156,7 @@ function Flow() {
             showZoom={controlSettings.showZoom}
             position={controlSettings.position}
           />
+          <Panel position={panelSettings.position}>{workspaceTitle.current ? workspaceTitle.current : ''}</Panel>
           <MiniMap
             nodeBorderRadius={miniMapSettings.nodeBorderRadius}
             position={miniMapSettings.position}
@@ -89,17 +171,21 @@ function Flow() {
             size={backgroundSettings.size}
           />
         </ReactFlow>
-        <MenuBar workspaceId={null} />
+        <MenuBar workspaceId={workspaceId} />
         {/* {editedNoteId !== '' && <Note />} */}
       </div>
     </Layout>
   )
 }
 
-export default function App() {
+const App: NextPage = () => {
   return (
-    <ReactFlowProvider>
-      <Flow />
-    </ReactFlowProvider>
+    <div>
+      <ReactFlowProvider>
+        <Flow />
+      </ReactFlowProvider>
+    </div>
   )
 }
+
+export default App

@@ -4,9 +4,10 @@ import { useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useRouter } from 'next/router'
-import { supabase } from '../utils/supabase'
+import { supabase } from 'utils/supabase'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { AuthChangeEvent, Session } from '@supabase/supabase-js'
 
 if (process.env.NEXT_PUBLIC_ENV === 'development') {
   require('../mocks')
@@ -23,42 +24,24 @@ const queryClient = new QueryClient({
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter()
-
-  const validateSession = async () => {
+  const checkUser = async () => {
     const user = (await supabase.auth.getUser()).data.user
-    if (
-      user === null &&
-      (router.pathname === '/' || router.pathname === '/account' || router.pathname === '/dashboard')
-    ) {
-      router.push('/login')
-      return
+    if (user === null && (router.pathname === '/account' || router.pathname === '/dashboard')) {
+      console.log(user)
+      return router.push('/login')
     }
-    if (user !== null && (router.pathname === '/login' || router.pathname === '/signup')) {
-      router.push('/')
-      return
+    if (user !== null && (router.pathname === '/login' || router.pathname === '/signup' || router.pathname === '/')) {
+      return router.push('/dashboard')
     }
-    // if (router.pathname === '/signup') {
-    //   console.log('signup')
-    //   return
-    // }
-    // if ((!user || user === null) && router.pathname === '/') {
-    //   router.push('/login')
-    // } else if (
-    //   user &&
-    //   user !== null &&
-    //   (router.pathname === '/login' || router.pathname === '/signup')
-    // ) {
-    //   router.push('/')
-    // }
   }
 
   useEffect(() => {
-    validateSession()
+    checkUser()
   }, [])
 
   supabase.auth.onAuthStateChange((event, _) => {
     if (event === 'SIGNED_IN' && (router.pathname === '/login' || router.pathname === '/signup')) {
-      router.push('/')
+      router.push('/dashboard')
     } else if (event === 'SIGNED_OUT') {
       router.push('/login')
     }

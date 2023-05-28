@@ -47,7 +47,7 @@ export const useMutateAuth = () => {
       const user = (await supabase.auth.getUser()).data.user
       queryClient.setQueryData(['sessionUser'], user)
       successToast(LOGIN_SUCCESS)
-      router.push('/')
+      router.push('/dashboard')
     },
     onError: (error: Error) => {
       throw new Error('Failed to login', error)
@@ -74,7 +74,7 @@ export const useMutateAuth = () => {
       const user = (await supabase.auth.getUser()).data.user
       queryClient.setQueryData(['sessionUser'], user)
       successToast(SIGNUP_SUCCESS)
-      router.push('/')
+      router.push('/dashboard')
     },
     onError: (error: Error) => {
       throw new Error('Failed to register', error)
@@ -92,7 +92,7 @@ export const useMutateAuth = () => {
     onSuccess: () => {
       queryClient.setQueryData(['sessionUser'], null)
       successToast(LOGOUT_SUCCESS)
-      router.push('/login')
+      router.push('/')
     },
     onError: (error: Error) => {
       throw new Error('Failed to logout', error)

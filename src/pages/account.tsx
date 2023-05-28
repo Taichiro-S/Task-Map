@@ -1,11 +1,11 @@
 import Header from 'components/Header'
 import { Layout } from 'components'
 import React from 'react'
+import { NextPage } from 'next'
 
-const AccountSettings = () => {
+const AccountSettings: NextPage = () => {
   return (
     <>
-      <Header />
       <Layout title="Account Settings">
         <div>
           <h1>Account Settings</h1>

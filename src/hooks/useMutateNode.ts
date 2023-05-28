@@ -86,7 +86,7 @@ export const useMutateNode = () => {
   // })
 
   const saveNodeMutation = useMutation({
-    mutationFn: async (user_id: string | undefined) => {
+    mutationFn: async ({ user_id, workspaceId }: { user_id: string; workspaceId: string }) => {
       const nodes = useStore.getState().nodes
       // console.log('storeNodes', nodes)
 
@@ -105,6 +105,7 @@ export const useMutateNode = () => {
           width: node.data.width,
           memo: node.data.memo,
           status: node.data.status,
+          workspace_id: workspaceId,
         }
       })
 
@@ -146,7 +147,7 @@ export const useMutateNode = () => {
       return updatedNodeDatas
     },
     onSuccess: (res: any) => {
-      // queryClient.invalidateQueries({ queryKey: ['nodes'] })
+      queryClient.invalidateQueries({ queryKey: ['nodes'] })
     },
     onError: (err: any) => {
       alert(err)

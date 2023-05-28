@@ -58,7 +58,7 @@ export const useMutateEdge = () => {
   // })
 
   const saveEdgeMutation = useMutation({
-    mutationFn: async (user_id: string | undefined) => {
+    mutationFn: async ({ user_id, workspaceId }: { user_id: string; workspaceId: string }) => {
       const edges = useStore.getState().edges
       // console.log('storeEdges', edges)
       const edgeDatas: Omit<EdgeData, 'id' | 'created_at'>[] = edges.map((edge) => {
@@ -70,6 +70,7 @@ export const useMutateEdge = () => {
           type: edge.type,
           label: edge.data.label,
           animated: edge.animated,
+          workspace_id: workspaceId,
         }
       })
       const { data, error } = await supabase.from('edges').upsert(edgeDatas, { onConflict: 'edge_nanoid' }).select('*')
@@ -106,7 +107,7 @@ export const useMutateEdge = () => {
     },
 
     onSuccess: (res: any) => {
-      // queryClient.resetQueries({ queryKey: ['edge'] })
+      queryClient.invalidateQueries({ queryKey: ['edge'] })
     },
     onError: (err: any) => {
       alert(err)

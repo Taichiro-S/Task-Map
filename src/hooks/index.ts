@@ -1,5 +1,6 @@
 export * from './useMutateAuth'
 export * from './useMutateEdge'
+export * from './useMutateFlow'
 export * from './useMutateNode'
 export * from './useMutateWorkspace'
 export * from './useNodeConnect'

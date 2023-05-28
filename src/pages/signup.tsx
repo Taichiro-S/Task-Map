@@ -1,16 +1,18 @@
-import { useState, FormEvent } from 'react'
 import { useForm } from 'react-hook-form'
-import { CheckBadgeIcon, ShieldCheckIcon } from '@heroicons/react/24/solid'
 import type { NextPage } from 'next'
 import { useMutateAuth } from 'hooks/useMutateAuth'
-import { Layout, Header } from 'components'
+import { Layout } from 'components'
 import { signupUserData } from 'types/types'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { signupSchema } from 'schema/signupSchema'
 import { TextField, Button, Card } from '@mui/material'
 import Link from 'next/link'
+import HomeIcon from '@mui/icons-material/Home'
+
+import { useRouter } from 'next/router'
 
 const Signup: NextPage = () => {
+  const router = useRouter()
   const { registerMutation } = useMutateAuth()
   const {
     register,
@@ -59,16 +61,23 @@ const Signup: NextPage = () => {
               />
             </div>
             <div className="m-2 ">
-              <Button type="submit">登録</Button>
+              <Button variant="outlined" type="submit">
+                登録
+              </Button>
             </div>
           </form>
           <div className="m-2">
             <span>
               アカウントをお持ちの方は
               <Link href="/login">
-                <span className="text-blue-300 hover:text-blue-600">こちら</span>
+                <span className="text-blue-400 hover:text-blue-600">こちら</span>
               </Link>
             </span>
+          </div>
+          <div className="m-2">
+            <Button variant="outlined" color="primary" onClick={() => router.push('/')} startIcon={<HomeIcon />}>
+              ホーム
+            </Button>
           </div>
         </Card>
       </Layout>

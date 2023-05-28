@@ -7,8 +7,11 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { loginSchema } from 'schema/loginSchema'
 import { TextField, Checkbox, FormControlLabel, Button, Card } from '@mui/material'
 import Link from 'next/link'
+import HomeIcon from '@mui/icons-material/Home'
+import { useRouter } from 'next/router'
 
 const Login: NextPage = () => {
+  const router = useRouter()
   const { loginMutation } = useMutateAuth()
   const {
     register,
@@ -19,7 +22,7 @@ const Login: NextPage = () => {
     resolver: yupResolver(loginSchema),
   })
   const onSubmit = async (data: loginUserData) => {
-    console.log('login', data)
+    // console.log('login', data)
     loginMutation.mutate({ email: data.email, password: data.password })
   }
   return (
@@ -50,16 +53,23 @@ const Login: NextPage = () => {
               <FormControlLabel control={<Checkbox {...register('remember')} value="on" />} label="Remember me" />
             </div>
             <div className="m-2 ">
-              <Button type="submit">ログイン</Button>
+              <Button variant="outlined" type="submit">
+                ログイン
+              </Button>
             </div>
           </form>
           <div className="m-2">
             <span className="text-sm text-neutral-600">
               アカウントをお持ちでない方は
               <Link href="/signup">
-                <span className="text-blue-300 hover:text-blue-600">こちら</span>
+                <span className="text-blue-400 hover:text-blue-600">こちら</span>
               </Link>
             </span>
+          </div>
+          <div className="m-2">
+            <Button variant="outlined" color="primary" onClick={() => router.push('/')} startIcon={<HomeIcon />}>
+              ホーム
+            </Button>
           </div>
         </Card>
       </Layout>

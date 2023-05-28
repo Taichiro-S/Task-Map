@@ -18,7 +18,7 @@ const CustomNodeToolBarBottom: FC<NodeProps> = (props) => {
       position={Position.Bottom}
       className="flex flex-row justify-center items-center p-2"
     >
-      <div className=" bg-white rounded-2xl drop-shadow-md items-center p-2">
+      <div className="bg-white rounded-2xl drop-shadow-md items-center p-2">
         <div>
           <div className="prod-info grid gap-10">
             <div>

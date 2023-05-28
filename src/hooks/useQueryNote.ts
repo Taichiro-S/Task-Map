@@ -3,17 +3,21 @@ import { supabase } from 'utils/supabase'
 import { NoteData } from 'types/types'
 import { User } from '@supabase/supabase-js'
 
-export const useQueryNote = (user: User | null | undefined) => {
+export const useQueryNote = (user: User | null | undefined, workspaceId: string) => {
   const getNotes = async () => {
     if (!user || user === null) {
       throw new Error('User is not logged in')
     }
-    const { data, error } = await supabase.from('notes').select('*').eq('user_id', user.id)
+    const { data, error } = await supabase
+      .from('notes')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('workspace_id', workspaceId)
     if (!data) {
-      throw new Error('Failed to fetch commentData')
+      throw new Error('Failed to fetch noteData')
     }
     if (error) {
-      throw new Error('Error fetching commentData')
+      throw new Error('Error fetching noteData')
     }
     const notes = data.map((note) => {
       return {

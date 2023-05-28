@@ -14,6 +14,7 @@ export type NodeData = {
   index_in_nodes_array: number
   memo: string
   status: string
+  workspace_id: string
 }
 
 export type EdgeData = {
@@ -26,6 +27,7 @@ export type EdgeData = {
   type: string | undefined
   label: string
   animated: boolean | undefined
+  workspace_id: string
 }
 
 export type NoteData = {
@@ -33,11 +35,12 @@ export type NoteData = {
   created_at: string
   user_id: string | undefined
   node_nanoid: string
-  content: string
   title: string
+  content: string
+  workspace_id: string
 }
 
-export type NewNote = Omit<NoteData, 'id' | 'created_at' | 'user_id'>
+export type NewNote = Omit<NoteData, 'id' | 'created_at' | 'user_id' | 'workspace_id'>
 
 export type WorkspaceData = {
   id: string

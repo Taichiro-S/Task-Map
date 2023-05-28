@@ -1,15 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from 'utils/supabase'
 import { CommentData } from 'types/types'
+
 export const useQueryComment = (workspaceId: string) => {
   const getComments = async () => {
     if (!workspaceId) {
       throw new Error('workspaceId undefined')
     }
-    const { data, error } = await supabase
-      .from('workspaces')
-      .select('*')
-      .eq('workspace_id', workspaceId)
+    const { data, error } = await supabase.from('comments').select('*').eq('workspace_id', workspaceId)
     if (!data) {
       throw new Error('Failed to fetch commentData')
     }
@@ -30,12 +28,8 @@ export const useQueryComment = (workspaceId: string) => {
     return comments as CommentData[]
   }
 
-  return useQuery<CommentData[], Error>(
-    ['comments', workspaceId],
-    getComments,
-    {
-      staleTime: Infinity,
-      enabled: !!workspaceId,
-    },
-  )
+  return useQuery<CommentData[], Error>(['comments', workspaceId], getComments, {
+    staleTime: Infinity,
+    enabled: !!workspaceId,
+  })
 }
