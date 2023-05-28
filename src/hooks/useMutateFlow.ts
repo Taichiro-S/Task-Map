@@ -120,8 +120,7 @@ export const useMutateFlow = () => {
       }
     },
     onSuccess: (res: any) => {
-      queryClient.invalidateQueries({ queryKey: ['nodes'] })
-      queryClient.invalidateQueries({ queryKey: ['edges'] })
+      queryClient.invalidateQueries({ queryKey: ['flows'] })
     },
     onError: (err: any) => {
       alert(err)

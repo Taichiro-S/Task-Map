@@ -25,6 +25,7 @@ import {
   useNodeDrop,
   useNodeConnect,
   useQueryWorkspace,
+  useQueryFlow,
 } from 'hooks'
 import { Layout, Spinner, MenuBar } from 'components'
 import { useRouter } from 'next/router'
@@ -49,17 +50,24 @@ const Flow = () => {
   const [reactFlowInstance, setReactFlowInstance] = useState<any>(null) // TODO: 型を指定する
   const { data: sessionUser, error: sessionUserError, isLoading: sessionUserIsLoading } = useQuerySessionUser()
   const {
-    data: edgeDatas,
-    error: edgeError,
-    isLoading: edgeIsLoading,
-    refetch: refetchEdge,
-  } = useQueryEdge(sessionUser, workspaceId)
-  const {
-    data: nodeDatas,
-    error: nodeError,
-    isLoading: nodeIsLoading,
-    refetch: refetchNode,
-  } = useQueryNode(sessionUser, workspaceId)
+    data: flowDatas,
+    error: flowError,
+    isLoading: flowIsLoading,
+    refetch: refetchFlow,
+  } = useQueryFlow(sessionUser, workspaceId)
+
+  // const {
+  //   data: edgeDatas,
+  //   error: edgeError,
+  //   isLoading: edgeIsLoading,
+  //   refetch: refetchEdge,
+  // } = useQueryEdge(sessionUser, workspaceId)
+  // const {
+  //   data: nodeDatas,
+  //   error: nodeError,
+  //   isLoading: nodeIsLoading,
+  //   refetch: refetchNode,
+  // } = useQueryNode(sessionUser, workspaceId)
   const {
     data: workspaceDatas,
     error: workspaceError,
@@ -82,13 +90,20 @@ const Flow = () => {
     }
   }, [sessionUser, sessionUserIsLoading, router])
 
+  // useEffect(() => {
+  //   if (nodeDatas && edgeDatas) {
+  //     resetFlow()
+  //     setInitialFlow(nodeDatas, edgeDatas)
+  //   }
+  // }, [nodeDatas, edgeDatas, setInitialFlow])
+
   useEffect(() => {
-    if (nodeDatas && edgeDatas) {
+    if (flowDatas) {
       resetFlow()
-      setInitialFlow(nodeDatas, edgeDatas)
-      console.log(nodeDatas)
+      const { sortedNodes, edges } = flowDatas
+      setInitialFlow(sortedNodes, edges)
     }
-  }, [nodeDatas, edgeDatas, setInitialFlow])
+  }, [flowDatas])
 
   const workspaceTitle = useRef<string | null>(null)
 
@@ -99,17 +114,11 @@ const Flow = () => {
   }, [])
 
   useEffect(() => {
-    refetchNode()
-    refetchEdge()
+    refetchFlow()
   }, [router.asPath])
-  // useEffect(() => {
-  //   if (!userId || !workspaceId) {
-  //     // router.push('/dashboard')
-  //   }
-  // }, [userId, workspaceId])
 
-  if (sessionUserError || edgeError || nodeError) {
-    console.log(sessionUserError, edgeError, nodeError)
+  if (sessionUserError || flowError) {
+    console.log(sessionUserError, flowError)
     return (
       <Layout title="Flow">
         <p>サーバーエラー</p>
@@ -117,7 +126,7 @@ const Flow = () => {
     )
   }
 
-  if (sessionUserIsLoading || nodeIsLoading || edgeIsLoading) {
+  if (sessionUserIsLoading || flowIsLoading) {
     return (
       <Layout title="Flow">
         <Spinner />
@@ -172,7 +181,6 @@ const Flow = () => {
           />
         </ReactFlow>
         <MenuBar workspaceId={workspaceId} />
-        {/* {editedNoteId !== '' && <Note />} */}
       </div>
     </Layout>
   )
