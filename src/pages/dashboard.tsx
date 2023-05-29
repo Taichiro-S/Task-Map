@@ -13,10 +13,9 @@ const Dashboard: NextPage = () => {
   const resetFlow = useStore((state) => state.resetFlow)
   useEffect(() => {
     if (!sessionUser && !sessionUserIsLoading) {
-      console.log('sessionUser', sessionUser)
       router.push('/login')
     }
-  }, [sessionUser, sessionUserIsLoading, router])
+  }, [sessionUser, sessionUserIsLoading])
 
   useEffect(() => {
     queryClient.removeQueries({ queryKey: ['flows'], exact: true })
@@ -44,6 +43,7 @@ const Dashboard: NextPage = () => {
     <div>
       <Layout title="Dashboard">
         <div className="flex-wrap">
+          <WorkspaceFormDialog workspaceData={undefined} isDelete={false} />
           <ul className="pl-0">
             {workspaceDatas?.map((workspaceData) => (
               <li className="list-none my-4" key={workspaceData.id}>
@@ -51,7 +51,6 @@ const Dashboard: NextPage = () => {
               </li>
             ))}
           </ul>
-          <WorkspaceFormDialog workspaceData={undefined} isDelete={false} />
         </div>
       </Layout>
     </div>

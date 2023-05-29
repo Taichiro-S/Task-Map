@@ -49,6 +49,7 @@ export type WorkspaceData = {
   user_id: string | undefined
   title: string
   description: string
+  public: boolean
 }
 
 export type NewWorkspace = Omit<WorkspaceData, 'id' | 'created_at' | 'updated_at' | 'user_id'>

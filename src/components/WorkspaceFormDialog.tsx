@@ -22,6 +22,8 @@ import router from 'next/router'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
 import { toastSettings } from 'utils/authToast'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Checkbox from '@mui/material/Checkbox'
 
 type Props = {
   workspaceData?: WorkspaceData
@@ -49,6 +51,7 @@ const FormDialog: FC<Props> = ({ workspaceData, isDelete }) => {
     reset({
       title: workspaceData ? workspaceData.title : '',
       description: workspaceData ? workspaceData.description : '',
+      public: workspaceData ? workspaceData.public : false,
     })
   }
 
@@ -66,14 +69,24 @@ const FormDialog: FC<Props> = ({ workspaceData, isDelete }) => {
         keepDirtyValues: false,
         keepErrors: false,
       },
+      defaultValues: {
+        title: workspaceData ? workspaceData.title : '',
+        description: workspaceData ? workspaceData.description : '',
+        public: workspaceData ? workspaceData.public : false,
+      },
     }
   }
   const {
     register,
     handleSubmit,
     formState: { errors, touchedFields },
+    setValue,
     reset,
   } = useForm<NewWorkspace>(useFormSettings)
+
+  useEffect(() => {
+    register('public')
+  }, [register])
 
   const onSubmit = async (data: NewWorkspace) => {
     if (!user || user === null) {
@@ -113,10 +126,7 @@ const FormDialog: FC<Props> = ({ workspaceData, isDelete }) => {
         )
       } else {
         updateWorkspaceMutation.mutate(
-          {
-            updatedWorkspace: { title: data.title, description: data.description },
-            id: workspaceData.id,
-          },
+          { updatedWorkspace: data, id: workspaceData.id },
           {
             onSuccess: () => {
               successToast('ワークスペースを更新しました')
@@ -163,7 +173,6 @@ const FormDialog: FC<Props> = ({ workspaceData, isDelete }) => {
               margin="dense"
               id="title"
               label="ワークスペース名"
-              defaultValue={workspaceData ? workspaceData.title : ''}
               type="text"
               fullWidth
               variant="outlined"
@@ -176,7 +185,6 @@ const FormDialog: FC<Props> = ({ workspaceData, isDelete }) => {
               id="description"
               margin="dense"
               label="説明"
-              defaultValue={workspaceData ? workspaceData.description : ''}
               multiline
               rows={3}
               fullWidth
@@ -184,6 +192,17 @@ const FormDialog: FC<Props> = ({ workspaceData, isDelete }) => {
               helperText={touchedFields.title && errors?.description?.message}
               error={!!errors?.description}
               disabled={isDelete}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  {...register('public')}
+                  checked={workspaceData?.public}
+                  onChange={(e) => setValue('public', e.target.checked)}
+                  disabled={isDelete}
+                />
+              }
+              label="公開する"
             />
             {isDelete && (
               <Alert severity="error">

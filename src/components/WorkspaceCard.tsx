@@ -10,6 +10,8 @@ import { User } from '@supabase/supabase-js'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import { getNodes, useQuerySessionUser } from 'hooks'
+import LockIcon from '@mui/icons-material/Lock'
+import PublicIcon from '@mui/icons-material/Public'
 type Props = {
   workspaceData: WorkspaceData
   // user?: User | null
@@ -36,6 +38,17 @@ const WorkspaceCard: FC<Props> = ({ workspaceData }) => {
           </span>
         </h3>
         <p className="p-2 border-2 m-2">{workspaceData.description}</p>
+        {workspaceData.public ? (
+          <div className="">
+            <PublicIcon color="success" fontSize="small" className="ml-2" />
+            <span className="text-sm ml-2 text-gray-600">公開されています</span>
+          </div>
+        ) : (
+          <>
+            <LockIcon color="secondary" fontSize="small" className="ml-2" />
+            <span className="text-sm ml-2 text-gray-600">非公開です</span>
+          </>
+        )}
         <p className="text-sm text-gray-600 m-2">最終更新日: {workspaceData.updated_at}</p>
         <Stack direction="row-reverse" spacing={1}>
           <WorkspaceFormDialog workspaceData={workspaceData} isDelete={true} />

@@ -9,11 +9,11 @@ export const useQueryWorkspace = (user: User | null | undefined) => {
       throw new Error('User is not logged in')
     }
     const { data, error } = await supabase.from('workspaces').select('*').eq('user_id', user.id)
+    if (error) {
+      throw new Error(`Error fetching workspaceData: ' ${error.message}`)
+    }
     if (!data) {
       throw new Error('Failed to fetch workspaceData')
-    }
-    if (error) {
-      throw new Error('Error fetching workspaceData')
     }
     const workspaces = data.map((workspace) => {
       return {
@@ -22,6 +22,7 @@ export const useQueryWorkspace = (user: User | null | undefined) => {
         created_at: workspace.created_at,
         updated_at: workspace.updated_at,
         title: workspace.title,
+        public: workspace.public,
       }
     })
     return workspaces as WorkspaceData[]
