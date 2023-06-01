@@ -1,5 +1,5 @@
 import { render, fireEvent, screen } from '@testing-library/react'
-import { ColoredSimpleButton } from 'components/ColoredSimpleButton'
+import { ColoredSimpleButton } from 'components'
 import userEvent from '@testing-library/user-event'
 describe('<ColoredSimpleButton />', () => {
   it('renders correctly with initial OFF state and provided color', () => {

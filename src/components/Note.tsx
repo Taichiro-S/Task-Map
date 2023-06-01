@@ -1,14 +1,14 @@
 // import React from 'react'
-// import useStore from 'stores/flowStore'
+// import useFlowStore from 'stores/flowStore'
 // import { ChevronDoubleRightIcon } from '@heroicons/react/24/outline'
 
 // const Note = () => {
-//   const { editedNoteId, nodes, notes } = useStore()
+//   const { editedNoteId, nodes, notes } = useFlowStore()
 //   const node = nodes.find((node) => node.id === editedNoteId)
 //   const note = notes.find((note) => note.node_nanoid === editedNoteId)
-//   const resetEditedNoteId = useStore((state) => state.resetEditedNoteId)
-//   const updateNoteContent = useStore((state) => state.updateNoteContent)
-//   const updateNodeLabel = useStore((state) => state.updateNodeLabel)
+//   const resetEditedNoteId = useFlowStore((state) => state.resetEditedNoteId)
+//   const updateNoteContent = useFlowStore((state) => state.updateNoteContent)
+//   const updateNodeLabel = useFlowStore((state) => state.updateNodeLabel)
 //   if (!node || !note) return null
 //   return (
 //     <div className="w-1/4 h-5/6 bg-white absolute bottom-10 right-4 z-50 rounded-2xl drop-shadow-md">

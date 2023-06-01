@@ -1,9 +1,10 @@
 import { useState, MouseEvent, TouchEvent, useCallback, DragEvent } from 'react'
 import { Node } from 'reactflow'
-import useStore, { RFState } from 'stores/flowStore'
+import { FlowState, useFlowStore } from 'stores/flowStore'
+import { useTemporalStore } from 'stores/temporalStore'
 import { shallow } from 'zustand/shallow'
 
-const selector = (state: RFState) => ({
+const selector = (state: FlowState) => ({
   setNodeSelection: state.setNodeSelection,
   reArrangeNodes: state.reArrangeNodes,
   setNodeParent: state.setNodeParent,
@@ -11,8 +12,7 @@ const selector = (state: RFState) => ({
 
 export const useNodeDrag = () => {
   const [isNodeDragged, setIsNodeDragged] = useState<boolean>(false)
-  const { setNodeSelection, reArrangeNodes, setNodeParent } = useStore(selector, shallow)
-
+  const { setNodeSelection, reArrangeNodes, setNodeParent } = useFlowStore(selector, shallow)
   const handleNodeClick = (event: MouseEvent | TouchEvent, node: Node) => {
     // console.log('node clicked')
     if (isNodeDragged) {
@@ -43,7 +43,7 @@ export const useNodeDrag = () => {
       reArrangeNodes(node)
       return
     }
-    const groupingNodes = useStore.getState().nodes.filter((n) => n.type === 'grouping')
+    const groupingNodes = useFlowStore.getState().nodes.filter((n) => n.type === 'grouping')
     // console.log('all groupingNodes', groupingNodes)
     type NodeCandidate = {
       node: Node
@@ -72,7 +72,7 @@ export const useNodeDrag = () => {
           nodePositionYFromPane > topEdgeOfGroupingNode &&
           nodePositionYFromPane < bottomEdgeOfGroupingNode
         ) {
-          let index = useStore.getState().nodes.indexOf(groupingNode)
+          let index = useFlowStore.getState().nodes.indexOf(groupingNode)
           parentGroupingNodeCandidates.push({
             node: groupingNode,
             index: index,
@@ -107,14 +107,14 @@ export const useNodeDrag = () => {
             0 < nodePositionYFromParentNode &&
             nodePositionYFromParentNode < groupingNode.height
           ) {
-            let index = useStore.getState().nodes.indexOf(groupingNode)
+            let index = useFlowStore.getState().nodes.indexOf(groupingNode)
             parentGroupingNodeCandidates.push({
               node: groupingNode,
               index: index,
             })
           }
         } else {
-          const oldParentNode = useStore.getState().nodes.find((n) => n.id === node.parentNode)
+          const oldParentNode = useFlowStore.getState().nodes.find((n) => n.id === node.parentNode)
           if (!oldParentNode) return
           if (
             groupingNode.width === undefined ||
@@ -135,7 +135,7 @@ export const useNodeDrag = () => {
             nodePositionYFromOldParentNode > topEdgeOfGroupingNode &&
             nodePositionYFromOldParentNode < bottomEdgeOfGroupingNode
           ) {
-            let index = useStore.getState().nodes.indexOf(groupingNode)
+            let index = useFlowStore.getState().nodes.indexOf(groupingNode)
             parentGroupingNodeCandidates.push({
               node: groupingNode,
               index: index,

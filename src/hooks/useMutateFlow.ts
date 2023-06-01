@@ -1,13 +1,15 @@
 import { useQueryClient, useMutation } from '@tanstack/react-query'
-import useStore from 'stores/flowStore'
+import { FlowState, useFlowStore } from 'stores/flowStore'
 import { supabase } from 'utils/supabase'
 import { NodeData, EdgeData } from 'types/types'
+import { loadingToast } from 'utils/toast'
+import { toast } from 'react-toastify'
 
 export const useMutateFlow = () => {
   const queryClient = useQueryClient()
   const saveFlowMutation = useMutation({
     mutationFn: async ({ user_id, workspaceId }: { user_id: string; workspaceId: string }) => {
-      const nodes = useStore.getState().nodes
+      const nodes = useFlowStore.getState().nodes
       // console.log('storeNodes', nodes)
 
       const nodeDatas: Omit<NodeData, 'id' | 'created_at'>[] = nodes.map((node) => {
@@ -26,10 +28,13 @@ export const useMutateFlow = () => {
           memo: node.data.memo,
           status: node.data.status,
           workspace_id: workspaceId,
+          url: node.data.url,
+          started_at: node.data.started_at,
+          ended_at: node.data.ended_at,
         }
       })
 
-      const edges = useStore.getState().edges
+      const edges = useFlowStore.getState().edges
       const edgeDatas: Omit<EdgeData, 'id' | 'created_at'>[] = edges.map((edge) => {
         return {
           source_node_id: edge.source,
@@ -43,16 +48,7 @@ export const useMutateFlow = () => {
         }
       })
 
-      // const notes = useStore.getState().notes
-      // const noteDatas: Omit<NoteData, 'id' | 'created_at'>[] = notes.map((note) => {
-      //   return {
-      //     user_id: user_id,
-      //     node_nanoid: note.node_nanoid,
-      //     content: note.content,
-      //     title: note.title,
-      //     workspace_id: workspaceId,
-      //   }
-      // })
+      console.log(user_id, workspaceId)
 
       // Upsert nodes
       const { data: updatedNodeDatas, error: nodesError } = await supabase
@@ -70,28 +66,9 @@ export const useMutateFlow = () => {
         .eq('workspace_id', workspaceId)
         .select('*')
 
-      // Upsert notes
-      // const { data: updatedNoteDatas, error: notesError } = await supabase
-      //   .from('notes')
-      //   .upsert(noteDatas, { onConflict: 'node_nanoid' })
-      //   .eq('user_id', user_id)
-      //   .eq('workspace_id', workspaceId)
-      //   .select('*')
-
       if (nodesError || edgesError) {
         throw new Error('Failed to upsert flow')
       }
-
-      // Fetch all nodes in the database for this user and workspace
-      // const { data: allNodes, error: nodefetchError } = await supabase
-      //   .from('nodes')
-      //   .select('*')
-      //   .eq('user_id', user_id)
-      //   .eq('workspace_id', workspaceId)
-
-      // if (nodefetchError) {
-      //   throw new Error(`${nodefetchError.message}: ${nodefetchError.details}`)
-      // }
 
       // Find the nodes and edges that exist in the database but not in the current state
       const nodesToDelete = updatedNodeDatas.filter((dbNode) => !nodes.find((node) => node.id === dbNode.node_nanoid))
@@ -119,11 +96,24 @@ export const useMutateFlow = () => {
         }
       }
     },
-    onSuccess: (res: any) => {
+    onMutate: async (newData) => {
+      // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries(['flows'])
+      // Snapshot the previous value
+      const previousData = queryClient.getQueryData(['flows'])
+      // Optimistically update to the new value
+      queryClient.setQueryData(['flows'], newData)
+      loadingToast('保存中...', 'flows')
+      return { previousData }
+    },
+    onSuccess: (res, variables, context) => {
       queryClient.invalidateQueries({ queryKey: ['flows'] })
     },
-    onError: (err: any) => {
-      alert(err)
+    onError: (err: Error, newData, context) => {
+      if (context) {
+        queryClient.setQueryData(['flows'], context.previousData)
+      }
+      throw new Error(err.message)
     },
   })
 

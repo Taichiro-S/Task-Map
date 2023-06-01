@@ -5,11 +5,9 @@ const tsconfig = require('./tsconfig.json')
 const baseUrl = tsconfig.compilerOptions.baseUrl
 
 // フォルダー名一覧を取得する
-const folders = fs
-  .readdirSync(baseUrl, { withFileTypes: true })
-  .flatMap((ele) => {
-    return ele.isDirectory() ? [ele.name] : []
-  })
+const folders = fs.readdirSync(baseUrl, { withFileTypes: true }).flatMap((ele) => {
+  return ele.isDirectory() ? [ele.name] : []
+})
 
 /**
  * @type {import("@jest/types").Config.InitialOptions}
@@ -22,6 +20,15 @@ const config = {
       [`^${folderName}(.*)$`]: `<rootDir>/src/${folderName}$1`,
     }
   }, {}),
+  // moduleNameMapper: folders.reduce((mapper, folderName) => {
+  //   return {
+  //     ...mapper,
+  //     [`^${folderName}/(.*)$`]: `<rootDir>/src/${folderName}/$1`,
+  //   }
+  // }, {}),
+  // moduleNameMapper: {
+  //   'src(.*)$': '<rootDir>/src/$1',
+  // },
 
   testEnvironment: 'jsdom',
   //   testEnvironment: 'node',

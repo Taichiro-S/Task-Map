@@ -55,6 +55,6 @@ export const panelSettings: PanelProps = {
 import { ControlProps } from 'reactflow'
 export const controlSettings: ControlProps = {
   showZoom: false,
-  //   showInteractive: true,
+  showInteractive: true,
   position: 'bottom-left',
 }

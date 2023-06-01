@@ -4,23 +4,30 @@ import { useQuerySessionUser, useQueryWorkspace, useMutateWorkspace } from 'hook
 import { NextPage } from 'next'
 import router from 'next/router'
 import React, { useEffect } from 'react'
-import useStore from 'stores/flowStore'
+import { FlowState, useFlowStore } from 'stores/flowStore'
+import { successToast } from 'utils/toast'
 
 const Dashboard: NextPage = () => {
   const queryClient = useQueryClient()
   const { data: sessionUser, error: sessionUserError, isLoading: sessionUserIsLoading } = useQuerySessionUser()
-  const { data: workspaceDatas, error: workspaceError, isLoading: workspaceIsLoading } = useQueryWorkspace(sessionUser)
-  const resetFlow = useStore((state) => state.resetFlow)
+  const {
+    data: workspaceDatas,
+    error: workspaceError,
+    isLoading: workspaceIsLoading,
+    refetch: refetchWorkspace,
+  } = useQueryWorkspace()
+  const resetFlow = useFlowStore((state) => state.resetFlow)
   useEffect(() => {
-    if (!sessionUser && !sessionUserIsLoading) {
-      router.push('/login')
+    if (!sessionUserIsLoading && !sessionUser) {
+      //   console.log('sessionUser', sessionUser)
+      successToast('セッションの有効期限が切れました')
+      router.push('/')
     }
   }, [sessionUser, sessionUserIsLoading])
 
   useEffect(() => {
     queryClient.removeQueries({ queryKey: ['flows'], exact: true })
     resetFlow()
-    console.log('nodes', useStore.getState().nodes)
   }, [])
 
   if (sessionUserIsLoading || workspaceIsLoading) {
@@ -42,15 +49,19 @@ const Dashboard: NextPage = () => {
   return (
     <div>
       <Layout title="Dashboard">
-        <div className="flex-wrap">
-          <WorkspaceFormDialog workspaceData={undefined} isDelete={false} />
-          <ul className="pl-0">
-            {workspaceDatas?.map((workspaceData) => (
-              <li className="list-none my-4" key={workspaceData.id}>
-                <WorkspaceCard workspaceData={workspaceData} />
-              </li>
-            ))}
-          </ul>
+        <div className="mx-auto w-1/2 flex justify-center">
+          <div>
+            <div className="text-center">
+              <WorkspaceFormDialog workspaceData={undefined} isDelete={false} />
+            </div>
+            <ul className="pl-0">
+              {workspaceDatas?.map((workspaceData) => (
+                <li className="list-none my-4 w-full" key={workspaceData.id}>
+                  <WorkspaceCard workspaceData={workspaceData} />
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </Layout>
     </div>

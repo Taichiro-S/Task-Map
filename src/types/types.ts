@@ -15,6 +15,9 @@ export type NodeData = {
   memo: string
   status: string
   workspace_id: string
+  url: string
+  started_at: string
+  ended_at: string
 }
 
 export type EdgeData = {

@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
-import ReactFlow, { MiniMap, Controls, Background, Panel, NodeOrigin, ReactFlowProvider } from 'reactflow'
+import ReactFlow, { MiniMap, Controls, Background, ReactFlowProvider } from 'reactflow'
 import { shallow } from 'zustand/shallow'
 import 'reactflow/dist/style.css'
-import useStore, { RFState } from 'stores/flowStore'
+import { FlowState, useFlowStore } from 'stores/flowStore'
+
 import { useQuerySessionUser, useNodeDrag, useNodeDrop, useNodeConnect } from 'hooks/index'
 import {
   nodeTypes,
@@ -15,39 +16,61 @@ import {
   backgroundSettings,
   controlSettings,
   miniMapSettings,
-  panelSettings,
 } from 'utils/reactflow'
-import { CustomNode, GroupingNode, Layout, MenuBar, CustomEdge } from 'components'
+import { Layout, MenuBar } from 'components'
 import { useRouter } from 'next/router'
+import { useQueryClient } from '@tanstack/react-query'
+import { DemoInstructionTabs } from 'components'
 
-const selector = (state: RFState) => ({
+const selector = (state: FlowState) => ({
   nodes: state.nodes,
   edges: state.edges,
   onNodesChange: state.onNodesChange,
   onEdgesChange: state.onEdgesChange,
+  resetFlow: state.resetFlow,
 })
 
 function Flow() {
-  const router = useRouter()
+  // const router = useRouter()
+  const queryClient = useQueryClient()
   const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
   const reactFlowBounds = reactFlowWrapper.current?.getBoundingClientRect()
   const [reactFlowInstance, setReactFlowInstance] = useState<any>(null) // TODO: 型を指定する
-  const { data: sessionUser, error: sessionUserError, isLoading: sessionUserIsLoading } = useQuerySessionUser()
-
-  const { nodes, edges, onNodesChange, onEdgesChange } = useStore(selector, shallow)
+  // const { data: sessionUser, error: sessionUserError, isLoading: sessionUserIsLoading } = useQuerySessionUser()
+  const { nodes, edges, onNodesChange, onEdgesChange, resetFlow } = useFlowStore(selector, shallow)
   const { handleNodeClick, handleNodeDragStart, handleNodeDragOver, handleNodeDragStop } = useNodeDrag()
   const { handleNodeDrop } = useNodeDrop(reactFlowInstance, reactFlowBounds)
   const { handleNodeConnectStart, handleNodeConnectEnd } = useNodeConnect()
 
-  useEffect(() => {
-    if (sessionUser && !sessionUserIsLoading) {
-      router.push('/dashboard')
-    }
-  }, [sessionUser, sessionUserIsLoading, router])
+  // useEffect(() => {
+  //   if (sessionUser && !sessionUserIsLoading) {
+  //     router.push('/dashboard')
+  //   }
+  // }, [sessionUser, sessionUserIsLoading, router])
 
+  useEffect(() => {
+    queryClient.removeQueries({ queryKey: ['flows'], exact: true })
+    queryClient.removeQueries({ queryKey: ['workspaces'], exact: true })
+    resetFlow()
+  }, [])
   return (
     <Layout title="Flow">
-      <div style={{ width: '100vw', height: '90vh' }} className="reactflow-wrapper" ref={reactFlowWrapper}>
+      <div className="flex justify-start" style={{ width: '80vw', maxWidth: 900, minWidth: 600 }}>
+        <p className="text-2xl font-zenMaruGothicMono font-bold left-0">
+          <span className="text-blue-500">P</span>
+          <span className="text-neutral-600">lay</span> <span className="text-blue-500">D</span>
+          <span className="text-neutral-600">emo</span>!
+        </p>
+      </div>
+
+      <div className="h-full" style={{ width: '80vw', maxWidth: 900, minWidth: 600 }}>
+        <DemoInstructionTabs />
+      </div>
+      <div
+        style={{ width: '80vw', height: '60vh', maxWidth: 900, minWidth: 600, minHeight: 600 }}
+        className="reactflow-wrapper border-2 border-neutral-600 rounded-md"
+        ref={reactFlowWrapper}
+      >
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -89,8 +112,9 @@ function Flow() {
             size={backgroundSettings.size}
           />
         </ReactFlow>
-        <MenuBar workspaceId={null} />
-        {/* {editedNoteId !== '' && <Note />} */}
+        <div className="relative top-12 right-0 mx-auto flex justify-center">
+          <MenuBar workspaceId={null} />
+        </div>
       </div>
     </Layout>
   )

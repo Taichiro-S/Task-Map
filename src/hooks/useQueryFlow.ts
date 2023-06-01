@@ -1,11 +1,16 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from 'utils/supabase'
 import { Node, Edge } from 'reactflow'
 import { User } from '@supabase/supabase-js'
+import { getSessionUser } from 'hooks'
+import { useEffect } from 'react'
 
-export const getFlows = async (user: User | null | undefined, workspaceId: string) => {
+export const getFlows = async (userId: string | null, workspaceId: string | null) => {
+  const user = await getSessionUser()
   if (!user) {
     throw new Error('User is not logged in')
+  } else if (user.id !== userId) {
+    throw new Error('page not found')
   }
   // get edges
   const { data: edgeDatas, error: edgeError } = await supabase
@@ -58,12 +63,16 @@ export const getFlows = async (user: User | null | undefined, workspaceId: strin
         width: nodeData.width,
         memo: nodeData.memo,
         status: nodeData.status,
+        url: nodeData.url,
+        started_at: nodeData.started_at,
+        ended_at: nodeData.ended_at,
+        open: false,
       },
       parentNode: nodeData.parent_node_id,
       zIndex: nodeData.type === 'grouping' ? 0 : 10,
     }
   })
-  // sort nodes by index_in_nodes_array
+  //
   const sortedNodes = [...nodes].sort((a, b) => {
     return a.data.index_in_nodes_array - b.data.index_in_nodes_array
   })
@@ -74,9 +83,20 @@ export const getFlows = async (user: User | null | undefined, workspaceId: strin
   }
 }
 
-export const useQueryFlow = (user: User | null | undefined, workspaceId: string) => {
-  return useQuery<{ edges: Edge[]; sortedNodes: Node[] }, Error>(['flows', user], () => getFlows(user, workspaceId), {
-    staleTime: Infinity,
-    enabled: !!user,
-  })
+export const useQueryFlow = (userId: string | null, workspaceId: string | null) => {
+  const queryClient = useQueryClient()
+  useEffect(() => {
+    if (userId && workspaceId) {
+      // If userId and workspaceId are truthy, remove any previous 'flows' query with null userId and workspaceId
+      queryClient.removeQueries(['flows', null, null])
+    }
+  }, [userId, workspaceId, queryClient])
+  return useQuery<{ edges: Edge[]; sortedNodes: Node[] }, Error>(
+    ['flows', userId, workspaceId],
+    () => getFlows(userId, workspaceId),
+    {
+      staleTime: Infinity,
+      enabled: !!workspaceId && !!userId,
+    },
+  )
 }

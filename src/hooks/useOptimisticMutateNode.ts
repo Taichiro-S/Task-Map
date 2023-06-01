@@ -1,5 +1,5 @@
 // import { useQueryClient, useMutation } from '@tanstack/react-query'
-// import useStore from 'stores/flowStore'
+// import useFlowStore from 'stores/flowStore'
 // import { supabase } from 'utils/supabase'
 // import { NodeData } from 'types/types'
 

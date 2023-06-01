@@ -9,9 +9,10 @@ import {
   Node,
 } from 'reactflow'
 import '@reactflow/node-resizer/dist/style.css'
-import useStore from 'stores/flowStore'
-import { GroupingNodeInput } from 'components'
+import { FlowState, useFlowStore } from 'stores/flowStore'
+import { GroupingNodeInput, GroupingNodeToolBarTop } from 'components'
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
+import { nodeColorList } from 'constant/nodeColorList'
 
 const GroupingNode: FC<NodeProps> = (props) => {
   const { id, data, selected } = props
@@ -22,12 +23,12 @@ const GroupingNode: FC<NodeProps> = (props) => {
   const [resizeCount, setResizeCount] = useState<number>(0)
 
   useEffect(() => {
-    const nodes = useStore.getState().nodes
+    const nodes = useFlowStore.getState().nodes
     const child = nodes.filter((node) => node.parentNode === id)
     setChildNodes(child)
   }, [isResizing])
   useEffect(() => {
-    const nodes = useStore.getState().nodes
+    const nodes = useFlowStore.getState().nodes
     const child = nodes.filter((node) => node.parentNode === id)
     setPrevChildNodes(child)
   }, [resizeCount])
@@ -43,12 +44,12 @@ const GroupingNode: FC<NodeProps> = (props) => {
       setParentNodeOnNodeResizeEnd(prevChildNodes, id)
     }
   }, [childNodes])
-  const setNodesUnselected = useStore((state) => state.setNodesUnselected)
-  const setEdgesUnselected = useStore((state) => state.setEdgesUnselected)
-  const setParentNodeOnNodeResizeStart = useStore((state) => state.setParentNodeOnNodeResizeStart)
-  const resizeGroupingNode = useStore((state) => state.resizeGroupingNode)
-  const setParentNodeOnNodeResizeEnd = useStore((state) => state.setParentNodeOnNodeResizeEnd)
-
+  const setNodesUnselected = useFlowStore((state) => state.setNodesUnselected)
+  const setEdgesUnselected = useFlowStore((state) => state.setEdgesUnselected)
+  const setParentNodeOnNodeResizeStart = useFlowStore((state) => state.setParentNodeOnNodeResizeStart)
+  const resizeGroupingNode = useFlowStore((state) => state.resizeGroupingNode)
+  const setParentNodeOnNodeResizeEnd = useFlowStore((state) => state.setParentNodeOnNodeResizeEnd)
+  const borderColor = nodeColorList.find((color) => color.colorCode === data.color)?.borderColorCode
   const resizePositions: ControlPosition[] = [
     'top-left',
     'top-right',
@@ -62,17 +63,27 @@ const GroupingNode: FC<NodeProps> = (props) => {
 
   return (
     <>
-      <DragIndicatorIcon className="grouping-node-drag-handle text-white  bg-fuchsia-600 bg-opacity-40 rounded-l-lg border-y-2 border-l-2 border-slate-300 relative top-7 -left-6" />
+      <GroupingNodeToolBarTop {...props} />
+      <DragIndicatorIcon
+        className="grouping-node-drag-handle text-white rounded-l-lg border-y-2 border-l-2 border-neutral-400 relative top-7 -left-6"
+        style={{
+          backgroundColor: data.color,
+          opacity: 0.5,
+        }}
+      />
 
       <div
         className={
           selected
-            ? 'border-2 rounded-lg border-fuchsia-800  relative justify-center items-center bg-fuchsia-300 bg-opacity-40 nodrag grouping-node'
-            : 'border-2 rounded-lg border-slate-300 relative justify-center items-center bg-fuchsia-300 bg-opacity-40 nodrag grouping-node'
+            ? 'border-2 rounded-lg h-full relative justify-center items-center bg-opacity-40 nodrag grouping-node'
+            : 'border-2 rounded-lg h-full relative justify-center items-center bg-opacity-40 nodrag grouping-node'
         }
         style={{
           width: `${data.width}px`,
           height: `${data.height}px`,
+          backgroundColor: data.color,
+          borderColor: selected ? borderColor : '#a3a3a3',
+          opacity: 0.5,
           zIndex: 0,
         }}
         onClick={() => {

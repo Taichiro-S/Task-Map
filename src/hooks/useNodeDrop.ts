@@ -1,9 +1,9 @@
 import { useCallback, DragEvent } from 'react'
 import { Node, XYPosition } from 'reactflow'
-import useStore, { RFState } from 'stores/flowStore'
+import { FlowState, useFlowStore } from 'stores/flowStore'
 import { shallow } from 'zustand/shallow'
 
-const selector = (state: RFState) => ({
+const selector = (state: FlowState) => ({
   addNewGroupNode: state.addNewGroupNode,
   addNewNode: state.addNewNode,
   reArrangeNodes: state.reArrangeNodes,
@@ -11,7 +11,7 @@ const selector = (state: RFState) => ({
 })
 
 export const useNodeDrop = (reactFlowInstance: any, reactFlowBounds: DOMRect | undefined) => {
-  const { addNewNode, addNewGroupNode, reArrangeNodes, setNodeParent } = useStore(selector, shallow)
+  const { addNewNode, addNewGroupNode, reArrangeNodes, setNodeParent } = useFlowStore(selector, shallow)
 
   const handleNodeDrop = useCallback(
     (event: DragEvent<HTMLDivElement>) => {
@@ -48,7 +48,7 @@ export const useNodeDrop = (reactFlowInstance: any, reactFlowBounds: DOMRect | u
         if (droppedNode.parentNode) return
         const nodePositionX = droppedNode.position.x
         const nodePositionY = droppedNode.position.y
-        const groupingNodes = useStore.getState().nodes.filter((n) => n.type === 'grouping')
+        const groupingNodes = useFlowStore.getState().nodes.filter((n) => n.type === 'grouping')
         type NodeCandidate = {
           node: Node
           index: number
@@ -65,7 +65,7 @@ export const useNodeDrop = (reactFlowInstance: any, reactFlowBounds: DOMRect | u
             nodePositionY > topEdgeOfgroupingNode &&
             nodePositionY < bottomEdgeOfgroupingNode
           ) {
-            let index = useStore.getState().nodes.indexOf(groupingNode)
+            let index = useFlowStore.getState().nodes.indexOf(groupingNode)
             parentGroupingNodeCandidates.push({
               node: groupingNode,
               index: index,

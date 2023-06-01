@@ -10,7 +10,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import IconButton from '@mui/material/IconButton'
 import Alert from '@mui/material/Alert'
 
-import useStore from 'stores/workspaceStore'
+import useFlowStore from 'stores/workspaceStore'
 import { NewWorkspace, WorkspaceData } from 'types/types'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { workspaceSchema } from 'schema/workspaceSchema'
@@ -21,7 +21,7 @@ import { useMutateWorkspace } from 'hooks'
 import router from 'next/router'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
-import { toastSettings } from 'utils/authToast'
+import { successToast, errorToast } from 'utils/toast'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
 
@@ -36,12 +36,6 @@ const FormDialog: FC<Props> = ({ workspaceData, isDelete }) => {
   const user: User | undefined = queryClient.getQueryData(['sessionUser'])
   const [open, setOpen] = useState(false)
   const { createWorkspaceMutation, updateWorkspaceMutation, deleteWorkspaceMutation } = useMutateWorkspace()
-  const successToast = (message: string) => {
-    toast.success(message, toastSettings)
-  }
-  const errorToast = (message: string) => {
-    toast.error(message, toastSettings)
-  }
   const handleClickOpen = () => {
     setOpen(true)
   }
@@ -65,10 +59,6 @@ const FormDialog: FC<Props> = ({ workspaceData, isDelete }) => {
     useFormSettings = {
       mode: 'onSubmit',
       resolver: yupResolver(workspaceSchema),
-      resetOptions: {
-        keepDirtyValues: false,
-        keepErrors: false,
-      },
       defaultValues: {
         title: workspaceData ? workspaceData.title : '',
         description: workspaceData ? workspaceData.description : '',
@@ -82,19 +72,20 @@ const FormDialog: FC<Props> = ({ workspaceData, isDelete }) => {
     formState: { errors, touchedFields },
     setValue,
     reset,
+    watch,
   } = useForm<NewWorkspace>(useFormSettings)
-
+  const publicValue = watch('public')
   useEffect(() => {
     register('public')
   }, [register])
 
   const onSubmit = async (data: NewWorkspace) => {
-    if (!user || user === null) {
-      console.log(user)
+    if (!user) {
+      errorToast('ユーザがログアウトしました')
       router.push('/login')
-
       return
     }
+    console.log(data)
     if (!workspaceData) {
       createWorkspaceMutation.mutate(
         { newWorkspace: data, user_id: user.id },
@@ -193,17 +184,19 @@ const FormDialog: FC<Props> = ({ workspaceData, isDelete }) => {
               error={!!errors?.description}
               disabled={isDelete}
             />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  {...register('public')}
-                  checked={workspaceData?.public}
-                  onChange={(e) => setValue('public', e.target.checked)}
-                  disabled={isDelete}
-                />
-              }
-              label="公開する"
-            />
+            <div className="ml-4">
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    {...register('public')}
+                    checked={publicValue}
+                    onChange={(e) => setValue('public', e.target.checked)}
+                    disabled={isDelete}
+                  />
+                }
+                label="公開する"
+              />
+            </div>
             {isDelete && (
               <Alert severity="error">
                 本当に削除してよろしいですか？

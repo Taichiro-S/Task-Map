@@ -1,11 +1,11 @@
-import useStore from 'stores/flowStore'
+import { FlowState, useFlowStore } from 'stores/flowStore'
 import { FC, memo } from 'react'
 import { EdgeText, BaseEdge, EdgeProps, getStraightPath } from 'reactflow'
 import { EdgeInput } from 'components'
 
 const CustomEdge: FC<EdgeProps> = (props) => {
   // console.log('edge')
-  const updateEdgeAnimation = useStore((state) => state.updateEdgeAnimation)
+  const updateEdgeAnimation = useFlowStore((state) => state.updateEdgeAnimation)
   const { sourceX, sourceY, targetX, targetY, data, selected, id } = props
   const [edgePath, labelX, labelY] = getStraightPath({
     sourceX,

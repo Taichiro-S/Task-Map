@@ -4,6 +4,17 @@ import { useMutateAuth, useQuerySessionUser } from 'hooks'
 import { useRouter } from 'next/router'
 import { useQueryClient } from '@tanstack/react-query'
 import Spinner from './Spinner'
+import { successToast, errorToast } from 'utils/toast'
+import Button from '@mui/material/Button'
+import LoginIcon from '@mui/icons-material/Login'
+import { MapPinIcon } from '@heroicons/react/24/outline'
+import { styled } from '@mui/material/styles'
+
+const CustomButton = styled(Button)({
+  '&:hover': {
+    backgroundColor: '#d81b60',
+  },
+})
 
 const Header: FC = () => {
   const router = useRouter()
@@ -11,72 +22,102 @@ const Header: FC = () => {
   const { logoutMutation } = useMutateAuth()
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    logoutMutation.mutate()
+    let variables = void 0
+    logoutMutation.mutate(variables, {
+      onSuccess: () => {
+        successToast('ログアウトしました')
+      },
+      onError: () => {
+        errorToast('ログアウトに失敗しました')
+      },
+    })
   }
   if (sessionUserIsLoading) return <Spinner />
   if (sessionUserError) return null
   return (
-    <div>
-      <nav className="bg-gray-800">
-        <div className="w-screen mx-auto px-4 sm:px-6 lg:px-8">
-          <ul className="flex justify-center">
+    <nav className="bg-neutral-800 h-10 flex items-center">
+      <div className="w-screen mx-auto px-4 sm:px-6 lg:px-8">
+        <ul className="flex justify-between items-center">
+          <Link href="/">
+            <p className="text-lg text-neutral-50 font-bold flex items-center">
+              <span>
+                <MapPinIcon className="h-6 w-6 mr-2 text-neutral-50" />
+              </span>
+              Task Map
+            </p>
+          </Link>
+          <div className="flex justify-end items-center">
             {!sessionUser || sessionUser === null ? (
               <>
-                <li>
-                  <button onClick={() => router.push('/')}>
+                {/* <li>
+                  <Link href="/">
                     <span className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                       ホーム
                     </span>
-                  </button>
-                </li>
-                <li>
-                  <button onClick={() => router.push('/login')}>
-                    <span className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                      {/* <LoginIcon className="text-white cursor-pointer hover:text-blue-300" /> */}
-                      ログイン
-                    </span>
-                  </button>
+                  </Link>
+                </li> */}
+                <li className="">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                      router.push('/login')
+                    }}
+                    startIcon={<LoginIcon />}
+                    size="small"
+                    style={{
+                      backgroundColor: '#2196f3',
+                    }}
+                  >
+                    ログイン
+                  </Button>
                 </li>
               </>
             ) : (
               <>
                 <li>
-                  <button onClick={() => router.push('/dashboard')}>
+                  <Link href="/dashboard">
                     <span className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                       ダッシュボード
                     </span>
-                  </button>
+                  </Link>
                 </li>
                 <li>
-                  <button onClick={() => router.push('/account')}>
+                  <Link href="/account">
                     <span className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                       アカウント
                     </span>
-                  </button>
+                  </Link>
                 </li>
-                <li>
-                  <button onClick={() => router.push('/mocktest')}>
+                {/* <li>
+                  <Link href="/mocktest">
                     <span className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                       モックテスト
                     </span>
-                  </button>
-                </li>
+                  </Link>
+                </li> */}
                 <li>
                   <form onSubmit={handleSubmit}>
-                    <button type="submit">
-                      {/* <LogoutIcon className="text-white cursor-pointer hover:text-blue-300" /> */}
-                      <span className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                        ログアウト
-                      </span>
-                    </button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      startIcon={<LoginIcon />}
+                      size="small"
+                      type="submit"
+                      style={{
+                        backgroundColor: '#f87171',
+                      }}
+                    >
+                      ログアウト
+                    </Button>
                   </form>
                 </li>
               </>
             )}
-          </ul>
-        </div>
-      </nav>
-    </div>
+          </div>
+        </ul>
+      </div>
+    </nav>
   )
 }
 

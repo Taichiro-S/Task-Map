@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 
-export type RFState = {}
+export type WorkspaceState = {}
 
-const useStore = create<RFState>((set, get) => ({}))
+const useFlowStore = create<WorkspaceState>((set, get) => ({}))
 
-export default useStore
+export default useFlowStore

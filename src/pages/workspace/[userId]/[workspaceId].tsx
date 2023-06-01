@@ -16,22 +16,13 @@ import {
 } from 'utils/reactflow'
 import { shallow } from 'zustand/shallow'
 import 'reactflow/dist/style.css'
-import useStore, { RFState } from 'stores/flowStore'
-import {
-  useQuerySessionUser,
-  useQueryNode,
-  useQueryEdge,
-  useNodeDrag,
-  useNodeDrop,
-  useNodeConnect,
-  useQueryWorkspace,
-  useQueryFlow,
-} from 'hooks'
+import { FlowState, useFlowStore } from 'stores/flowStore'
+import { useQuerySessionUser, useNodeDrag, useNodeDrop, useNodeConnect, useQueryWorkspace, useQueryFlow } from 'hooks'
 import { Layout, Spinner, MenuBar } from 'components'
 import { useRouter } from 'next/router'
 import { useQueryClient } from '@tanstack/react-query'
 
-const selector = (state: RFState) => ({
+const selector = (state: FlowState) => ({
   nodes: state.nodes,
   edges: state.edges,
   onNodesChange: state.onNodesChange,
@@ -42,60 +33,32 @@ const selector = (state: RFState) => ({
 
 const Flow = () => {
   const router = useRouter()
-  const queryClient = useQueryClient()
-  const userId = router.query.userId as string
-  const workspaceId = router.query.workspaceId as string
+  const [userId, setUserId] = useState<string | null>(null)
+  const [workspaceId, setWorkspaceId] = useState<string | null>(null)
   const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
   const reactFlowBounds = reactFlowWrapper.current?.getBoundingClientRect()
   const [reactFlowInstance, setReactFlowInstance] = useState<any>(null) // TODO: 型を指定する
   const { data: sessionUser, error: sessionUserError, isLoading: sessionUserIsLoading } = useQuerySessionUser()
-  const {
-    data: flowDatas,
-    error: flowError,
-    isLoading: flowIsLoading,
-    refetch: refetchFlow,
-  } = useQueryFlow(sessionUser, workspaceId)
-
-  // const {
-  //   data: edgeDatas,
-  //   error: edgeError,
-  //   isLoading: edgeIsLoading,
-  //   refetch: refetchEdge,
-  // } = useQueryEdge(sessionUser, workspaceId)
-  // const {
-  //   data: nodeDatas,
-  //   error: nodeError,
-  //   isLoading: nodeIsLoading,
-  //   refetch: refetchNode,
-  // } = useQueryNode(sessionUser, workspaceId)
-  const {
-    data: workspaceDatas,
-    error: workspaceError,
-    isLoading: workspaceIsLoading,
-    refetch: refetchWorkspace,
-  } = useQueryWorkspace(sessionUser)
-  const { nodes, edges, onNodesChange, onEdgesChange, setInitialFlow, resetFlow } = useStore(selector, shallow)
+  const { data: flowDatas, error: flowError, isLoading: flowIsLoading } = useQueryFlow(userId, workspaceId)
+  const { data: workspaceDatas, error: workspaceError, isLoading: workspaceIsLoading } = useQueryWorkspace()
+  const { nodes, edges, onNodesChange, onEdgesChange, setInitialFlow, resetFlow } = useFlowStore(selector, shallow)
   const { handleNodeClick, handleNodeDragStart, handleNodeDragOver, handleNodeDragStop } = useNodeDrag()
   const { handleNodeDrop } = useNodeDrop(reactFlowInstance, reactFlowBounds)
   const { handleNodeConnectStart, handleNodeConnectEnd } = useNodeConnect()
 
-  // console.log('userId', userId, 'workspaceId', workspaceId)
-  // console.log(sessionUser, workspaceId)
-
   useEffect(() => {
-    if (!sessionUser && !sessionUserIsLoading) {
-      router.push('/login')
-    } else if (sessionUser && sessionUser.id !== userId) {
-      router.push('/dashboard')
+    if (router.isReady) {
+      const userQueryId = router.query.userId as string
+      const workspaceQueryId = router.query.workspaceId as string
+      setUserId(userQueryId)
+      setWorkspaceId(workspaceQueryId)
+      if (!sessionUserIsLoading && !sessionUser) {
+        router.push('/')
+      } else if (sessionUser && sessionUser.id !== userQueryId) {
+        router.push('/dashboard')
+      }
     }
-  }, [sessionUser, sessionUserIsLoading, router])
-
-  // useEffect(() => {
-  //   if (nodeDatas && edgeDatas) {
-  //     resetFlow()
-  //     setInitialFlow(nodeDatas, edgeDatas)
-  //   }
-  // }, [nodeDatas, edgeDatas, setInitialFlow])
+  }, [router, sessionUser, sessionUserIsLoading])
 
   useEffect(() => {
     if (flowDatas) {
@@ -105,20 +68,13 @@ const Flow = () => {
     }
   }, [flowDatas])
 
-  const workspaceTitle = useRef<string | null>(null)
+  const workspaceTitle =
+    workspaceDatas?.length && workspaceDatas?.length > 0
+      ? workspaceDatas.find((workspace) => workspace.id === workspaceId)?.title
+      : ''
 
-  useEffect(() => {
-    if (workspaceDatas) {
-      workspaceTitle.current = workspaceDatas.find((workspace) => workspace.id === workspaceId)!.title
-    }
-  }, [])
-
-  useEffect(() => {
-    refetchFlow()
-  }, [router.asPath])
-
-  if (sessionUserError || flowError) {
-    console.log(sessionUserError, flowError)
+  if (sessionUserError || flowError || workspaceError) {
+    console.error(sessionUserError, flowError)
     return (
       <Layout title="Flow">
         <p>サーバーエラー</p>
@@ -126,7 +82,7 @@ const Flow = () => {
     )
   }
 
-  if (sessionUserIsLoading || flowIsLoading) {
+  if (sessionUserIsLoading || flowIsLoading || workspaceIsLoading) {
     return (
       <Layout title="Flow">
         <Spinner />
@@ -137,7 +93,6 @@ const Flow = () => {
   return (
     <Layout title="Flow">
       <div style={{ width: '100vw', height: '90vh' }} className="reactflow-wrapper" ref={reactFlowWrapper}>
-        {/* <Header /> */}
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -165,7 +120,7 @@ const Flow = () => {
             showZoom={controlSettings.showZoom}
             position={controlSettings.position}
           />
-          <Panel position={panelSettings.position}>{workspaceTitle.current ? workspaceTitle.current : ''}</Panel>
+          <Panel position={panelSettings.position}>{workspaceTitle}</Panel>
           <MiniMap
             nodeBorderRadius={miniMapSettings.nodeBorderRadius}
             position={miniMapSettings.position}
@@ -178,9 +133,12 @@ const Flow = () => {
             variant={backgroundSettings.variant}
             gap={backgroundSettings.gap}
             size={backgroundSettings.size}
+            color={backgroundSettings.color}
           />
         </ReactFlow>
-        <MenuBar workspaceId={workspaceId} />
+        <div className="mx-auto flex justify-center">
+          <MenuBar workspaceId={workspaceId} />
+        </div>
       </div>
     </Layout>
   )

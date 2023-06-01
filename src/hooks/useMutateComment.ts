@@ -1,5 +1,5 @@
 // import { useQueryClient, useMutation } from '@tanstack/react-query'
-// import useStore from 'stores/flowStore'
+// import useFlowStore from 'stores/flowStore'
 // import { supabase } from 'utils/supabase'
 // import { CommentData } from 'types/types'
 
@@ -48,7 +48,7 @@
 
 //   const saveCommentMutation = useMutation({
 //     mutationFn: async (user_id: string | undefined) => {
-//       const comments = useStore.getState().comments
+//       const comments = useFlowStore.getState().comments
 //       // console.log('storeComments', comments)
 //       const commentDatas: Omit<CommentData, 'id' | 'created_at'>[] = comments.map((comment) => {
 //         return {
