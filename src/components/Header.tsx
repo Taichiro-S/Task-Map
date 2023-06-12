@@ -2,27 +2,23 @@ import Link from 'next/link'
 import React, { FC, FormEvent, memo, useEffect, useState } from 'react'
 import { useMutateAuth, useQuerySessionUser } from 'hooks'
 import { useRouter } from 'next/router'
-import { useQueryClient } from '@tanstack/react-query'
 import Spinner from './Spinner'
 import { successToast, errorToast } from 'utils/toast'
 import Button from '@mui/material/Button'
 import LoginIcon from '@mui/icons-material/Login'
 import { MapPinIcon } from '@heroicons/react/24/outline'
-import { styled } from '@mui/material/styles'
-
-const CustomButton = styled(Button)({
-  '&:hover': {
-    backgroundColor: '#d81b60',
-  },
-})
 
 const Header: FC = () => {
   const router = useRouter()
-  const { data: sessionUser, error: sessionUserError, isLoading: sessionUserIsLoading } = useQuerySessionUser()
+  const {
+    data: sessionUser,
+    error: sessionUserError,
+    isLoading: sessionUserIsLoading,
+  } = useQuerySessionUser()
   const { logoutMutation } = useMutateAuth()
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    let variables = void 0
+    const variables = void 0
     logoutMutation.mutate(variables, {
       onSuccess: () => {
         successToast('ログアウトしました')
@@ -43,20 +39,39 @@ const Header: FC = () => {
               <span>
                 <MapPinIcon className="h-6 w-6 mr-2 text-neutral-50" />
               </span>
-              Task Map
+              TaskFlow
             </p>
           </Link>
           <div className="flex justify-end items-center">
             {!sessionUser || sessionUser === null ? (
               <>
-                {/* <li>
+                <li>
                   <Link href="/">
-                    <span className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                      ホーム
+                    <span
+                      className={
+                        router.pathname === '/'
+                          ? ' text-blue-400 mx-1 px-2 py-2 border-t-2 border-blue-400 text-sm font-medium'
+                          : ' text-gray-400 hover:bg-gray-700 hover:text-white mx-1 px-2 py-2 rounded-md text-sm font-medium'
+                      }
+                    >
+                      Home
                     </span>
                   </Link>
-                </li> */}
-                <li className="">
+                </li>
+                <li>
+                  <Link href="/demo">
+                    <span
+                      className={
+                        router.pathname === '/demo'
+                          ? ' text-blue-400 mx-1 px-2 py-2 border-t-2 border-blue-400 text-sm font-medium'
+                          : ' text-gray-400 hover:bg-gray-700 hover:text-white mx-1 px-2 py-2 rounded-md text-sm font-medium'
+                      }
+                    >
+                      Demo
+                    </span>
+                  </Link>
+                </li>
+                <li className="ml-2">
                   <Button
                     variant="contained"
                     color="primary"
@@ -69,34 +84,72 @@ const Header: FC = () => {
                       backgroundColor: '#2196f3',
                     }}
                   >
-                    ログイン
+                    Login
                   </Button>
                 </li>
               </>
             ) : (
               <>
                 <li>
-                  <Link href="/dashboard">
-                    <span className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                      ダッシュボード
+                  <Link href="/">
+                    <span
+                      className={
+                        router.pathname === '/'
+                          ? ' text-blue-400 mx-1 px-2 py-2 border-t-2 border-blue-400 text-sm font-medium'
+                          : ' text-gray-400 hover:bg-gray-700 hover:text-white mx-1 px-2 py-2 rounded-md text-sm font-medium'
+                      }
+                    >
+                      Home
                     </span>
                   </Link>
                 </li>
                 <li>
+                  <Link href="/dashboard">
+                    <span
+                      className={
+                        router.pathname === '/dashboard'
+                          ? ' text-blue-400 mx-1 px-2 py-2 border-t-2 border-blue-400 text-sm font-medium'
+                          : ' text-gray-400 hover:bg-gray-700 hover:text-white mx-1 px-2 py-2 rounded-md text-sm font-medium'
+                      }
+                    >
+                      Dashboard
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/demo">
+                    <span
+                      className={
+                        router.pathname === '/demo'
+                          ? ' text-blue-400 mx-1 px-2 py-2 border-t-2 border-blue-400 text-sm font-medium'
+                          : ' text-gray-400 hover:bg-gray-700 hover:text-white mx-1 px-2 py-2 rounded-md text-sm font-medium'
+                      }
+                    >
+                      Demo
+                    </span>
+                  </Link>
+                </li>
+                <li className="">
                   <Link href="/account">
-                    <span className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                      アカウント
+                    <span
+                      className={
+                        router.pathname === '/account'
+                          ? ' text-blue-400 mx-1 px-2 py-2 border-t-2 border-blue-400 text-sm font-medium'
+                          : ' text-gray-400 hover:bg-gray-700 hover:text-white mx-1 px-2 py-2 rounded-md text-sm font-medium'
+                      }
+                    >
+                      Account
                     </span>
                   </Link>
                 </li>
                 {/* <li>
                   <Link href="/mocktest">
-                    <span className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                    <span className="text-gray-400 hover:bg-gray-700 hover:text-white mx-1 px-2 py-2 rounded-md text-sm font-medium">
                       モックテスト
                     </span>
                   </Link>
                 </li> */}
-                <li>
+                <li className="ml-2">
                   <form onSubmit={handleSubmit}>
                     <Button
                       variant="contained"
@@ -108,7 +161,7 @@ const Header: FC = () => {
                         backgroundColor: '#f87171',
                       }}
                     >
-                      ログアウト
+                      Logout
                     </Button>
                   </form>
                 </li>

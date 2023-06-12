@@ -7,11 +7,11 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { loginSchema } from 'schema/loginSchema'
 import { TextField, Checkbox, FormControlLabel, Button, Card } from '@mui/material'
 import Link from 'next/link'
-import HomeIcon from '@mui/icons-material/Home'
 import { useRouter } from 'next/router'
 import { successToast, errorToast } from 'utils/toast'
-import { LOGIN_SUCCESS, INVALID_LOGIN_CREDENTIALS, LOGIN_ERROR } from 'constant/authMessages'
+import { LOGIN_SUCCESS, INVALID_LOGIN_CREDENTIALS, LOGIN_ERROR } from 'hoge/authMessages'
 import LoginIcon from '@mui/icons-material/Login'
+import { HomeIcon } from '@heroicons/react/24/outline'
 
 import styled from '@emotion/styled'
 
@@ -58,14 +58,11 @@ const Login: NextPage = () => {
   }
   return (
     <>
-      <div className="m-2 flex justify-end">
-        <Button variant="outlined" color="primary" onClick={() => router.push('/')} startIcon={<HomeIcon />}>
-          ホーム
-        </Button>
-      </div>
       <Layout title="Auth">
         <div>
-          <h1 className="text-3xl text-center font-zenMaruGothic mb-4 text-neutral-800">ログイン</h1>
+          <h1 className="text-3xl text-center font-zenMaruGothic mb-4 text-neutral-800">
+            ログイン
+          </h1>
         </div>
         <CustomCard>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -100,7 +97,12 @@ const Login: NextPage = () => {
               />
             </div>
             <div className="m-2 flex justify-center">
-              <Button startIcon={<LoginIcon />} variant="outlined" type="submit" style={{ width: '100%' }}>
+              <Button
+                startIcon={<LoginIcon />}
+                variant="outlined"
+                type="submit"
+                style={{ width: '100%' }}
+              >
                 ログイン
               </Button>
             </div>
@@ -114,6 +116,10 @@ const Login: NextPage = () => {
             </Link>
           </span>
         </div>
+
+        <Link href="/">
+          <HomeIcon className="h-6 w-6 m-2 mt-4 flex justify-center cursor-pointer text-gray-500 hover:text-blue-500" />
+        </Link>
       </Layout>
     </>
   )

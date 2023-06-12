@@ -14,12 +14,29 @@ export const successToast = (message: string, settings: any = authToastSettings)
 export const errorToast = (message: string, settings: any = authToastSettings) => {
   toast.error(message, settings)
 }
-export const loadingToast = (message: string, toastId: string, settings: any = authToastSettings) => {
+export const loadingToast = (
+  message: string,
+  toastId: string,
+  settings: any = authToastSettings,
+) => {
   toast.loading(message, { ...settings, isLoading: true, toastId: toastId })
 }
-export const updateWithSuccessToast = (message: string, toastId: string, settings: any = authToastSettings) => {
-  toast.update(toastId, { ...settings, render: message, isLoading: false, type: toast.TYPE.SUCCESS })
+export const updateWithSuccessToast = (
+  message: string,
+  toastId: string,
+  settings: any = authToastSettings,
+) => {
+  toast.update(toastId, {
+    ...settings,
+    render: message,
+    isLoading: false,
+    type: toast.TYPE.SUCCESS,
+  })
 }
-export const updateWithErrorToast = (message: string, toastId: string, settings: any = authToastSettings) => {
+export const updateWithErrorToast = (
+  message: string,
+  toastId: string,
+  settings: any = authToastSettings,
+) => {
   toast.update(toastId, { ...settings, render: message, isLoading: false, type: toast.TYPE.ERROR })
 }

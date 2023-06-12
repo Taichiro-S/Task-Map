@@ -1,18 +1,16 @@
+import { yupResolver } from '@hookform/resolvers/yup'
+import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit'
+import Alert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
-import TextField from '@mui/material/TextField'
-import DeleteIcon from '@mui/icons-material/Delete'
-import EditIcon from '@mui/icons-material/Edit'
 import IconButton from '@mui/material/IconButton'
-import Alert from '@mui/material/Alert'
-
-import useFlowStore from 'stores/workspaceStore'
+import TextField from '@mui/material/TextField'
 import { NewWorkspace, WorkspaceData } from 'types/types'
-import { yupResolver } from '@hookform/resolvers/yup'
 import { workspaceSchema } from 'schema/workspaceSchema'
 import { useForm } from 'react-hook-form'
 import React, { FC, memo, useEffect, useState } from 'react'
@@ -20,7 +18,6 @@ import { User } from '@supabase/supabase-js'
 import { useMutateWorkspace } from 'hooks'
 import router from 'next/router'
 import { useQueryClient } from '@tanstack/react-query'
-import { toast } from 'react-toastify'
 import { successToast, errorToast } from 'utils/toast'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
@@ -33,11 +30,18 @@ type Props = {
 
 const FormDialog: FC<Props> = ({ workspaceData, isDelete }) => {
   const queryClient = useQueryClient()
+
   const user: User | undefined = queryClient.getQueryData(['sessionUser'])
   const [open, setOpen] = useState(false)
-  const { createWorkspaceMutation, updateWorkspaceMutation, deleteWorkspaceMutation } = useMutateWorkspace()
+  const { createWorkspaceMutation, updateWorkspaceMutation, deleteWorkspaceMutation } =
+    useMutateWorkspace()
   const handleClickOpen = () => {
     setOpen(true)
+    reset({
+      title: workspaceData ? workspaceData.title : '',
+      description: workspaceData ? workspaceData.description : '',
+      public: workspaceData ? workspaceData.public : false,
+    })
   }
 
   const handleClose = () => {
@@ -85,13 +89,13 @@ const FormDialog: FC<Props> = ({ workspaceData, isDelete }) => {
       router.push('/login')
       return
     }
-    console.log(data)
     if (!workspaceData) {
       createWorkspaceMutation.mutate(
         { newWorkspace: data, user_id: user.id },
         {
           onSuccess: () => {
             successToast('ワークスペースを作成しました')
+
             handleClose()
           },
           onError: () => {
@@ -107,6 +111,7 @@ const FormDialog: FC<Props> = ({ workspaceData, isDelete }) => {
           {
             onSuccess: () => {
               successToast('ワークスペースを削除しました')
+
               handleClose()
             },
             onError: () => {
@@ -121,6 +126,7 @@ const FormDialog: FC<Props> = ({ workspaceData, isDelete }) => {
           {
             onSuccess: () => {
               successToast('ワークスペースを更新しました')
+
               handleClose()
             },
             onError: () => {
@@ -166,6 +172,7 @@ const FormDialog: FC<Props> = ({ workspaceData, isDelete }) => {
               label="ワークスペース名"
               type="text"
               fullWidth
+              defaultValue={workspaceData ? workspaceData.title : ''}
               variant="outlined"
               {...register('title')}
               helperText={touchedFields.title && errors?.title?.message}
@@ -179,6 +186,7 @@ const FormDialog: FC<Props> = ({ workspaceData, isDelete }) => {
               multiline
               rows={3}
               fullWidth
+              defaultValue={''}
               {...register('description')}
               helperText={touchedFields.title && errors?.description?.message}
               error={!!errors?.description}

@@ -8,11 +8,11 @@ import {
   ResizeParams,
   Node,
 } from 'reactflow'
-import '@reactflow/node-resizer/dist/style.css'
+// import '@reactflow/node-resizer/dist/style.css'
 import { FlowState, useFlowStore } from 'stores/flowStore'
 import { GroupingNodeInput, GroupingNodeToolBarTop } from 'components'
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
-import { nodeColorList } from 'constant/nodeColorList'
+import { nodeColorList } from 'hoge/nodeColorList'
 
 const GroupingNode: FC<NodeProps> = (props) => {
   const { id, data, selected } = props
@@ -46,7 +46,9 @@ const GroupingNode: FC<NodeProps> = (props) => {
   }, [childNodes])
   const setNodesUnselected = useFlowStore((state) => state.setNodesUnselected)
   const setEdgesUnselected = useFlowStore((state) => state.setEdgesUnselected)
-  const setParentNodeOnNodeResizeStart = useFlowStore((state) => state.setParentNodeOnNodeResizeStart)
+  const setParentNodeOnNodeResizeStart = useFlowStore(
+    (state) => state.setParentNodeOnNodeResizeStart,
+  )
   const resizeGroupingNode = useFlowStore((state) => state.resizeGroupingNode)
   const setParentNodeOnNodeResizeEnd = useFlowStore((state) => state.setParentNodeOnNodeResizeEnd)
   const borderColor = nodeColorList.find((color) => color.colorCode === data.color)?.borderColorCode

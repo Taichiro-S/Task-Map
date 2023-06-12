@@ -1,7 +1,7 @@
 import React, { FC, memo, useState } from 'react'
 import { NodeProps, NodeToolbar, Position } from 'reactflow'
 import { useFlowStore } from 'stores/flowStore'
-import { statusList } from 'constant/statusList'
+import { statusList } from 'hoge/statusList'
 import {
   ArrowTopRightOnSquareIcon,
   ClipboardDocumentIcon,
@@ -35,7 +35,7 @@ const CustomNodeToolBarBottom: FC<NodeProps> = (props) => {
       onClick={(e) => {
         e.stopPropagation()
         setNodesUnselected()
-        // e.preventDefault()
+        e.preventDefault()
       }}
     >
       <div className="bg-white rounded-2xl items-center p-2 w-full">
@@ -153,7 +153,7 @@ const CustomNodeToolBarBottom: FC<NodeProps> = (props) => {
         <div className="m-2">
           <textarea
             placeholder="メモ"
-            className="w-full h-5/6 bg-neutral-100 outline-none overflow-hidden rounded-md focus:border-2  border-neutral-400 p-2 font-mono font-medium text-sm"
+            className="w-full h-5/6 bg-neutral-100 outline-none overflow-auto rounded-md p-2 font-mono font-medium text-sm"
             value={data.memo}
             onChange={(e) => {
               updateNodeMemo(node.id, e.target.value)

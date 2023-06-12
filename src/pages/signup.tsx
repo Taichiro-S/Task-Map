@@ -7,9 +7,9 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { signupSchema } from 'schema/signupSchema'
 import { TextField, Button, Card } from '@mui/material'
 import Link from 'next/link'
-import HomeIcon from '@mui/icons-material/Home'
+import { HomeIcon } from '@heroicons/react/24/outline'
 import { successToast, errorToast } from 'utils/toast'
-import { SIGNUP_SUCCESS, USER_ALREADY_REGISTERED, SIGNUP_ERROR } from 'constant/authMessages'
+import { SIGNUP_SUCCESS, USER_ALREADY_REGISTERED, SIGNUP_ERROR } from 'hoge/authMessages'
 import { useRouter } from 'next/router'
 import styled from '@emotion/styled'
 import LoginIcon from '@mui/icons-material/Login'
@@ -33,7 +33,7 @@ const Signup: NextPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<signupUserData>({
-    mode: 'onChange',
+    mode: 'onSubmit',
     resolver: yupResolver(signupSchema),
   })
   const onSubmit = async (data: signupUserData) => {
@@ -56,14 +56,11 @@ const Signup: NextPage = () => {
   }
   return (
     <>
-      <div className="m-2 flex justify-end">
-        <Button variant="outlined" color="primary" onClick={() => router.push('/')} startIcon={<HomeIcon />}>
-          ホーム
-        </Button>
-      </div>
       <Layout title="Auth">
         <div>
-          <h1 className="text-3xl text-center font-zenMaruGothic mb-4 text-neutral-800">ユーザー登録</h1>
+          <h1 className="text-3xl text-center font-zenMaruGothic mb-4 text-neutral-800">
+            ユーザー登録
+          </h1>
         </div>
         <CustomCard>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -97,20 +94,28 @@ const Signup: NextPage = () => {
               />
             </div>
             <div className="m-2 ">
-              <Button startIcon={<LoginIcon />} variant="outlined" type="submit" style={{ width: '100%' }}>
+              <Button
+                startIcon={<LoginIcon />}
+                variant="outlined"
+                type="submit"
+                style={{ width: '100%' }}
+              >
                 登録
               </Button>
             </div>
           </form>
         </CustomCard>
         <div className="m-2 mt-4">
-          <span>
+          <span className="text-sm text-neutral-600">
             アカウントをお持ちの方は
             <Link href="/login">
               <span className="text-blue-400 hover:text-blue-600">こちら</span>
             </Link>
           </span>
         </div>
+        <Link href="/">
+          <HomeIcon className="h-6 w-6 m-2 mt-4 flex justify-center cursor-pointer text-gray-500 hover:text-blue-500" />
+        </Link>
       </Layout>
     </>
   )

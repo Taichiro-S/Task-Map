@@ -1,17 +1,21 @@
 import { useMutateFlow, useQuerySessionUser } from 'hooks'
 import { DragEvent, FC, memo, useEffect, useState } from 'react'
 import { errorToast, updateWithSuccessToast, updateWithErrorToast } from 'utils/toast'
-import SkipPreviousOutlinedIcon from '@mui/icons-material/SkipPreviousOutlined'
-import SkipNextOutlinedIcon from '@mui/icons-material/SkipNextOutlined'
 import SaveAltIcon from '@mui/icons-material/SaveAlt'
 import Button from '@mui/material/Button'
 import { useTemporalStore } from 'stores/temporalStore'
 import Tooltip from '@mui/material/Tooltip'
 
 const MenuBar: FC<{ workspaceId: string | null }> = ({ workspaceId }) => {
-  const { data: sessionUser, error: sessionUserError, isLoading: sessionUserIsLoading } = useQuerySessionUser()
+  const {
+    data: sessionUser,
+    error: sessionUserError,
+    isLoading: sessionUserIsLoading,
+  } = useQuerySessionUser()
   const { saveFlowMutation } = useMutateFlow()
-  const { undo, redo, pause, resume, futureStates, pastStates, clear } = useTemporalStore((state) => state)
+  const { undo, redo, pause, resume, futureStates, pastStates, clear } = useTemporalStore(
+    (state) => state,
+  )
   const [isSaving, setIsSaving] = useState<boolean>(false)
   const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType: string) => {
     event.dataTransfer.setData('application/reactflow', nodeType)
@@ -42,10 +46,10 @@ const MenuBar: FC<{ workspaceId: string | null }> = ({ workspaceId }) => {
   }
 
   return (
-    <div className="max-w-lg min-w-fit w-1/2 h-1/10 p-2 bg-neutral-50 absolute bottom-20 rounded-2xl drop-shadow-md flex items-center justify-between">
+    <div className="max-w-lg min-w-fit h-1/10 p-2 bg-neutral-50 absolute bottom-20 rounded-2xl drop-shadow-md flex items-center justify-between">
       <Tooltip title="Drag to add TaskNode" placement="top">
         <div
-          className="dndnode input cursor-grab rounded-lg border-2 h-8 mr-2 border-neutral-300 hover:border-neutral-600 px-2 py-1 flex items-center"
+          className="dndnode input cursor-grab rounded-lg border-2 h-8 ml-2 mr-2 border-neutral-300 hover:border-neutral-600 px-2 py-1 flex items-center"
           onDragStart={(event) => onDragStart(event, 'custom')}
           draggable
         >

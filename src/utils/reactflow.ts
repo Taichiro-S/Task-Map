@@ -12,7 +12,7 @@ import { CustomEdge } from 'components'
 import { EdgeTypes, ConnectionLineType, ConnectionMode, DefaultEdgeOptions } from 'reactflow'
 export const connectionLineStyle: React.CSSProperties = { stroke: '#808080', strokeWidth: 1 }
 export const defaultEdgeOptions: DefaultEdgeOptions = { style: connectionLineStyle, type: 'custom' }
-export const defaultConnectionLineType: ConnectionLineType = ConnectionLineType.Straight
+export const defaultConnectionLineType: ConnectionLineType = ConnectionLineType.SimpleBezier
 export const defaultConnectionMode: ConnectionMode = ConnectionMode.Loose
 export const edgeTypes: EdgeTypes = {
   custom: CustomEdge,

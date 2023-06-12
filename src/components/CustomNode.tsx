@@ -1,8 +1,3 @@
-import { FC, memo } from 'react'
-import { Handle, NodeProps, Position } from 'reactflow'
-import { NodeInput, CustomNodeToolBarTop, CustomNodeToolBarBottom } from 'components'
-import { useFlowStore } from 'stores/flowStore'
-import { statusList } from 'constant/statusList'
 import {
   CheckCircleIcon,
   PauseCircleIcon,
@@ -12,6 +7,11 @@ import {
   ChevronUpIcon,
   ChevronDownIcon,
 } from '@heroicons/react/24/outline'
+import { FC, memo } from 'react'
+import { Handle, NodeProps, Position } from 'reactflow'
+import { NodeInput, CustomNodeToolBarTop, CustomNodeToolBarBottom } from 'components'
+import { statusList } from 'hoge/statusList'
+import { useFlowStore } from 'stores/flowStore'
 
 const CustomNode: FC<NodeProps> = (props) => {
   // console.log('node')
@@ -20,7 +20,9 @@ const CustomNode: FC<NodeProps> = (props) => {
   const setNodeOpen = useFlowStore((state) => state.setNodeOpen)
   const node = nodes.find((n) => n.id === id)
   if (!node) return null
-  const noteStatusColorCode = statusList.find((status) => status.statusName === node.data.status)?.statusColorCode
+  const noteStatusColorCode = statusList.find(
+    (status) => status.statusName === node.data.status,
+  )?.statusColorCode
   return (
     <>
       <CustomNodeToolBarTop {...props} />
@@ -33,7 +35,7 @@ const CustomNode: FC<NodeProps> = (props) => {
         }
         style={{ backgroundColor: data.color }}
       >
-        <div className="flex justify-center items-center h-5 relative z-10">
+        <div className="flex justify-center items-center h-6 relative z-10">
           <div className="bg-transparent w-3 h-full mr-0.5 flex items-center">
             <svg viewBox="0 0 24 24">
               <path

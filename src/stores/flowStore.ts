@@ -10,8 +10,9 @@ import {
 } from 'reactflow'
 import { create } from 'zustand'
 import { ZundoOptions, temporal } from 'zundo'
-import { nanoid } from 'nanoid'
-import { nodeColorList } from 'constant/nodeColorList'
+// import { nanoid } from 'nanoid'
+import uuid4 from 'uuid4'
+import { nodeColorList } from 'hoge/nodeColorList'
 import _ from 'lodash'
 
 export type FlowState = {
@@ -87,7 +88,7 @@ export const useFlowStore = create(
 
       addChildNode: (parentNode, position) => {
         const newNode: Node = {
-          id: nanoid(),
+          id: uuid4(),
           type: 'custom',
           data: {
             label: '',
@@ -108,7 +109,7 @@ export const useFlowStore = create(
         }
 
         const newEdge: Edge = {
-          id: nanoid(),
+          id: uuid4(),
           source: parentNode.id,
           target: newNode.id,
           type: 'custom',
@@ -161,7 +162,7 @@ export const useFlowStore = create(
       addNewEdge: (parentNode, childNode) => {
         if (parentNode.id === childNode.id) return
         const newEdge: Edge = {
-          id: nanoid(),
+          id: uuid4(),
           source: parentNode.id,
           target: childNode.id,
           type: 'custom',
@@ -170,7 +171,12 @@ export const useFlowStore = create(
           zIndex: 5,
           markerEnd: 'arrowclosed',
         }
-        if (get().edges.some((edge) => edge.source === newEdge.source && edge.target === newEdge.target)) return
+        if (
+          get().edges.some(
+            (edge) => edge.source === newEdge.source && edge.target === newEdge.target,
+          )
+        )
+          return
 
         set({
           edges: [...get().edges, newEdge],
@@ -179,7 +185,7 @@ export const useFlowStore = create(
 
       addNewNode: (position) => {
         const newNode: Node = {
-          id: nanoid(),
+          id: uuid4(),
           type: 'custom',
           data: {
             label: '',
@@ -225,10 +231,10 @@ export const useFlowStore = create(
       },
       addNewGroupNode: (position: XYPosition) => {
         const newGroupNode: Node = {
-          id: nanoid(),
+          id: uuid4(),
           type: 'grouping',
           data: {
-            label: 'New Group',
+            label: '',
             width: 300,
             height: 200,
             memo: '',
@@ -353,7 +359,10 @@ export const useFlowStore = create(
         nodesCopy.splice(draggedNodeIndex, 1)
 
         // Initialize the insertion index as the index of the last grouping node
-        let insertionIndex = nodesCopy.reduce((acc, cur, index) => (cur.type === 'grouping' ? index : acc), -1)
+        let insertionIndex = nodesCopy.reduce(
+          (acc, cur, index) => (cur.type === 'grouping' ? index : acc),
+          -1,
+        )
 
         for (const groupingNode of nodesCopy) {
           if (groupingNode.type === 'grouping' && groupingNode.parentNode) {
@@ -401,7 +410,12 @@ export const useFlowStore = create(
                 const leftEdge = parentNode.position.x
                 const topEdge = parentNode.position.y
                 const bottomEdge = parentNode.position.y + parentNode.height!
-                if (nodeX < rightEdge && nodeX > leftEdge && nodeY < bottomEdge && nodeY > topEdge) {
+                if (
+                  nodeX < rightEdge &&
+                  nodeX > leftEdge &&
+                  nodeY < bottomEdge &&
+                  nodeY > topEdge
+                ) {
                   node.position = {
                     x: node.position.x - parentNode.position.x,
                     y: node.position.y - parentNode.position.y,

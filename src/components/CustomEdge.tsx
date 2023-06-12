@@ -1,13 +1,21 @@
-import { FlowState, useFlowStore } from 'stores/flowStore'
 import { FC, memo } from 'react'
-import { EdgeText, BaseEdge, EdgeProps, getStraightPath } from 'reactflow'
+import {
+  EdgeText,
+  BaseEdge,
+  EdgeProps,
+  getStraightPath,
+  getBezierPath,
+  getSimpleBezierPath,
+  getSmoothStepPath,
+} from 'reactflow'
 import { EdgeInput } from 'components'
+import { FlowState, useFlowStore } from 'stores/flowStore'
 
 const CustomEdge: FC<EdgeProps> = (props) => {
   // console.log('edge')
   const updateEdgeAnimation = useFlowStore((state) => state.updateEdgeAnimation)
   const { sourceX, sourceY, targetX, targetY, data, selected, id } = props
-  const [edgePath, labelX, labelY] = getStraightPath({
+  const [edgePath, labelX, labelY] = getSimpleBezierPath({
     sourceX,
     sourceY: sourceY - 20,
     targetX,

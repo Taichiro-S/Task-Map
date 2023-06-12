@@ -8,7 +8,7 @@ import { supabase } from 'utils/supabase'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { AuthChangeEvent, Session } from '@supabase/supabase-js'
-import { Zen_Maru_Gothic, Zen_Kaku_Gothic_New } from 'next/font/google'
+import { Zen_Maru_Gothic, Zen_Kaku_Gothic_New, Kosugi_Maru } from 'next/font/google'
 
 if (process.env.NEXT_PUBLIC_ENV === 'development') {
   require('../mocks')
@@ -23,8 +23,17 @@ const queryClient = new QueryClient({
   },
 })
 
-const zenMaruGothic = Zen_Maru_Gothic({ weight: '500', style: 'normal', subsets: ['latin'] })
-const zenKakuGothicNew = Zen_Kaku_Gothic_New({ weight: '400', style: 'normal', subsets: ['latin'] })
+const zenMaruGothic = Zen_Maru_Gothic({
+  weight: ['300', '500', '700'],
+  style: ['normal'],
+  subsets: ['latin'],
+})
+const zenKakuGothicNew = Zen_Kaku_Gothic_New({
+  weight: ['300', '500', '700'],
+  style: ['normal'],
+  subsets: ['latin'],
+})
+const kosugiMaru = Kosugi_Maru({ weight: ['400'], style: ['normal'], subsets: ['latin'] })
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter()
@@ -61,6 +70,7 @@ export default function App({ Component, pageProps }: AppProps) {
           :root {
             --font-zenMaruGothic: ${zenMaruGothic.style.fontFamily};
             --font-zenKakuGothicNew: ${zenKakuGothicNew.style.fontFamily};
+            --font-kosugiMaru: ${kosugiMaru.style.fontFamily};
           }
         `}
       </style>

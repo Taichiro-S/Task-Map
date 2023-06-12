@@ -9,7 +9,7 @@ const GroupingNodeInput: FC<NodeInputProps> = (props) => {
   const updateNodeLabel = useFlowStore((state) => state.updateNodeLabel)
   const [tooltipOpen, setTooltipOpen] = React.useState<boolean>(false)
 
-  const inputWidth = charLengthCalc(label, 8, 12, 30)
+  const inputWidth = charLengthCalc(label, 8, 12, 80)
   return (
     <Tooltip open={tooltipOpen} title="Max 20 characters" placement="top">
       <input
@@ -21,6 +21,7 @@ const GroupingNodeInput: FC<NodeInputProps> = (props) => {
           }, 2000)
         }}
         defaultValue={label}
+        placeholder="New Group"
         className="bg-transparent w-6 h-4 outline-none border-slate-600 text-xs font-mono mx-1"
         style={{ width: inputWidth }}
         maxLength={20}

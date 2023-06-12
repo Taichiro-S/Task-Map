@@ -121,7 +121,12 @@ export const useNodeConnect = () => {
                 const leftEdge = gNode.position.x
                 const topEdge = gNode.position.y
                 const bottomEdge = gNode.position.y + gNode.height!
-                if (nodeX > leftEdge && nodeX < rightEdge && nodeY > topEdge && nodeY < bottomEdge) {
+                if (
+                  nodeX > leftEdge &&
+                  nodeX < rightEdge &&
+                  nodeY > topEdge &&
+                  nodeY < bottomEdge
+                ) {
                   let index = useFlowStore.getState().nodes.indexOf(gNode)
                   parentGroupingNodeCandidates.push({
                     node: gNode,

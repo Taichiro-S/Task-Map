@@ -1,7 +1,11 @@
 import { create } from 'zustand'
 
-export type WorkspaceState = {}
+export type WorkspaceState = {
+  updatedFlag: boolean
+  toggleUpdate: () => void
+}
 
-const useFlowStore = create<WorkspaceState>((set, get) => ({}))
-
-export default useFlowStore
+export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
+  updatedFlag: false,
+  toggleUpdate: () => set({ updatedFlag: !get().updatedFlag }),
+}))

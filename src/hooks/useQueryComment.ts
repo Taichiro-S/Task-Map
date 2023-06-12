@@ -7,7 +7,10 @@ export const useQueryComment = (workspaceId: string) => {
     if (!workspaceId) {
       throw new Error('workspaceId undefined')
     }
-    const { data, error } = await supabase.from('comments').select('*').eq('workspace_id', workspaceId)
+    const { data, error } = await supabase
+      .from('comments')
+      .select('*')
+      .eq('workspace_id', workspaceId)
     if (!data) {
       throw new Error('Failed to fetch commentData')
     }

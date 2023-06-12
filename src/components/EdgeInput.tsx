@@ -1,6 +1,6 @@
 import { FlowState, useFlowStore } from 'stores/flowStore'
 import { ChangeEvent, FC, memo, useState } from 'react'
-import { EdgeProps, getStraightPath, EdgeLabelRenderer } from 'reactflow'
+import { EdgeProps, getStraightPath, getSimpleBezierPath, EdgeLabelRenderer } from 'reactflow'
 import { charLengthCalc } from 'utils/charLengthCalc'
 import Tooltip from '@mui/material/Tooltip'
 
@@ -8,7 +8,7 @@ const EdgeInput: FC<EdgeProps> = (props) => {
   const updateEdgeLabel = useFlowStore((state) => state.updateEdgeLabel)
   const { sourceX, sourceY, targetX, targetY, data, selected, id } = props
   const [tooltipOpen, setTooltipOpen] = useState<boolean>(false)
-  const [edgePath, labelX, labelY] = getStraightPath({
+  const [edgePath, labelX, labelY] = getSimpleBezierPath({
     sourceX,
     sourceY: sourceY - 20,
     targetX,

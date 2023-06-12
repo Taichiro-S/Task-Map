@@ -7,7 +7,9 @@ export function charLengthCalc(
   str = String(str)
   const printableASCII = str.match(/[\x20-\x7E]/g) || []
   const japaneseChars =
-    str.match(/[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}ーａ-ｚＡ-Ｚ０-９々〆〤　]/gu) || []
+    str.match(
+      /[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}ーａ-ｚＡ-Ｚ０-９々〆〤　]/gu,
+    ) || []
 
   // Calculate width based on character count
   const printableASCIITotalWidth = printableASCII.length * printableASCIIWidth

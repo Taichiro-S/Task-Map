@@ -12,7 +12,7 @@ import {
   SIGNUP_ERROR,
   LOGOUT_SUCCESS,
   LOGOUT_ERROR,
-} from 'constant/authMessages'
+} from 'hoge/authMessages'
 
 export const useMutateAuth = () => {
   const queryClient = useQueryClient()
@@ -40,13 +40,14 @@ export const useMutateAuth = () => {
 
   const signupMutation = useMutation({
     mutationFn: async ({ email, password }: { email: string; password: string }) => {
-      const { data, error } = await supabase.auth.signUp({ email, password })
-      if (error) {
-        throw new Error(error.message)
+      const { data: authUserData, error: authUserError } = await supabase.auth.signUp({
+        email,
+        password,
+      })
+      if (authUserError || !authUserData) {
+        throw new Error(`Failed to signup : ${authUserError?.message}`)
       }
-      if (!data) {
-        throw new Error('Failed to signup')
-      }
+      await supabase.from('users').insert({ auth_id: authUserData.user?.id })
     },
     onSuccess: async () => {
       const user = (await supabase.auth.getUser()).data.user

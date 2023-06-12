@@ -1,11 +1,11 @@
 import * as React from 'react'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
-import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import LooksOneIcon from '@mui/icons-material/LooksOne'
 import LooksTwoIcon from '@mui/icons-material/LooksTwo'
 import Looks3Icon from '@mui/icons-material/Looks3'
+import { CheckIcon } from '@heroicons/react/24/outline'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -24,11 +24,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   )
 }
@@ -54,26 +50,29 @@ export default function DemoInstructionTabs() {
           <Tab label="Task Node" {...a11yProps(0)} />
           <Tab label="Group Node" {...a11yProps(1)} />
           <Tab label="Edge" {...a11yProps(2)} />
+          <Tab label="How To Use" {...a11yProps(3)} />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
         <div className="h-1/6">
           <li className="flex items-center">
             <LooksOneIcon color="info" className="h-6 w-6 mr-2" />
-            <p className=" text-base font-semibold font-zenMaruGothic">
-              <code className="bg-neutral-50 p-0.5 text-sm  border-1 border-neutral-600 rounded-md mr-0.5">Task</code>
+            <p className=" text-base font-semibold font-kosugiMaru">
+              <code className="bg-neutral-50 p-0.5 px-1 text-sm  border-1 border-neutral-600 rounded-md mr-0.5">
+                Task
+              </code>
               をドラッグ&ドロップして、新規タスクノードを作成しましょう。
             </p>
           </li>
           <li className="flex items-center">
             <LooksTwoIcon color="info" className="h-6 w-6 mr-2" />
-            <p className=" text-base font-semibold font-zenMaruGothic">
+            <p className=" text-base font-semibold font-kosugiMaru">
               タスクノードには、背景色、タイトル、ステータス、期限、URL、メモを設定できます。
             </p>
           </li>
           <li className="flex items-center">
             <Looks3Icon color="info" className="h-6 w-6 mr-2" />
-            <p className=" text-base font-semibold font-zenMaruGothic">
+            <p className=" text-base font-semibold font-kosugiMaru">
               タスクノードからEdgeを伸ばしてマップ上にドロップすることで新たなタスクノードを追加できます。
             </p>
           </li>
@@ -84,7 +83,9 @@ export default function DemoInstructionTabs() {
           <li className="flex items-center">
             <LooksOneIcon color="info" className="h-6 w-6 mr-2" />
             <p className=" text-base font-semibold font-zenMaruGothic">
-              <code className="bg-neutral-50 p-0.5 text-sm border-1 border-neutral-600 rounded-md mr-0.5">Group</code>
+              <code className="bg-neutral-50 p-0.5 px-1 text-sm border-1 border-neutral-600 rounded-md mr-0.5">
+                Group
+              </code>
               をドラッグ&ドロップして、新規グループノードを作成しましょう。
             </p>
           </li>
@@ -112,12 +113,42 @@ export default function DemoInstructionTabs() {
           </li>
           <li className="flex items-center">
             <LooksTwoIcon color="info" className="h-6 w-6 mr-2" />
-            <p className=" text-base font-semibold font-zenMaruGothic">Edgeをクリックして、テキストを追加できます。</p>
+            <p className=" text-base font-semibold font-zenMaruGothic">
+              Edgeをクリックして、テキストを追加できます。
+            </p>
           </li>
           <li className="flex items-center">
             <Looks3Icon color="info" className="h-6 w-6 mr-2" />
             <p className=" text-base font-semibold font-zenMaruGothic">
               Edgeをダブルクリックして、アニメーションを追加できます。
+            </p>
+          </li>
+        </div>
+      </TabPanel>
+      <TabPanel value={value} index={3}>
+        <div className="h-1/6">
+          <li className="flex items-center">
+            <CheckIcon className="h-5 w-5 mr-2 text-blue-400" />
+            <p className=" text-base font-semibold font-zenMaruGothic"></p>
+          </li>
+          <li className="flex items-center">
+            <CheckIcon className="h-5 w-5 mr-2  text-blue-400" />
+            <p className=" text-base font-semibold font-zenMaruGothic">
+              オートセーブ機能はありません。こまめに保存しましょう。
+            </p>
+          </li>
+          <li className="flex items-center">
+            <CheckIcon className="h-5 w-5 mr-2  text-blue-400" />
+            <p className=" text-base font-semibold font-zenMaruGothic">
+              URL欄を活用し、詳細なメモは外部ツールで行いましょう。
+              <a
+                className="hover:text-blue-400 underline"
+                href="https://www.notion.so/"
+                target="_blank"
+              >
+                notion
+              </a>
+              がおすすめです。
             </p>
           </li>
         </div>

@@ -11,7 +11,10 @@ const selector = (state: FlowState) => ({
 })
 
 export const useNodeDrop = (reactFlowInstance: any, reactFlowBounds: DOMRect | undefined) => {
-  const { addNewNode, addNewGroupNode, reArrangeNodes, setNodeParent } = useFlowStore(selector, shallow)
+  const { addNewNode, addNewGroupNode, reArrangeNodes, setNodeParent } = useFlowStore(
+    selector,
+    shallow,
+  )
 
   const handleNodeDrop = useCallback(
     (event: DragEvent<HTMLDivElement>) => {
@@ -86,7 +89,14 @@ export const useNodeDrop = (reactFlowInstance: any, reactFlowBounds: DOMRect | u
         return
       }
     },
-    [reactFlowInstance, reactFlowBounds, addNewGroupNode, addNewNode, reArrangeNodes, setNodeParent],
+    [
+      reactFlowInstance,
+      reactFlowBounds,
+      addNewGroupNode,
+      addNewNode,
+      reArrangeNodes,
+      setNodeParent,
+    ],
   )
 
   return {

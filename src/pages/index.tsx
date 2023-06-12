@@ -1,129 +1,38 @@
-import React, { useEffect, useRef, useState } from 'react'
-import ReactFlow, { MiniMap, Controls, Background, ReactFlowProvider } from 'reactflow'
-import { shallow } from 'zustand/shallow'
-import 'reactflow/dist/style.css'
-import { FlowState, useFlowStore } from 'stores/flowStore'
-
-import { useQuerySessionUser, useNodeDrag, useNodeDrop, useNodeConnect } from 'hooks/index'
-import {
-  nodeTypes,
-  nodeOrigin,
-  connectionLineStyle,
-  defaultEdgeOptions,
-  edgeTypes,
-  defaultConnectionLineType,
-  defaultConnectionMode,
-  backgroundSettings,
-  controlSettings,
-  miniMapSettings,
-} from 'utils/reactflow'
-import { Layout, MenuBar } from 'components'
-import { useRouter } from 'next/router'
-import { useQueryClient } from '@tanstack/react-query'
-import { DemoInstructionTabs } from 'components'
-
-const selector = (state: FlowState) => ({
-  nodes: state.nodes,
-  edges: state.edges,
-  onNodesChange: state.onNodesChange,
-  onEdgesChange: state.onEdgesChange,
-  resetFlow: state.resetFlow,
-})
-
-function Flow() {
-  // const router = useRouter()
-  const queryClient = useQueryClient()
-  const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
-  const reactFlowBounds = reactFlowWrapper.current?.getBoundingClientRect()
-  const [reactFlowInstance, setReactFlowInstance] = useState<any>(null) // TODO: 型を指定する
-  // const { data: sessionUser, error: sessionUserError, isLoading: sessionUserIsLoading } = useQuerySessionUser()
-  const { nodes, edges, onNodesChange, onEdgesChange, resetFlow } = useFlowStore(selector, shallow)
-  const { handleNodeClick, handleNodeDragStart, handleNodeDragOver, handleNodeDragStop } = useNodeDrag()
-  const { handleNodeDrop } = useNodeDrop(reactFlowInstance, reactFlowBounds)
-  const { handleNodeConnectStart, handleNodeConnectEnd } = useNodeConnect()
-
-  // useEffect(() => {
-  //   if (sessionUser && !sessionUserIsLoading) {
-  //     router.push('/dashboard')
-  //   }
-  // }, [sessionUser, sessionUserIsLoading, router])
-
-  useEffect(() => {
-    queryClient.removeQueries({ queryKey: ['flows'], exact: true })
-    queryClient.removeQueries({ queryKey: ['workspaces'], exact: true })
-    resetFlow()
-  }, [])
+import { Layout } from 'components'
+import Image from 'next/image'
+export default function App() {
   return (
-    <Layout title="Flow">
-      <div className="flex justify-start" style={{ width: '80vw', maxWidth: 900, minWidth: 600 }}>
-        <p className="text-2xl font-zenMaruGothicMono font-bold left-0">
-          <span className="text-blue-500">P</span>
-          <span className="text-neutral-600">lay</span> <span className="text-blue-500">D</span>
-          <span className="text-neutral-600">emo</span>!
-        </p>
-      </div>
-
-      <div className="h-full" style={{ width: '80vw', maxWidth: 900, minWidth: 600 }}>
-        <DemoInstructionTabs />
-      </div>
-      <div
-        style={{ width: '80vw', height: '60vh', maxWidth: 900, minWidth: 600, minHeight: 600 }}
-        className="reactflow-wrapper border-2 border-neutral-600 rounded-md"
-        ref={reactFlowWrapper}
-      >
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          onConnectStart={handleNodeConnectStart}
-          onConnectEnd={handleNodeConnectEnd}
-          onNodeDragStart={handleNodeDragStart}
-          nodeOrigin={nodeOrigin}
-          connectionLineStyle={connectionLineStyle}
-          defaultEdgeOptions={defaultEdgeOptions}
-          connectionLineType={defaultConnectionLineType}
-          fitView
-          onNodeClick={handleNodeClick}
-          onInit={setReactFlowInstance}
-          onDrop={handleNodeDrop}
-          onDragOver={handleNodeDragOver}
-          onNodeDragStop={handleNodeDragStop}
-          connectionMode={defaultConnectionMode}
-        >
-          <Controls
-            showInteractive={controlSettings.showInteractive}
-            showZoom={controlSettings.showZoom}
-            position={controlSettings.position}
-          />
-          <MiniMap
-            nodeBorderRadius={miniMapSettings.nodeBorderRadius}
-            position={miniMapSettings.position}
-            zoomable={miniMapSettings.zoomable}
-            pannable={miniMapSettings.pannable}
-            nodeColor={miniMapSettings.nodeColor}
-            inversePan={miniMapSettings.inversePan}
-          />
-          <Background
-            variant={backgroundSettings.variant}
-            gap={backgroundSettings.gap}
-            size={backgroundSettings.size}
-          />
-        </ReactFlow>
-        <div className="relative top-12 right-0 mx-auto flex justify-center">
-          <MenuBar workspaceId={null} />
+    <Layout title="Home">
+      <div>
+        <h1>MindFlow タスク管理を革新する、ビジュアル化された世界へようこそ</h1>
+        <div className="flex justify-around">
+          <div className="w-1/2">
+            <Image src="/static/Mindmap-rafiki.png" alt="mindmap" width="500" height="500" />
+            <a
+              href="https://storyset.com/work"
+              className="text-xs text-gray-500 hover:text-blue-400 underline"
+            >
+              Work illustrations by Storyset
+            </a>
+          </div>
+          <div className="w-1/2">
+            <h1 className="text-3xl text-center font-zenMaruGothic mb-4 text-neutral-800">
+              【MindFlow】は、あなたのタスク管理を一新する全く新しいツールです
+            </h1>
+            <p className="text-center text-neutral-600">
+              。もはや、長々としたリストや、行き来するスプレッドシートに迷い込むことはありません。思考の流れをそのまま描けるインターフェイスで、一目瞭然、全てが手の中に。
+              自由に配置・編集できるタスクノード
+              テキスト入力可能なタスクノードを自由に配置し、あなたの思考を可視化します。背景色、期限、ステータス、URL、メモといった情報を各ノードに設定可能。色彩を駆使して、視覚的にも情報を整理しましょう。
+              タスク間の繋がりを視覚化
+              各ノードをエッジで結び、タスク間の関係性を明確に示します。エッジにもテキスト設定が可能なので、ノード間の関連性をより具体的に表現できます。
+              まとめて管理するグループノード
+              タスクが多くなってきたら、グループノードを利用して一括管理。サイズと背景色の変更が可能なので、視覚的に整理しやすくなっています。
+              あなたのタスク管理を、まるでマインドマップのようなフローチャートで行うことで、全てが見えやすくなり、思考がスムーズに進みます。大切なプロジェクトを達成するためのステップが、一目で理解できます。
+              革新的なタスク管理ツール【MindFlow】で、あなたの生産性を一段と引き上げ、目標達成への道のりを明瞭にしましょう。思考を描く楽しさを、ぜひ体験してみてください。
+            </p>
+          </div>
         </div>
       </div>
     </Layout>
-  )
-}
-
-export default function App() {
-  return (
-    <ReactFlowProvider>
-      <Flow />
-    </ReactFlowProvider>
   )
 }

@@ -4,12 +4,16 @@ import { useQuerySessionUser, useQueryWorkspace, useMutateWorkspace } from 'hook
 import { NextPage } from 'next'
 import router from 'next/router'
 import React, { useEffect } from 'react'
-import { FlowState, useFlowStore } from 'stores/flowStore'
+import { useFlowStore } from 'stores/flowStore'
 import { successToast } from 'utils/toast'
 
 const Dashboard: NextPage = () => {
   const queryClient = useQueryClient()
-  const { data: sessionUser, error: sessionUserError, isLoading: sessionUserIsLoading } = useQuerySessionUser()
+  const {
+    data: sessionUser,
+    error: sessionUserError,
+    isLoading: sessionUserIsLoading,
+  } = useQuerySessionUser()
   const {
     data: workspaceDatas,
     error: workspaceError,

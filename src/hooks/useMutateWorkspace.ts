@@ -7,9 +7,18 @@ import { successToast, errorToast } from 'utils/toast'
 export const useMutateWorkspace = () => {
   const queryClient = useQueryClient()
   const createWorkspaceMutation = useMutation({
-    mutationFn: async ({ newWorkspace, user_id }: { newWorkspace: NewWorkspace; user_id: string }) => {
+    mutationFn: async ({
+      newWorkspace,
+      user_id,
+    }: {
+      newWorkspace: NewWorkspace
+      user_id: string
+    }) => {
       const newWorkspaceWithUserId = { ...newWorkspace, user_id }
-      const { data, error } = await supabase.from('workspaces').insert(newWorkspaceWithUserId).select('*')
+      const { data, error } = await supabase
+        .from('workspaces')
+        .insert(newWorkspaceWithUserId)
+        .select('*')
       if (error) {
         throw new Error(error.message)
       }
@@ -26,7 +35,13 @@ export const useMutateWorkspace = () => {
   })
 
   const updateWorkspaceMutation = useMutation({
-    mutationFn: async ({ updatedWorkspace, id }: { updatedWorkspace: NewWorkspace; id: string }) => {
+    mutationFn: async ({
+      updatedWorkspace,
+      id,
+    }: {
+      updatedWorkspace: NewWorkspace
+      id: string
+    }) => {
       const { data, error } = await supabase
         .from('workspaces')
         .update({

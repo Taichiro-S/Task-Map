@@ -13,7 +13,8 @@ module.exports = {
       },
       fontFamily: {
         zenMaruGothic: ['var(--font-zenMaruGothic)'],
-        zenMaruGothicMono: ['var(--font-zenMaruGothicMono)'],
+        zenKakuGothicNew: ['var(--font-zenKakuGothicNew)'],
+        kosugiMaru: ['var(--font-kosugiMaru)'],
       },
     },
   },

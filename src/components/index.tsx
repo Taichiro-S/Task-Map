@@ -15,6 +15,8 @@ export { default as MenuBar } from './MenuBar'
 export { default as NodeInput } from './NodeInput'
 // export { default as Note } from './Note'
 export { default as ResizableNode } from './ResizableNode'
+export { default as SideBar } from './SideBar'
+
 export { default as SimpleButton } from './SimpleButton'
 export { default as Spinner } from './Spinner'
 export { default as TestExample } from './TestExample'
