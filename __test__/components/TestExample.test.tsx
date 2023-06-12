@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 
-import TestExample from 'components/TestExample'
+import { TestExample } from 'components'
 
 describe('コンポーネントテスト例', () => {
   test('Hello Worldが表示されるか', async () => {

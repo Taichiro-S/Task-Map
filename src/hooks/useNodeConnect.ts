@@ -1,9 +1,9 @@
 import { useCallback, useRef } from 'react'
 import { OnConnectEnd, Node, useStoreApi, useReactFlow, OnConnectStart } from 'reactflow'
-import useStore, { RFState } from 'stores/flowStore'
+import { FlowState, useFlowStore } from 'stores/flowStore'
 import { shallow } from 'zustand/shallow'
 
-const selector = (state: RFState) => ({
+const selector = (state: FlowState) => ({
   setNodeParent: state.setNodeParent,
   addNewEdge: state.addNewEdge,
   addChildNode: state.addChildNode,
@@ -12,7 +12,7 @@ const selector = (state: RFState) => ({
 export const useNodeConnect = () => {
   const connectingNodeId = useRef<string | null>(null)
   const { project } = useReactFlow()
-  const { setNodeParent, addNewEdge, addChildNode } = useStore(selector, shallow)
+  const { setNodeParent, addNewEdge, addChildNode } = useFlowStore(selector, shallow)
 
   const handleNodeConnectStart: OnConnectStart = useCallback((_, { nodeId }) => {
     connectingNodeId.current = nodeId
@@ -47,12 +47,6 @@ export const useNodeConnect = () => {
         y: event.clientY - top,
       })
     }
-
-    // calculate with positionAbsolute here in order for child nodes to be positioned relative to their parent
-    // return {
-    //   x: panePosition.x - parentNode.positionAbsolute.x + parentNode.width / 2,
-    //   y: panePosition.y - parentNode.positionAbsolute.y + parentNode.height / 2,
-    // }
     return {
       x: panePosition.x,
       y: panePosition.y,
@@ -90,12 +84,6 @@ export const useNodeConnect = () => {
             y: event.clientY - top,
           })
         }
-
-        // calculate with positionAbsolute here in order for child nodes to be positioned relative to their parent
-        // return {
-        //   x: panePosition.x - parentNode.positionAbsolute.x + parentNode.width / 2,
-        //   y: panePosition.y - parentNode.positionAbsolute.y + parentNode.height / 2,
-        // }
         return {
           x: panePosition.x - 20,
           y: panePosition.y - 20,
@@ -117,7 +105,7 @@ export const useNodeConnect = () => {
           const childNodePosition = getChildNodePosition(event, parentNode)
           if (parentNode && childNodePosition) {
             const node: Node = addChildNode(parentNode, childNodePosition)
-            const groupinNodes = useStore.getState().nodes.filter((n) => n.type === 'grouping')
+            const groupinNodes = useFlowStore.getState().nodes.filter((n) => n.type === 'grouping')
             type NodeCandidate = {
               node: Node
               index: number
@@ -133,8 +121,13 @@ export const useNodeConnect = () => {
                 const leftEdge = gNode.position.x
                 const topEdge = gNode.position.y
                 const bottomEdge = gNode.position.y + gNode.height!
-                if (nodeX > leftEdge && nodeX < rightEdge && nodeY > topEdge && nodeY < bottomEdge) {
-                  let index = useStore.getState().nodes.indexOf(gNode)
+                if (
+                  nodeX > leftEdge &&
+                  nodeX < rightEdge &&
+                  nodeY > topEdge &&
+                  nodeY < bottomEdge
+                ) {
+                  let index = useFlowStore.getState().nodes.indexOf(gNode)
                   parentGroupingNodeCandidates.push({
                     node: gNode,
                     index: index,
@@ -155,7 +148,7 @@ export const useNodeConnect = () => {
         }
 
         const targetNodeId = (event.target as Element).getAttribute('data-nodeid')
-        const nodes = useStore.getState().nodes
+        const nodes = useFlowStore.getState().nodes
         if (parentNode && targetNodeId && nodes) {
           const childNode = nodes.find((node) => node.id === targetNodeId)
           if (childNode) {

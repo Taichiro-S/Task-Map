@@ -36,7 +36,15 @@ export default function FormDialog() {
             fullWidth
             variant="outlined"
           />
-          <TextField id="description" margin="dense" label="説明" multiline rows={3} maxRows={3} fullWidth />
+          <TextField
+            id="description"
+            margin="dense"
+            label="説明"
+            multiline
+            rows={3}
+            maxRows={3}
+            fullWidth
+          />
           <DialogContentText></DialogContentText>
         </DialogContent>
         <DialogActions>

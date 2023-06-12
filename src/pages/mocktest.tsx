@@ -1,8 +1,9 @@
 import React from 'react'
 import axios from 'axios'
-import { Layout, Header } from 'components'
+import { Layout } from 'components'
+import { NextPage } from 'next'
 
-const Mocktest = () => {
+const Mocktest: NextPage = () => {
   const apiClient = axios.create({
     baseURL: 'http://localhost:3000/api',
     responseType: 'json',
@@ -45,7 +46,6 @@ const Mocktest = () => {
   }
   return (
     <div>
-      <Header />
       <Layout title="Mocktest">
         <button className="cursor-pointer hover:text-emerald-400" onClick={() => login()}>
           ログイン

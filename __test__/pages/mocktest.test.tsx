@@ -1,10 +1,8 @@
+import { render, fireEvent, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import { render, fireEvent, screen, waitFor } from '@testing-library/react'
-import 'test/utils/setup' // setupファイルのインポート
+import '../utils/setup' // setupファイルのインポート
 import Mocktest from 'pages/mocktest'
-import { setupServer } from 'msw/node'
-import { handlers } from 'mocks/handlers'
 
 // const server = setupServer(...handlers)
 let mockLog: jest.SpyInstance

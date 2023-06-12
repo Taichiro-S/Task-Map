@@ -1,20 +1,11 @@
-import { NewWorkspace } from 'types/types'
 import { create } from 'zustand'
 
-export type RFState = {
-  newWorkspace: NewWorkspace
-  setNewWorkspace: (newWorkspace: NewWorkspace) => void
-  resetNewWorkspace: () => void
+export type WorkspaceState = {
+  updatedFlag: boolean
+  toggleUpdate: () => void
 }
 
-const useStore = create<RFState>((set, get) => ({
-  newWorkspace: {
-    title: '',
-    description: '',
-  },
-  setNewWorkspace: (newWorkspace) =>
-    set({ newWorkspace: { title: newWorkspace.title, description: newWorkspace.description } }),
-  resetNewWorkspace: () => set({ newWorkspace: { title: '', description: '' } }),
+export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
+  updatedFlag: false,
+  toggleUpdate: () => set({ updatedFlag: !get().updatedFlag }),
 }))
-
-export default useStore

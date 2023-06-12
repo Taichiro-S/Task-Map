@@ -1,14 +1,14 @@
-import Header from 'components/Header'
 import { Layout } from 'components'
 import React from 'react'
+import { NextPage } from 'next'
 
-const AccountSettings = () => {
+const AccountSettings: NextPage = () => {
   return (
     <>
-      <Header />
       <Layout title="Account Settings">
-        <div>
+        <div className="text-center">
           <h1>Account Settings</h1>
+          <p className="mt-10 font-zenMaruGothic">準備中...</p>
         </div>
       </Layout>
     </>

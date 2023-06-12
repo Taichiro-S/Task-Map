@@ -3,7 +3,7 @@ export function charLengthCalc(
   printableASCIIWidth: number,
   japaneseWidth: number,
   emptyWidth: number,
-) {
+): number {
   str = String(str)
   const printableASCII = str.match(/[\x20-\x7E]/g) || []
   const japaneseChars =
@@ -17,8 +17,8 @@ export function charLengthCalc(
 
   const totalWidth =
     printableASCIITotalWidth + japaneseTotalWidth < emptyWidth
-      ? emptyWidth + 'px'
-      : `${printableASCIITotalWidth + japaneseTotalWidth}px`
+      ? emptyWidth
+      : printableASCIITotalWidth + japaneseTotalWidth
 
   return totalWidth
 }

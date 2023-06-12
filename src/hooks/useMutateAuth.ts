@@ -2,7 +2,7 @@ import { supabase } from '../utils/supabase'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
-import { toastSettings } from 'utils/authToast'
+import { authToastSettings, successToast, errorToast } from 'utils/toast'
 import {
   LOGIN_SUCCESS,
   INVALID_LOGIN_CREDENTIALS,
@@ -12,18 +12,10 @@ import {
   SIGNUP_ERROR,
   LOGOUT_SUCCESS,
   LOGOUT_ERROR,
-} from 'constants/authMessages'
+} from 'hoge/authMessages'
 
 export const useMutateAuth = () => {
-  const router = useRouter()
   const queryClient = useQueryClient()
-  const successToast = (message: string) => {
-    toast.success(message, toastSettings)
-  }
-  const errorToast = (message: string) => {
-    toast.error(message, toastSettings)
-  }
-
   const loginMutation = useMutation({
     mutationFn: async ({ email, password }: { email: string; password: string }) => {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -31,53 +23,38 @@ export const useMutateAuth = () => {
         password,
       })
       if (error) {
-        if (error.message.includes('Invalid login credentials')) {
-          errorToast(INVALID_LOGIN_CREDENTIALS)
-        } else {
-          errorToast(LOGIN_ERROR)
-        }
-        throw new Error('Failed to login', error)
+        throw new Error(error.message)
       }
       if (!data) {
-        errorToast(LOGIN_ERROR)
         throw new Error('Failed to login')
       }
     },
     onSuccess: async (_, variables: { email: string; password: string }) => {
       const user = (await supabase.auth.getUser()).data.user
       queryClient.setQueryData(['sessionUser'], user)
-      successToast(LOGIN_SUCCESS)
-      router.push('/')
     },
     onError: (error: Error) => {
       throw new Error('Failed to login', error)
     },
   })
 
-  const registerMutation = useMutation({
+  const signupMutation = useMutation({
     mutationFn: async ({ email, password }: { email: string; password: string }) => {
-      const { data, error } = await supabase.auth.signUp({ email, password })
-      if (error) {
-        if (error.message.includes('User already registered')) {
-          errorToast(USER_ALREADY_REGISTERED)
-        } else {
-          errorToast(SIGNUP_ERROR)
-        }
-        throw new Error('Failed to register')
+      const { data: authUserData, error: authUserError } = await supabase.auth.signUp({
+        email,
+        password,
+      })
+      if (authUserError || !authUserData) {
+        throw new Error(`Failed to signup : ${authUserError?.message}`)
       }
-      if (!data) {
-        errorToast(SIGNUP_ERROR)
-        throw new Error('Failed to register')
-      }
+      await supabase.from('users').insert({ auth_id: authUserData.user?.id })
     },
     onSuccess: async () => {
       const user = (await supabase.auth.getUser()).data.user
       queryClient.setQueryData(['sessionUser'], user)
-      successToast(SIGNUP_SUCCESS)
-      router.push('/')
     },
     onError: (error: Error) => {
-      throw new Error('Failed to register', error)
+      throw new Error('Failed to signup', error)
     },
   })
 
@@ -90,9 +67,7 @@ export const useMutateAuth = () => {
       }
     },
     onSuccess: () => {
-      queryClient.setQueryData(['sessionUser'], null)
-      successToast(LOGOUT_SUCCESS)
-      router.push('/login')
+      queryClient.clear()
     },
     onError: (error: Error) => {
       throw new Error('Failed to logout', error)
@@ -100,7 +75,7 @@ export const useMutateAuth = () => {
   })
   return {
     loginMutation,
-    registerMutation,
+    signupMutation,
     logoutMutation,
   }
 }

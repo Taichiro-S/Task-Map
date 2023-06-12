@@ -1,76 +1,121 @@
-import { useState, FormEvent } from 'react'
 import { useForm } from 'react-hook-form'
-import { CheckBadgeIcon, ShieldCheckIcon } from '@heroicons/react/24/solid'
 import type { NextPage } from 'next'
 import { useMutateAuth } from 'hooks/useMutateAuth'
-import { Layout, Header } from 'components'
+import { Layout } from 'components'
 import { signupUserData } from 'types/types'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { signupSchema } from 'schema/signupSchema'
 import { TextField, Button, Card } from '@mui/material'
 import Link from 'next/link'
+import { HomeIcon } from '@heroicons/react/24/outline'
+import { successToast, errorToast } from 'utils/toast'
+import { SIGNUP_SUCCESS, USER_ALREADY_REGISTERED, SIGNUP_ERROR } from 'hoge/authMessages'
+import { useRouter } from 'next/router'
+import styled from '@emotion/styled'
+import LoginIcon from '@mui/icons-material/Login'
 
+const CustomCard = styled(Card)`
+  width: 330px;
+  background-color: #fafafa;
+  margin: 0 auto;
+  padding: 1rem;
+  border-radius: 0.5rem;
+`
+
+const CustomTextField = styled(TextField)`
+  width: 100%;
+`
 const Signup: NextPage = () => {
-  const { registerMutation } = useMutateAuth()
+  const router = useRouter()
+  const { signupMutation } = useMutateAuth()
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<signupUserData>({
-    mode: 'onChange',
+    mode: 'onSubmit',
     resolver: yupResolver(signupSchema),
   })
   const onSubmit = async (data: signupUserData) => {
-    console.log('signup', data)
-    registerMutation.mutate({ email: data.email, password: data.password })
+    // console.log('signup', data)
+    signupMutation.mutate(
+      { email: data.email, password: data.password },
+      {
+        onSuccess: () => {
+          successToast(SIGNUP_SUCCESS)
+        },
+        onError: (error: Error) => {
+          if (error.message.includes('User already registered')) {
+            errorToast(USER_ALREADY_REGISTERED)
+          } else {
+            errorToast(SIGNUP_ERROR)
+          }
+        },
+      },
+    )
   }
   return (
     <>
       <Layout title="Auth">
-        <Card className="m-auto">
+        <div>
+          <h1 className="text-3xl text-center font-zenMaruGothic mb-4 text-neutral-800">
+            ユーザー登録
+          </h1>
+        </div>
+        <CustomCard>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="m-2">
-              <TextField
+              <CustomTextField
                 id="email"
-                label="Email"
+                label="メールアドレス"
                 {...register('email')}
                 helperText={errors?.email?.message}
                 error={!!errors?.email}
               />
             </div>
             <div className="m-2">
-              <TextField
+              <CustomTextField
                 id="password"
-                label="Password"
+                label="パスワード"
                 type="password"
                 {...register('password')}
-                helperText={errors?.password?.message || '8-20 characters'}
+                helperText={errors?.password?.message || '8-20 文字で入力して下さい'}
                 error={!!errors?.password}
               />
             </div>
             <div className="m-2">
-              <TextField
+              <CustomTextField
                 id="repassword"
-                label="Repassword"
+                label="パスワード再入力"
                 type="password"
                 {...register('repassword')}
-                helperText={errors?.repassword?.message || 'パスワードを再入力してください'}
+                helperText={errors?.repassword?.message}
                 error={!!errors?.repassword}
               />
             </div>
             <div className="m-2 ">
-              <Button type="submit">登録</Button>
+              <Button
+                startIcon={<LoginIcon />}
+                variant="outlined"
+                type="submit"
+                style={{ width: '100%' }}
+              >
+                登録
+              </Button>
             </div>
           </form>
-          <div className="m-2">
-            <span>
-              アカウントをお持ちの方は
-              <Link href="/login">
-                <span className="text-blue-300 hover:text-blue-600">こちら</span>
-              </Link>
-            </span>
-          </div>
-        </Card>
+        </CustomCard>
+        <div className="m-2 mt-4">
+          <span className="text-sm text-neutral-600">
+            アカウントをお持ちの方は
+            <Link href="/login">
+              <span className="text-blue-400 hover:text-blue-600">こちら</span>
+            </Link>
+          </span>
+        </div>
+        <Link href="/">
+          <HomeIcon className="h-6 w-6 m-2 mt-4 flex justify-center cursor-pointer text-gray-500 hover:text-blue-500" />
+        </Link>
       </Layout>
     </>
   )
