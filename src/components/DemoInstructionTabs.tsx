@@ -49,7 +49,7 @@ export default function DemoInstructionTabs() {
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab label="Task Node" {...a11yProps(0)} />
           <Tab label="Group Node" {...a11yProps(1)} />
-          <Tab label="Edge" {...a11yProps(2)} />
+          <Tab label="エッジ" {...a11yProps(2)} />
           <Tab label="How To Use" {...a11yProps(3)} />
         </Tabs>
       </Box>
@@ -57,7 +57,7 @@ export default function DemoInstructionTabs() {
         <div className="h-1/6">
           <li className="flex items-center">
             <LooksOneIcon color="info" className="h-6 w-6 mr-2" />
-            <p className=" text-base font-semibold font-kosugiMaru">
+            <p className=" text-base font-semibold font-zenMaruGothic">
               <code className="bg-neutral-50 p-0.5 px-1 text-sm  border-1 border-neutral-600 rounded-md mr-0.5">
                 Task
               </code>
@@ -66,14 +66,14 @@ export default function DemoInstructionTabs() {
           </li>
           <li className="flex items-center">
             <LooksTwoIcon color="info" className="h-6 w-6 mr-2" />
-            <p className=" text-base font-semibold font-kosugiMaru">
+            <p className=" text-base font-semibold font-zenMaruGothic">
               タスクノードには、背景色、タイトル、ステータス、期限、URL、メモを設定できます。
             </p>
           </li>
           <li className="flex items-center">
             <Looks3Icon color="info" className="h-6 w-6 mr-2" />
-            <p className=" text-base font-semibold font-kosugiMaru">
-              タスクノードからEdgeを伸ばしてマップ上にドロップすることで新たなタスクノードを追加できます。
+            <p className=" text-base font-semibold font-zenMaruGothic">
+              タスクノードからエッジを伸ばしてマップ上にドロップすることで新たなタスクノードを追加できます。
             </p>
           </li>
         </div>
@@ -108,19 +108,19 @@ export default function DemoInstructionTabs() {
           <li className="flex items-center">
             <LooksOneIcon color="info" className="h-6 w-6 mr-2" />
             <p className=" text-base font-semibold font-zenMaruGothic">
-              タスクノードからタスクノードへEdgeを伸ばして結びつけることができます。
+              タスクノードからタスクノードへエッジを伸ばして結びつけることができます。
             </p>
           </li>
           <li className="flex items-center">
             <LooksTwoIcon color="info" className="h-6 w-6 mr-2" />
             <p className=" text-base font-semibold font-zenMaruGothic">
-              Edgeをクリックして、テキストを追加できます。
+              エッジをクリックして、テキストを追加できます。
             </p>
           </li>
           <li className="flex items-center">
             <Looks3Icon color="info" className="h-6 w-6 mr-2" />
             <p className=" text-base font-semibold font-zenMaruGothic">
-              Edgeをダブルクリックして、アニメーションを追加できます。
+              エッジをダブルクリックして、アニメーションを追加できます。
             </p>
           </li>
         </div>
@@ -129,7 +129,9 @@ export default function DemoInstructionTabs() {
         <div className="h-1/6">
           <li className="flex items-center">
             <CheckIcon className="h-5 w-5 mr-2 text-blue-400" />
-            <p className=" text-base font-semibold font-zenMaruGothic"></p>
+            <p className=" text-base font-semibold font-zenMaruGothic">
+              グループノードを削除してしまうとグループに含まれるタスクノードも削除されてしまいます。
+            </p>
           </li>
           <li className="flex items-center">
             <CheckIcon className="h-5 w-5 mr-2  text-blue-400" />
