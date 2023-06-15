@@ -10,7 +10,7 @@ import {
 import { FC, memo } from 'react'
 import { Handle, NodeProps, Position } from 'reactflow'
 import { NodeInput, CustomNodeToolBarTop, CustomNodeToolBarBottom } from 'components'
-import { statusList } from 'hoge/statusList'
+import { statusList } from 'constant_values/statusList'
 import { useFlowStore } from 'stores/flowStore'
 
 const CustomNode: FC<NodeProps> = (props) => {

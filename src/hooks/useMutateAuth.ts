@@ -12,7 +12,7 @@ import {
   SIGNUP_ERROR,
   LOGOUT_SUCCESS,
   LOGOUT_ERROR,
-} from 'hoge/authMessages'
+} from 'constant_values/authMessages'
 
 export const useMutateAuth = () => {
   const queryClient = useQueryClient()
