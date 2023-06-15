@@ -5,7 +5,7 @@ import { User } from '@supabase/supabase-js'
 export const useQueryUser = () => {
   const getUser = async () => {
     const sessionUser = (await supabase.auth.getSession()).data.session?.user
-    if (sessionUser && sessionUser !== null) {
+    if (sessionUser) {
       return sessionUser
     }
     const user = (await supabase.auth.getUser()).data.user
