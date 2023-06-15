@@ -1,7 +1,7 @@
 import React, { FC, memo } from 'react'
 import { NodeProps, NodeToolbar, Position } from 'reactflow'
 import { useFlowStore } from 'stores/flowStore'
-import { nodeColorList } from 'hoge/nodeColorList'
+import { nodeColorList } from 'constant_values/nodeColorList'
 
 const GroupingNodeToolBarTop: FC<NodeProps> = (props) => {
   const { data, id, selected } = props

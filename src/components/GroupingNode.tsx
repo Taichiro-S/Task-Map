@@ -12,7 +12,7 @@ import {
 import { FlowState, useFlowStore } from 'stores/flowStore'
 import { GroupingNodeInput, GroupingNodeToolBarTop } from 'components'
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
-import { nodeColorList } from 'hoge/nodeColorList'
+import { nodeColorList } from 'constant_values/nodeColorList'
 
 const GroupingNode: FC<NodeProps> = (props) => {
   const { id, data, selected } = props
