@@ -9,7 +9,7 @@ import { TextField, Checkbox, FormControlLabel, Button, Card } from '@mui/materi
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { successToast, errorToast } from 'utils/toast'
-import { LOGIN_SUCCESS, INVALID_LOGIN_CREDENTIALS, LOGIN_ERROR } from 'constant_values/authMessages'
+import { LOGIN_SUCCESS, INVALID_LOGIN_CREDENTIALS, LOGIN_ERROR } from 'constants/authMessages'
 import LoginIcon from '@mui/icons-material/Login'
 import { HomeIcon } from '@heroicons/react/24/outline'
 

@@ -12,7 +12,7 @@ import {
   SIGNUP_ERROR,
   LOGOUT_SUCCESS,
   LOGOUT_ERROR,
-} from 'constant_values/authMessages'
+} from 'constants/authMessages'
 
 export const useMutateAuth = () => {
   const queryClient = useQueryClient()

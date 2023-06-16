@@ -1,7 +1,7 @@
 import React, { FC, memo, useState } from 'react'
 import { NodeProps, NodeToolbar, Position } from 'reactflow'
 import { useFlowStore } from 'stores/flowStore'
-import { statusList } from 'constant_values/statusList'
+import { statusList } from 'constants/statusList'
 import {
   ArrowTopRightOnSquareIcon,
   ClipboardDocumentIcon,
