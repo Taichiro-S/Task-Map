@@ -3,9 +3,9 @@ import { Layout } from 'components'
 import Image from 'next/image'
 import styled from '@emotion/styled'
 import { useRouter } from 'next/router'
+import { DocumentIcon, FolderIcon, ShareIcon } from '@heroicons/react/24/outline'
 
 const CustomCard = styled(Card)`
-  width: 350px;
   background-color: #fafafa;
   margin: 0 auto;
   padding: 1rem;
@@ -19,7 +19,7 @@ export default function App() {
       <div>
         <div className="flex justify-center">
           <div className="flex items-center justify-around m-10 ">
-            <div className="w-full m-10 mx-auto">
+            <div className="w-full mx-auto">
               <div className="flex justify-center">
                 <div className="text-5xl text-start font-zenMaruGothic mb-60 text-neutral-800">
                   <span className="text-blue-400 bg-neutral-100 rounded-full px-10 py-2 font-semibold">
@@ -29,9 +29,9 @@ export default function App() {
               </div>
               <div className="text-2xl text-center font-zenMaruGothic mt-10 text-neutral-800 px-8 py-4 rounded-md bg-neutral-100 bg-opacity-60 ">
                 <p className="mb-4 font-semibold">思考の流れをそのまま描けるインターフェイスで</p>
-                <p className="font-semibold">あなたのタスク管理を一新します。</p>
+                <p className="font-semibold">あなたのタスク管理を一新します</p>
               </div>
-              <div className="flex justify-center mt-8">
+              <div className="flex justify-center mt-10">
                 <button
                   className="bg-blue-400 hover:bg-blue-600 text-neutral-100 text-lg font-md px-4 py-2 ml-4 rounded-md"
                   onClick={() => {
@@ -55,26 +55,45 @@ export default function App() {
             </div>
           </div>
         </div>
-        <div className="flex w-4/5 justify-center">
-          <CustomCard>
-            自由に配置・編集できるタスクノード
-            テキスト入力可能なタスクノードを自由に配置し、あなたの思考を可視化します。背景色、期限、ステータス、URL、メモといった情報を各ノードに設定可能。色彩を駆使して、視覚的にも情報を整理しましょう。
+        <div className="w-1/2 mx-auto">
+          <p className="text-4xl text-center font-semibold mb-10 mt-10">TaskFlowの特長</p>
+          <CustomCard className="mb-5">
+            <div className="flex items-center mb-2">
+              <div className="bg-green-400 rounded-full p-1 mr-2">
+                <DocumentIcon className="h-6 w-6 text-white" />
+              </div>
+              <span className="text-2xl font-semibold">自由に配置できるタスクノード</span>
+            </div>
+            <p>
+              タスクノードをキャンバス上に自由に配置し、あなたのタスクを可視化します。背景色、期限、ステータス、URL、メモといった情報を各ノードに設定可能です。
+            </p>
           </CustomCard>
+          <CustomCard className="mb-5">
+            <div className="flex items-center mb-2">
+              <div className="bg-yellow-400 rounded-full p-1 mr-2">
+                <ShareIcon className="h-6 w-6 text-white" />
+              </div>
+              <span className="text-2xl font-semibold">タスク間の繋がりを視覚化</span>
+            </div>
 
-          <CustomCard className="ml-0">
-            タスク間の繋がりを視覚化
-            各ノードをエッジで結び、タスク間の関係性を明確に示します。エッジにもテキスト設定が可能なので、ノード間の関連性をより具体的に表現できます。
+            <p>
+              各ノードをエッジで結び、タスク間の関係性を明確に示します。さらにエッジにテキストを設定し、ノード間の関連性をより具体的に表現しましょう。
+            </p>
           </CustomCard>
-          <CustomCard className="ml-0">
-            まとめて管理するグループノード
-            タスクが多くなってきたら、グループノードを利用して一括管理。サイズと背景色の変更が可能なので、視覚的に整理しやすくなっています。
+          <CustomCard className="mb-5">
+            <div className="flex items-center mb-2">
+              <div className="bg-rose-400 rounded-full p-1 mr-2">
+                <FolderIcon className="h-6 w-6 text-white" />
+              </div>
+              <span className="text-2xl font-semibold">まとめて管理するグループノード</span>
+            </div>
+
+            <p>
+              タスクが多くなってきたら、グループノードを利用して一括管理。複数のタスクノードをグループ化して整理しましょう。
+            </p>
           </CustomCard>
         </div>
-        <p className="text-center text-neutral-600">
-          あなたのタスク管理を、まるでマインドマップのようなフローチャートで行うことで、全てが見えやすくなり、思考がスムーズに進みます。大切なプロジェクトを達成するためのステップが、一目で理解できます。
-          革新的なタスク管理ツールTaskFlowで、あなたの生産性を一段と引き上げ、目標達成への道のりを明瞭にしましょう。思考を描く楽しさを、ぜひ体験してみてください。
-        </p>
-        <div className="flex justify-center">
+        <div className="flex justify-center mb-10">
           <a
             href="https://storyset.com/work"
             className="text-xs text-center mt-0 text-gray-500 hover:text-blue-400 underline"
