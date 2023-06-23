@@ -12,7 +12,7 @@ import { create } from 'zustand'
 import { ZundoOptions, temporal } from 'zundo'
 import { nanoid } from 'nanoid'
 import uuid4 from 'uuid4'
-import { nodeColorList } from 'constant_values/nodeColorList'
+import { nodeColorList } from 'constants/nodeColorList'
 import _ from 'lodash'
 
 export type FlowState = {
