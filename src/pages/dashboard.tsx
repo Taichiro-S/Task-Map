@@ -23,8 +23,8 @@ const Dashboard: NextPage = () => {
   const resetFlow = useFlowStore((state) => state.resetFlow)
   useEffect(() => {
     if (!sessionUserIsLoading && !sessionUser) {
-      //   console.log('sessionUser', sessionUser)
-      successToast('セッションの有効期限が切れました')
+      console.log('sessionUser', sessionUser)
+      // successToast('セッションの有効期限が切れました')
       router.push('/')
     }
   }, [sessionUser, sessionUserIsLoading])

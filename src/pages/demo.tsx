@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import ReactFlow, { MiniMap, Controls, Background, ReactFlowProvider } from 'reactflow'
 import { shallow } from 'zustand/shallow'
 import 'reactflow/dist/style.css'
@@ -21,6 +21,7 @@ import { Layout, MenuBar } from 'components'
 import { useRouter } from 'next/router'
 import { useQueryClient } from '@tanstack/react-query'
 import { DemoInstructionTabs } from 'components'
+import { NextPage } from 'next'
 
 const selector = (state: FlowState) => ({
   nodes: state.nodes,
@@ -30,7 +31,7 @@ const selector = (state: FlowState) => ({
   resetFlow: state.resetFlow,
 })
 
-function Flow() {
+const Flow: FC = () => {
   // const router = useRouter()
   const queryClient = useQueryClient()
   const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
@@ -48,7 +49,7 @@ function Flow() {
     resetFlow()
   }, [])
   return (
-    <Layout title="Flow">
+    <Layout title="Demo">
       <div className="flex justify-start" style={{ width: '80vw', maxWidth: 900, minWidth: 600 }}>
         <p className="text-2xl font-zenMaruGothicMono font-bold left-0">
           <span className="text-blue-500">P</span>
@@ -114,10 +115,12 @@ function Flow() {
   )
 }
 
-export default function Demo() {
+const Demo: NextPage = () => {
   return (
     <ReactFlowProvider>
       <Flow />
     </ReactFlowProvider>
   )
 }
+
+export default Demo

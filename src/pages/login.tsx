@@ -58,7 +58,7 @@ const Login: NextPage = () => {
   }
   return (
     <>
-      <Layout title="Auth">
+      <Layout title="Login">
         <div>
           <h1 className="text-3xl text-center font-zenMaruGothic mb-4 text-neutral-800">
             ログイン
