@@ -70,7 +70,7 @@ const Home: NextPage = () => {
         </div>
         <div className="w-1/2 mx-auto">
           <p className="text-4xl text-center font-semibold mb-10 mt-10">TaskFlowの特長</p>
-          <CustomCard className="mb-5">
+          <CustomCard>
             <div className="flex items-center mb-2">
               <div className="bg-green-400 rounded-full p-1 mr-2">
                 <DocumentIcon className="h-6 w-6 text-white" />
@@ -81,7 +81,7 @@ const Home: NextPage = () => {
               タスクノードをキャンバス上に自由に配置し、あなたのタスクを可視化します。背景色、期限、ステータス、URL、メモといった情報を各ノードに設定可能です。
             </p>
           </CustomCard>
-          <CustomCard className="mb-5">
+          <CustomCard>
             <div className="flex items-center mb-2">
               <div className="bg-yellow-400 rounded-full p-1 mr-2">
                 <ShareIcon className="h-6 w-6 text-white" />
@@ -93,7 +93,7 @@ const Home: NextPage = () => {
               各ノードをエッジで結び、タスク間の関係性を明確に示します。さらにエッジにテキストを設定し、ノード間の関連性をより具体的に表現しましょう。
             </p>
           </CustomCard>
-          <CustomCard className="mb-5">
+          <CustomCard>
             <div className="flex items-center mb-2">
               <div className="bg-rose-400 rounded-full p-1 mr-2">
                 <FolderIcon className="h-6 w-6 text-white" />
