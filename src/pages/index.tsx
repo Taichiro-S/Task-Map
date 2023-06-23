@@ -2,6 +2,7 @@ import { Card } from '@mui/material'
 import { Layout } from 'components'
 import Image from 'next/image'
 import styled from '@emotion/styled'
+import { useRouter } from 'next/router'
 
 const CustomCard = styled(Card)`
   width: 350px;
@@ -12,32 +13,44 @@ const CustomCard = styled(Card)`
 `
 
 export default function App() {
+  const router = useRouter()
   return (
     <Layout title="Home">
       <div>
         <div className="flex justify-center">
-          <div className="flex items-center justify-center">
-            <div className="w-1/2">
-              <div className="text-5xl text-start font-zenMaruGothic mb-20 text-neutral-800">
-                <span className="text-blue-400 bg-neutral-100 rounded-full px-6 py-4 font-semibold">
-                  TaskFlow
-                </span>
+          <div className="flex items-center justify-around m-10 ">
+            <div className="w-full m-10 mx-auto">
+              <div className="flex justify-center">
+                <div className="text-5xl text-start font-zenMaruGothic mb-60 text-neutral-800">
+                  <span className="text-blue-400 bg-neutral-100 rounded-full px-10 py-2 font-semibold">
+                    TaskFlow
+                  </span>
+                </div>
               </div>
-              <div className="text-2xl text-start font-zenMaruGothic ml-2 text-neutral-800">
+              <div className="text-2xl text-center font-zenMaruGothic mt-10 text-neutral-800 px-8 py-4 rounded-md bg-neutral-100 bg-opacity-60 ">
                 <p className="mb-4 font-semibold">思考の流れをそのまま描けるインターフェイスで</p>
-
                 <p className="font-semibold">あなたのタスク管理を一新します。</p>
               </div>
-              <div className="flex justify-start mt-8">
-                <button className="bg-blue-400 text-neutral-100 text-lg font-md px-4 py-2 ml-4 rounded-md">
+              <div className="flex justify-center mt-8">
+                <button
+                  className="bg-blue-400 hover:bg-blue-600 text-neutral-100 text-lg font-md px-4 py-2 ml-4 rounded-md"
+                  onClick={() => {
+                    router.push('/login')
+                  }}
+                >
                   Login
                 </button>
-                <button className="bg-orange-400 text-neutral-100 text-lg font-md ml-10 px-4 py-2 rounded-md">
+                <button
+                  className="bg-orange-400 hover:bg-orange-600 text-neutral-100 text-lg font-md ml-10 px-4 py-2 rounded-md"
+                  onClick={() => {
+                    router.push('/demo')
+                  }}
+                >
                   Try Demo
                 </button>
               </div>
             </div>
-            <div className="w-1/2">
+            <div className="m-10 absolute -z-10 opacity-80">
               <Image src="/static/Mindmap-rafiki.png" alt="mindmap" width="600" height="600" />
             </div>
           </div>
