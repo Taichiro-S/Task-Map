@@ -11,7 +11,7 @@ import {
 import { urlChecker } from 'utils/urlChecker'
 import Tooltip from '@mui/material/Tooltip'
 
-const CustomNodeToolBarBottom: FC<NodeProps> = (props) => {
+const TaskNodeToolBarBottom: FC<NodeProps> = (props) => {
   const { data, id } = props
   const nodes = useFlowStore((state) => state.nodes)
   const [toolTiptitle, setToolTiptitle] = useState<string>('COPY')
@@ -23,7 +23,7 @@ const CustomNodeToolBarBottom: FC<NodeProps> = (props) => {
   const updateNodeEndTime = useFlowStore((state) => state.updateNodeEndTime)
   const setNodesUnselected = useFlowStore((state) => state.setNodesUnselected)
   const node = nodes.find((node) => node.id === id)
-  if (!node) throw new Error('node not found')
+  if (!node) return null
   const now = new Date()
   const deadline_datetime = new Date(data.started_at)
   const diff = (deadline_datetime.getTime() - now.getTime()) / (60 * 60 * 1000)
@@ -165,4 +165,4 @@ const CustomNodeToolBarBottom: FC<NodeProps> = (props) => {
   )
 }
 
-export default memo(CustomNodeToolBarBottom)
+export default memo(TaskNodeToolBarBottom)

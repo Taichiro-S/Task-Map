@@ -1,6 +1,13 @@
 import { NextPage } from 'next'
 import React, { useEffect, useRef, useState } from 'react'
-import ReactFlow, { MiniMap, Controls, Background, Panel, ReactFlowProvider } from 'reactflow'
+import ReactFlow, {
+  MiniMap,
+  Controls,
+  Background,
+  Panel,
+  ReactFlowProvider,
+  SelectionMode,
+} from 'reactflow'
 import {
   nodeTypes,
   nodeOrigin,
@@ -25,7 +32,7 @@ import {
   useQueryWorkspace,
   useQueryFlow,
 } from 'hooks'
-import { Layout, Spinner, MenuBar, SideBar } from 'components'
+import { Layout, Spinner, MenuBar, SideBar, TaskNodeInfoDialog } from 'components'
 import { useRouter } from 'next/router'
 import { useQueryClient } from '@tanstack/react-query'
 import { XMarkIcon } from '@heroicons/react/24/outline'
@@ -50,6 +57,8 @@ const Flow = () => {
   const reactFlowBounds = reactFlowWrapper.current?.getBoundingClientRect()
   const [reactFlowInstance, setReactFlowInstance] = useState<any>(null) // TODO: 型を指定する
   const [isMiniMapOpen, setIsMiniMapOpen] = useState<boolean>(true)
+  const [isSideBarOpen, setIsSideBarOpen] = useState(false)
+
   const {
     data: sessionUser,
     error: sessionUserError,
@@ -73,7 +82,6 @@ const Flow = () => {
     useNodeDrag()
   const { handleNodeDrop } = useNodeDrop(reactFlowInstance, reactFlowBounds)
   const { handleNodeConnectStart, handleNodeConnectEnd } = useNodeConnect()
-  const [isSideBarOpen, setIsSideBarOpen] = useState(false)
 
   useEffect(() => {
     if (router.isReady) {
@@ -101,7 +109,7 @@ const Flow = () => {
     workspaceDatas?.length && workspaceDatas?.length > 0
       ? workspaceDatas.find((workspace) => workspace.id === workspaceId)?.title
       : ''
-
+  // const panOnDrag = [1, 2]
   if (sessionUserError || flowError || workspaceError) {
     console.error(sessionUserError, flowError)
     return (
@@ -147,6 +155,10 @@ const Flow = () => {
           onDragOver={handleNodeDragOver}
           onNodeDragStop={handleNodeDragStop}
           connectionMode={defaultConnectionMode}
+          panOnScroll
+          selectionOnDrag
+          // panOnDrag={panOnDrag}
+          selectionMode={SelectionMode.Partial}
         >
           <Controls
             showInteractive={controlSettings.showInteractive}
@@ -161,7 +173,6 @@ const Flow = () => {
                   onClick={() => setIsMiniMapOpen(false)}
                   className="h-5 w-5 text-gray-800 font-semibold z-10 cursor-pointer hover:text-blue-500 hover:border-2 p-0.5 border-neutral-400 rounded-md absolute top-5 right-5"
                 />
-
                 <MiniMap
                   nodeBorderRadius={miniMapSettings.nodeBorderRadius}
                   position={miniMapSettings.position}
@@ -197,17 +208,12 @@ const Flow = () => {
         </div>
         {isSideBarOpen ? (
           <>
-            <ChevronDoubleLeftIcon
-              className="cursor-pointer hover:text-blue-500 z-10 h-5 w-5 text-gray-300"
-              style={{
-                position: 'absolute',
-                top: '115px',
-                left: '300px',
-              }}
-              onClick={() => setIsSideBarOpen(false)}
-            />
             <div className="absolute top-24 left-3 h-3/4 w-80">
-              <SideBar workspaceId={workspaceId} />
+              <SideBar
+                workspaceId={workspaceId}
+                isSideBarOpen={isSideBarOpen}
+                setIsSideBarOpen={setIsSideBarOpen}
+              />
             </div>
           </>
         ) : (
@@ -225,6 +231,7 @@ const Flow = () => {
           </div>
         )}
       </div>
+      <TaskNodeInfoDialog />
     </Layout>
   )
 }

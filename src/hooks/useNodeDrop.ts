@@ -33,7 +33,7 @@ export const useNodeDrop = (reactFlowInstance: any, reactFlowBounds: DOMRect | u
             x: event.clientX - reactFlowBounds.left,
             y: event.clientY - reactFlowBounds.top - 30,
           })
-        } else if (nodeType === 'custom') {
+        } else if (nodeType === 'task') {
           Droppedposition = reactFlowInstance.project({
             x: event.clientX - reactFlowBounds.left - 10,
             y: event.clientY - reactFlowBounds.top - 20,
@@ -44,7 +44,7 @@ export const useNodeDrop = (reactFlowInstance: any, reactFlowBounds: DOMRect | u
           droppedNode = addNewGroupNode(Droppedposition)
           reArrangeNodes(droppedNode)
           return
-        } else if (nodeType === 'custom') {
+        } else if (nodeType === 'task') {
           droppedNode = addNewNode(Droppedposition)
         }
         if (droppedNode === null || !droppedNode) return

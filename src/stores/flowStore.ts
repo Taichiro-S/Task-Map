@@ -21,6 +21,7 @@ export type FlowState = {
   onNodesChange: OnNodesChange
   onEdgesChange: OnEdgesChange
   isNodeDragged: boolean
+  editedNodeId: string
   addChildNode: (parentNode: Node, position: XYPosition) => Node
   addNewEdge: (parentNode: Node, childNode: Node) => void
   updateNodeLabel: (nodeId: string, label: string) => void
@@ -49,6 +50,9 @@ export type FlowState = {
   updateNodeUrl: (nodeId: string, url: string) => void
   updateNodeStartTime: (nodeId: string, startTime: string) => void
   updateNodeEndTime: (nodeId: string, endTime: string) => void
+  setEditedNodeId: (nodeId: string) => void
+  deleteNode: (nodeId: string) => void
+  deleteEdge: (edgeId: string) => void
 }
 
 export const useFlowStore = create(
@@ -57,6 +61,7 @@ export const useFlowStore = create(
       nodes: [],
       edges: [],
       isNodeDragged: false,
+      editedNodeId: '',
       setInitialFlow: (nodes, edges) => {
         set({ nodes: nodes, edges: edges })
       },
@@ -89,7 +94,7 @@ export const useFlowStore = create(
       addChildNode: (parentNode, position) => {
         const newNode: Node = {
           id: uuid4(),
-          type: 'custom',
+          type: 'task',
           data: {
             label: '',
             color: nodeColorList[0].colorCode,
@@ -186,7 +191,7 @@ export const useFlowStore = create(
       addNewNode: (position) => {
         const newNode: Node = {
           id: uuid4(),
-          type: 'custom',
+          type: 'task',
           data: {
             label: '',
             color: nodeColorList[0].colorCode,
@@ -466,6 +471,21 @@ export const useFlowStore = create(
             }
             return node
           }),
+        })
+      },
+      setEditedNodeId: (nodeId) => {
+        set({
+          editedNodeId: nodeId,
+        })
+      },
+      deleteNode: (nodeId) => {
+        set({
+          nodes: get().nodes.filter((node) => node.id !== nodeId),
+        })
+      },
+      deleteEdge: (edgeId) => {
+        set({
+          edges: get().edges.filter((edge) => edge.id !== edgeId),
         })
       },
     }),

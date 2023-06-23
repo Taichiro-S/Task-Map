@@ -1,8 +1,8 @@
 // node settings
-import { CustomNode, GroupingNode } from 'components'
+import { TaskNode, GroupingNode } from 'components'
 import { Node, NodeOrigin, NodeTypes } from 'reactflow'
 export const nodeTypes: NodeTypes = {
-  custom: CustomNode,
+  task: TaskNode,
   grouping: GroupingNode,
 }
 export const nodeOrigin: NodeOrigin = [0, 0]
