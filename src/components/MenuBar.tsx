@@ -50,7 +50,7 @@ const MenuBar: FC<{ workspaceId: string | null }> = ({ workspaceId }) => {
       <Tooltip title="Drag to add TaskNode" placement="top">
         <div
           className="dndnode input cursor-grab rounded-lg border-2 h-8 ml-2 mr-2 border-neutral-300 hover:border-neutral-600 px-2 py-1 flex items-center"
-          onDragStart={(event) => onDragStart(event, 'custom')}
+          onDragStart={(event) => onDragStart(event, 'task')}
           draggable
         >
           <div className="bg-transparent w-5 mr-0.5 h-full flex items-center">

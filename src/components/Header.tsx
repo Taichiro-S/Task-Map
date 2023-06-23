@@ -97,19 +97,6 @@ const Header: FC = () => {
             ) : (
               <>
                 <li>
-                  <Link href="/">
-                    <span
-                      className={
-                        router.pathname === '/'
-                          ? ' text-blue-400 mx-1 px-2 py-2 border-t-2 border-blue-400 text-sm font-medium'
-                          : ' text-gray-400 hover:bg-gray-700 hover:text-white mx-1 px-2 py-2 rounded-md text-sm font-medium'
-                      }
-                    >
-                      Home
-                    </span>
-                  </Link>
-                </li>
-                <li>
                   <Link href="/dashboard">
                     <span
                       className={
@@ -148,13 +135,6 @@ const Header: FC = () => {
                     </span>
                   </Link>
                 </li>
-                {/* <li>
-                  <Link href="/mocktest">
-                    <span className="text-gray-400 hover:bg-gray-700 hover:text-white mx-1 px-2 py-2 rounded-md text-sm font-medium">
-                      モックテスト
-                    </span>
-                  </Link>
-                </li> */}
                 <li className="ml-2">
                   <form onSubmit={handleSubmit}>
                     <Button

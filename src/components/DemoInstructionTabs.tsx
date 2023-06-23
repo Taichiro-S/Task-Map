@@ -47,101 +47,69 @@ export default function DemoInstructionTabs() {
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="Task Node" {...a11yProps(0)} />
-          <Tab label="Group Node" {...a11yProps(1)} />
-          <Tab label="エッジ" {...a11yProps(2)} />
-          <Tab label="How To Use" {...a11yProps(3)} />
+          <Tab label="How To Use" {...a11yProps(0)} />
+          <Tab label="Task Node" {...a11yProps(1)} />
+          <Tab label="Group Node" {...a11yProps(2)} />
+          <Tab label="Edge" {...a11yProps(3)} />
+          <Tab label="Tips" {...a11yProps(4)} />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
         <div className="h-1/6">
-          <li className="flex items-center">
-            <LooksOneIcon color="info" className="h-6 w-6 mr-2" />
-            <p className=" text-base font-semibold font-zenMaruGothic">
-              <code className="bg-neutral-50 p-0.5 px-1 text-sm  border-1 border-neutral-600 rounded-md mr-0.5">
-                Task
-              </code>
-              をドラッグ&ドロップして、新規タスクノードを作成しましょう。
-            </p>
-          </li>
-          <li className="flex items-center">
-            <LooksTwoIcon color="info" className="h-6 w-6 mr-2" />
-            <p className=" text-base font-semibold font-zenMaruGothic">
-              タスクノードには、背景色、タイトル、ステータス、期限、URL、メモを設定できます。
-            </p>
-          </li>
-          <li className="flex items-center">
-            <Looks3Icon color="info" className="h-6 w-6 mr-2" />
-            <p className=" text-base font-semibold font-zenMaruGothic">
-              タスクノードからエッジを伸ばしてマップ上にドロップすることで新たなタスクノードを追加できます。
-            </p>
-          </li>
+          <ul className="list-decimal font-zenMaruGothic">
+            <li>スクロールでキャンバスを上下移動、Shift + スクロールで左右移動できます。</li>
+            <li>Cmd ( Windowsの場合はCtrl ) + スクロールで拡大縮小できます。</li>
+            <li>ノードをドラッグ&ドロップして自由に配置できます。</li>
+          </ul>
         </div>
       </TabPanel>
       <TabPanel value={value} index={1}>
         <div className="h-1/6">
-          <li className="flex items-center">
-            <LooksOneIcon color="info" className="h-6 w-6 mr-2" />
-            <p className=" text-base font-semibold font-zenMaruGothic">
-              <code className="bg-neutral-50 p-0.5 px-1 text-sm border-1 border-neutral-600 rounded-md mr-0.5">
-                Group
+          <ul className="list-decimal font-zenMaruGothic">
+            <li>
+              <code className="bg-neutral-50 p-0.5 px-1 text-sm  border-1 border-neutral-600 rounded-md mr-0.5">
+                Task
               </code>
-              をドラッグ&ドロップして、新規グループノードを作成しましょう。
-            </p>
-          </li>
-          <li className="flex items-center">
-            <LooksTwoIcon color="info" className="h-6 w-6 mr-2" />
-            <p className=" text-base font-semibold font-zenMaruGothic">
-              グループノードには背景色とタイトルを設定でき、サイズを変更することができます。
-            </p>
-          </li>
-          <li className="flex items-center">
-            <Looks3Icon color="info" className="h-6 w-6 mr-2" />
-            <p className=" text-base font-semibold font-zenMaruGothic">
-              タスクノードをグループノード上にドロップすることで、グループ化できます。
-            </p>
-          </li>
+              をドラッグ&ドロップして、新規タスクノードを作成しましょう。
+            </li>
+            <li>タスクノードには、背景色、タイトル、ステータス、期限、URL、メモを設定できます。</li>
+            <li>
+              タスクノードからエッジを伸ばしてマップ上にドロップすることで新たなタスクノードを追加できます。
+            </li>
+          </ul>
         </div>
       </TabPanel>
       <TabPanel value={value} index={2}>
         <div className="h-1/6">
-          <li className="flex items-center">
-            <LooksOneIcon color="info" className="h-6 w-6 mr-2" />
-            <p className=" text-base font-semibold font-zenMaruGothic">
-              タスクノードからタスクノードへエッジを伸ばして結びつけることができます。
-            </p>
-          </li>
-          <li className="flex items-center">
-            <LooksTwoIcon color="info" className="h-6 w-6 mr-2" />
-            <p className=" text-base font-semibold font-zenMaruGothic">
-              エッジをクリックして、テキストを追加できます。
-            </p>
-          </li>
-          <li className="flex items-center">
-            <Looks3Icon color="info" className="h-6 w-6 mr-2" />
-            <p className=" text-base font-semibold font-zenMaruGothic">
-              エッジをダブルクリックして、アニメーションを追加できます。
-            </p>
-          </li>
+          <ul className="list-decimal font-zenMaruGothic">
+            <li>
+              <code className="bg-neutral-50 p-0.5 px-1 text-sm border-1 border-neutral-600 rounded-md mr-0.5">
+                Group
+              </code>
+              をドラッグ&ドロップして、新規グループノードを作成しましょう。
+            </li>
+            <li>グループノードには背景色とタイトルを設定でき、サイズを変更することができます。</li>
+            <li>タスクノードをグループノード上にドロップすることで、グループ化できます。</li>
+          </ul>
         </div>
       </TabPanel>
       <TabPanel value={value} index={3}>
         <div className="h-1/6">
-          <li className="flex items-center">
-            <CheckIcon className="h-5 w-5 mr-2 text-blue-400" />
-            <p className=" text-base font-semibold font-zenMaruGothic">
-              グループノードを削除してしまうとグループに含まれるタスクノードも削除されてしまいます。
-            </p>
-          </li>
-          <li className="flex items-center">
-            <CheckIcon className="h-5 w-5 mr-2  text-blue-400" />
-            <p className=" text-base font-semibold font-zenMaruGothic">
-              オートセーブ機能はありません。こまめに保存しましょう。
-            </p>
-          </li>
-          <li className="flex items-center">
-            <CheckIcon className="h-5 w-5 mr-2  text-blue-400" />
-            <p className=" text-base font-semibold font-zenMaruGothic">
+          <ul className="list-decimal font-zenMaruGothic">
+            <li>タスクノードからタスクノードへエッジを伸ばして結びつけることができます。</li>
+            <li>エッジをクリックして、テキストを追加できます。</li>
+            <li>エッジをダブルクリックして、アニメーションを追加できます。</li>
+          </ul>
+        </div>
+      </TabPanel>
+      <TabPanel value={value} index={4}>
+        <div className="h-1/6">
+          <ul className="list-decimal font-zenMaruGothic">
+            <li>
+              グループノードを削除するとグループに含まれるタスクノードも削除されます。注意しましょう。
+            </li>
+            <li>オートセーブ機能はありません。こまめに保存しましょう。</li>
+            <li>
               URL欄を活用し、詳細なメモは外部ツールで行いましょう。
               <a
                 className="hover:text-blue-400 underline"
@@ -151,8 +119,8 @@ export default function DemoInstructionTabs() {
                 notion
               </a>
               がおすすめです。
-            </p>
-          </li>
+            </li>
+          </ul>
         </div>
       </TabPanel>
     </Box>

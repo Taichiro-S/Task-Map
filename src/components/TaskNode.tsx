@@ -9,11 +9,11 @@ import {
 } from '@heroicons/react/24/outline'
 import { FC, memo } from 'react'
 import { Handle, NodeProps, Position } from 'reactflow'
-import { NodeInput, CustomNodeToolBarTop, CustomNodeToolBarBottom } from 'components'
+import { NodeInput, TaskNodeToolBarTop, TaskNodeToolBarBottom } from 'components'
 import { statusList } from 'constants/statusList'
 import { useFlowStore } from 'stores/flowStore'
 
-const CustomNode: FC<NodeProps> = (props) => {
+const TaskNode: FC<NodeProps> = (props) => {
   // console.log('node')
   const { id, data, selected } = props
   const nodes = useFlowStore((state) => state.nodes)
@@ -25,8 +25,8 @@ const CustomNode: FC<NodeProps> = (props) => {
   )?.statusColorCode
   return (
     <>
-      <CustomNodeToolBarTop {...props} />
-      <CustomNodeToolBarBottom {...props} />
+      <TaskNodeToolBarTop {...props} />
+      <TaskNodeToolBarBottom {...props} />
       <div
         className={
           selected
@@ -79,7 +79,7 @@ const CustomNode: FC<NodeProps> = (props) => {
             )}
           </span>
           <NodeInput label={data.label} id={id} />
-          {data.open ? (
+          {/* {data.open ? (
             <ChevronDownIcon
               className="text-gray-400 cursor-pointer hover:text-blue-700 h-4 w-4 nodrag"
               onClick={(e) => {
@@ -95,7 +95,7 @@ const CustomNode: FC<NodeProps> = (props) => {
                 setNodeOpen(id)
               }}
             />
-          )}
+          )} */}
         </div>
         <Handle
           style={{
@@ -127,4 +127,4 @@ const CustomNode: FC<NodeProps> = (props) => {
   )
 }
 
-export default memo(CustomNode)
+export default memo(TaskNode)
