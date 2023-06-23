@@ -1,7 +1,6 @@
 import { Card } from '@mui/material'
 import { useQueryClient } from '@tanstack/react-query'
 import { Layout } from 'components'
-import { useQuerySessionUser } from 'hooks'
 import { NextPage } from 'next'
 import Image from 'next/image'
 import styled from '@emotion/styled'
@@ -11,29 +10,23 @@ import { DocumentIcon, FolderIcon, ShareIcon } from '@heroicons/react/24/outline
 const CustomCard = styled(Card)`
   background-color: #fafafa;
   margin: 0 auto;
+  margin-bottom: 1.25rem;
   padding: 1rem;
   border-radius: 0.5rem;
 `
 import { useEffect } from 'react'
 import { useFlowStore } from 'stores/flowStore'
 
-
 const Home: NextPage = () => {
   const router = useRouter()
   const queryClient = useQueryClient()
   const resetFlow = useFlowStore((state) => state.resetFlow)
-
-  const {
-    data: sessionUser,
-    error: sessionUserError,
-    isLoading: sessionUserIsLoading,
-  } = useQuerySessionUser()
   useEffect(() => {
     queryClient.removeQueries({ queryKey: ['flows'], exact: true })
     queryClient.removeQueries({ queryKey: ['workspaces'], exact: true })
     resetFlow()
   }, [])
-  
+
   return (
     <Layout title="Home">
       <div>

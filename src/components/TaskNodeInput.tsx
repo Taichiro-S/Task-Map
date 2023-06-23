@@ -9,7 +9,7 @@ import {
   emptyWidthForTaskNode,
 } from 'constants/charLength'
 
-const NodeInput: FC<NodeInputProps> = (props) => {
+const TaskNodeInput: FC<NodeInputProps> = (props) => {
   const { label, id } = props
   const updateNodeLabel = useFlowStore((state) => state.updateNodeLabel)
   const editedNodeId = useFlowStore((state) => state.editedNodeId)
@@ -56,4 +56,4 @@ const NodeInput: FC<NodeInputProps> = (props) => {
   )
 }
 
-export default memo(NodeInput)
+export default memo(TaskNodeInput)

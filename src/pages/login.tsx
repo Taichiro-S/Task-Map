@@ -85,7 +85,7 @@ const Login: NextPage = () => {
                 error={!!errors?.password}
               />
             </div>
-            <div className="m-2 mx-auto">
+            {/* <div className="m-2 mx-auto">
               <FormControlLabel
                 style={{
                   display: 'flex',
@@ -95,7 +95,7 @@ const Login: NextPage = () => {
                 control={<Checkbox {...register('remember')} value="on" />}
                 label="ログイン状態を保持する"
               />
-            </div>
+            </div> */}
             <div className="m-2 flex justify-center">
               <Button
                 startIcon={<LoginIcon />}

@@ -9,7 +9,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { FC, memo } from 'react'
 import { Handle, NodeProps, Position } from 'reactflow'
-import { NodeInput, TaskNodeToolBarTop, TaskNodeToolBarBottom } from 'components'
+import { TaskNodeInput, TaskNodeToolBarTop, TaskNodeToolBarBottom } from 'components'
 import { statusList } from 'constants/statusList'
 import { useFlowStore } from 'stores/flowStore'
 
@@ -78,7 +78,7 @@ const TaskNode: FC<NodeProps> = (props) => {
               />
             )}
           </span>
-          <NodeInput label={data.label} id={id} />
+          <TaskNodeInput label={data.label} id={id} />
           {/* {data.open ? (
             <ChevronDownIcon
               className="text-gray-400 cursor-pointer hover:text-blue-700 h-4 w-4 nodrag"
