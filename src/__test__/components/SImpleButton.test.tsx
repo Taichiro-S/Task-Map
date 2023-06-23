@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { SimpleButton } from 'components'
+import '../utils/setup'
 
 test('ボタンをクリックするとON/OFFの表示が切り替わる', async () => {
   render(<SimpleButton />)

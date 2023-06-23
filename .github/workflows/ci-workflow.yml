@@ -1,0 +1,42 @@
+# ワークフロー名
+name: CI flow
+
+# トリガーとなるアクション
+on: [push]
+
+jobs:
+  ci:
+    # ジョブ名
+    name: ci
+
+    # テスト実行に使用するdocker image
+    runs-on: ubuntu-latest
+
+    # 10分後に強制的に終了する
+    timeout-minutes: 10
+
+    steps:
+      # ワークフロー内でgithubリポジトリのソースコードを参照する
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # 単体テスト実行
+      # テストに成功したら下記のsuccessが実行され、失敗したらfailureが実行
+      - name: Unit Test
+        run: cd ${{ github.workspace }}
+      - run: npm install && npm run test
+
+      - name: Success
+        uses: rtCamp/action-slack-notify@v2.0.2
+        # 成功した場合
+        if: success()
+
+      - name: Failure
+        uses: rtCamp/action-slack-notify@v2.0.2
+        # 失敗した場合
+        if: failure()
+
+      - name: Cancel
+        uses: rtCamp/action-slack-notify@v2.0.2
+        # タイムアウトした場合
+        if: cancelled()

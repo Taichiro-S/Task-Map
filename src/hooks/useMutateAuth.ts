@@ -1,18 +1,7 @@
 import { supabase } from '../utils/supabase'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'react-toastify'
-import { useRouter } from 'next/router'
-import { authToastSettings, successToast, errorToast } from 'utils/toast'
-import {
-  LOGIN_SUCCESS,
-  INVALID_LOGIN_CREDENTIALS,
-  LOGIN_ERROR,
-  SIGNUP_SUCCESS,
-  USER_ALREADY_REGISTERED,
-  SIGNUP_ERROR,
-  LOGOUT_SUCCESS,
-  LOGOUT_ERROR,
-} from 'hoge/authMessages'
+import { errorToast } from 'utils/toast'
+import { LOGOUT_ERROR } from 'constants/authMessages'
 
 export const useMutateAuth = () => {
   const queryClient = useQueryClient()

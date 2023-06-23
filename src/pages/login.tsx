@@ -9,7 +9,7 @@ import { TextField, Checkbox, FormControlLabel, Button, Card } from '@mui/materi
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { successToast, errorToast } from 'utils/toast'
-import { LOGIN_SUCCESS, INVALID_LOGIN_CREDENTIALS, LOGIN_ERROR } from 'hoge/authMessages'
+import { LOGIN_SUCCESS, INVALID_LOGIN_CREDENTIALS, LOGIN_ERROR } from 'constants/authMessages'
 import LoginIcon from '@mui/icons-material/Login'
 import { HomeIcon } from '@heroicons/react/24/outline'
 
@@ -58,7 +58,7 @@ const Login: NextPage = () => {
   }
   return (
     <>
-      <Layout title="Auth">
+      <Layout title="Login">
         <div>
           <h1 className="text-3xl text-center font-zenMaruGothic mb-4 text-neutral-800">
             ログイン

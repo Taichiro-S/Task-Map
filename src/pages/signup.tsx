@@ -9,7 +9,7 @@ import { TextField, Button, Card } from '@mui/material'
 import Link from 'next/link'
 import { HomeIcon } from '@heroicons/react/24/outline'
 import { successToast, errorToast } from 'utils/toast'
-import { SIGNUP_SUCCESS, USER_ALREADY_REGISTERED, SIGNUP_ERROR } from 'hoge/authMessages'
+import { SIGNUP_SUCCESS, USER_ALREADY_REGISTERED, SIGNUP_ERROR } from 'constants/authMessages'
 import { useRouter } from 'next/router'
 import styled from '@emotion/styled'
 import LoginIcon from '@mui/icons-material/Login'
@@ -56,7 +56,7 @@ const Signup: NextPage = () => {
   }
   return (
     <>
-      <Layout title="Auth">
+      <Layout title="Signup">
         <div>
           <h1 className="text-3xl text-center font-zenMaruGothic mb-4 text-neutral-800">
             ユーザー登録

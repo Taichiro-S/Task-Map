@@ -1,20 +1,26 @@
 import Link from 'next/link'
-import React, { FC, FormEvent, memo, useEffect, useState } from 'react'
+import React, { FC, FormEvent, memo } from 'react'
 import { useMutateAuth, useQuerySessionUser } from 'hooks'
 import { useRouter } from 'next/router'
-import Spinner from './Spinner'
 import { successToast, errorToast } from 'utils/toast'
 import Button from '@mui/material/Button'
 import LoginIcon from '@mui/icons-material/Login'
 import { MapPinIcon } from '@heroicons/react/24/outline'
+import { useQueryClient } from '@tanstack/react-query'
+import { User } from '@supabase/supabase-js'
+import { Spinner } from 'components'
 
 const Header: FC = () => {
+  // const queryClient = useQueryClient()
+  // const user = queryClient.getQueryData<User | null | undefined>(['sessionUser'])
+  // console.log('query user', user)
   const router = useRouter()
   const {
     data: sessionUser,
     error: sessionUserError,
     isLoading: sessionUserIsLoading,
   } = useQuerySessionUser()
+
   const { logoutMutation } = useMutateAuth()
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -43,7 +49,7 @@ const Header: FC = () => {
             </p>
           </Link>
           <div className="flex justify-end items-center">
-            {!sessionUser || sessionUser === null ? (
+            {!sessionUser ? (
               <>
                 <li>
                   <Link href="/">

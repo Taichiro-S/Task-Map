@@ -8,11 +8,11 @@ import {
   ResizeParams,
   Node,
 } from 'reactflow'
-// import '@reactflow/node-resizer/dist/style.css'
+import '@reactflow/node-resizer/dist/style.css'
 import { FlowState, useFlowStore } from 'stores/flowStore'
 import { GroupingNodeInput, GroupingNodeToolBarTop } from 'components'
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
-import { nodeColorList } from 'hoge/nodeColorList'
+import { nodeColorList } from 'constants/nodeColorList'
 
 const GroupingNode: FC<NodeProps> = (props) => {
   const { id, data, selected } = props
