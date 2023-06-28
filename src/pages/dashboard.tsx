@@ -45,7 +45,7 @@ const Dashboard: NextPage = () => {
   if (sessionUserError || workspaceError) {
     return (
       <Layout title="Dashboard">
-        <div>error</div>
+        <div>データの読み込みに失敗しました</div>
       </Layout>
     )
   }

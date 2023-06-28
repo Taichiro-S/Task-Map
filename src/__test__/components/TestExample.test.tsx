@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import '../utils/setup'
+import '../utils/supabase'
 import { TestExample } from 'components'
 
 describe('コンポーネントテスト例', () => {

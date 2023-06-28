@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import type { NextPage } from 'next'
 import { useMutateAuth } from 'hooks/useMutateAuth'
 import { Layout } from 'components'
-import { signupUserData } from 'types/types'
+import { SignupUserData } from 'types/types'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { signupSchema } from 'schema/signupSchema'
 import { TextField, Button, Card } from '@mui/material'
@@ -32,11 +32,11 @@ const Signup: NextPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<signupUserData>({
+  } = useForm<SignupUserData>({
     mode: 'onSubmit',
     resolver: yupResolver(signupSchema),
   })
-  const onSubmit = async (data: signupUserData) => {
+  const onSubmit = async (data: SignupUserData) => {
     // console.log('signup', data)
     signupMutation.mutate(
       { email: data.email, password: data.password },

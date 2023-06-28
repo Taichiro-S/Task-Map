@@ -75,14 +75,14 @@ export type NodeInputProps = {
   id: string
 }
 
-export type signupUserData = {
+export type SignupUserData = {
   email: string
   password: string
   repassword: string
   showPassword: boolean
 }
 
-export type loginUserData = {
+export type LoginUserData = {
   email: string
   password: string
   remember?: string
