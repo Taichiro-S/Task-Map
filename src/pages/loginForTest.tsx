@@ -16,7 +16,6 @@ const LoginForTest: NextPage = () => {
       email,
       password,
     })
-    console.log(data, error)
     if (error) {
       setMessage(error.message)
     }

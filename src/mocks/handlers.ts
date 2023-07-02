@@ -5,7 +5,6 @@ const API_ENDPOINT = process.env.NEXT_PUBLIC_SUPABASE_URL
 const authEndpoint = `${API_ENDPOINT}/auth/v1/token`
 export const handlers = [
   rest.post(authEndpoint, async (req, res, ctx) => {
-    console.log('req', req, 'res', res, 'ctx', ctx)
     const userInput = await req.json()
     // login with valid credentials
     if (userInput.email === 'valid@email.com' && userInput.password === 'validpassword') {
