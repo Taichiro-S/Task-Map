@@ -26,5 +26,7 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_API_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_API_KEY }}
-        run: cd ${{ github.workspace }}
-      - run: npm install && npm run test
+        run: |
+          cd ${{ github.workspace }}
+          npm install
+          npm run test
