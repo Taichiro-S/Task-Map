@@ -31,7 +31,7 @@ const WorkspaceCard: FC<Props> = ({ workspaceData }) => {
   const update_at = formatDateTime(workspaceData.updated_at)
   if (sessionUserIsLoading) return <Spinner />
   if (sessionUserError) return <div>error</div>
-  console.log(workspaceData)
+  // console.log(workspaceData)
   return (
     <Card sx={{ width: '100%', maxWidth: 600, minWidth: 400 }}>
       <CardContent>
