@@ -23,20 +23,10 @@ jobs:
       # 単体テスト実行
       # テストに成功したら下記のsuccessが実行され、失敗したらfailureが実行
       - name: Unit Test
-        run: cd ${{ github.workspace }}
-      - run: npm install && npm run test
-
-      - name: Success
-        uses: rtCamp/action-slack-notify@v2.0.2
-        # 成功した場合
-        if: success()
-
-      - name: Failure
-        uses: rtCamp/action-slack-notify@v2.0.2
-        # 失敗した場合
-        if: failure()
-
-      - name: Cancel
-        uses: rtCamp/action-slack-notify@v2.0.2
-        # タイムアウトした場合
-        if: cancelled()
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_API_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_API_KEY }}
+        run: |
+          cd ${{ github.workspace }}
+          npm install
+          npm run test

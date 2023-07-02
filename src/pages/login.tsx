@@ -2,17 +2,16 @@ import { useForm } from 'react-hook-form'
 import type { NextPage } from 'next'
 import { useMutateAuth } from 'hooks/useMutateAuth'
 import { Layout } from 'components'
-import { loginUserData } from 'types/types'
+import { LoginUserData } from 'types/types'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { loginSchema } from 'schema/loginSchema'
-import { TextField, Checkbox, FormControlLabel, Button, Card } from '@mui/material'
+import { TextField, Button, Card } from '@mui/material'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { successToast, errorToast } from 'utils/toast'
 import { LOGIN_SUCCESS, INVALID_LOGIN_CREDENTIALS, LOGIN_ERROR } from 'constants/authMessages'
 import LoginIcon from '@mui/icons-material/Login'
 import { HomeIcon } from '@heroicons/react/24/outline'
-
 import styled from '@emotion/styled'
 
 const CustomCard = styled(Card)`
@@ -34,11 +33,11 @@ const Login: NextPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<loginUserData>({
+  } = useForm<LoginUserData>({
     mode: 'onSubmit',
     resolver: yupResolver(loginSchema),
   })
-  const onSubmit = async (data: loginUserData) => {
+  const onSubmit = async (data: LoginUserData) => {
     // console.log('login', data)
     loginMutation.mutate(
       { email: data.email, password: data.password },

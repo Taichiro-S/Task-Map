@@ -1,44 +1,18 @@
 import { rest } from 'msw'
 
+const API_ENDPOINT = process.env.NEXT_PUBLIC_SUPABASE_URL
+
+const authEndpoint = `${API_ENDPOINT}/auth/v1/token`
 export const handlers = [
-  rest.post('http://localhost:3000/api/login', (req, res, ctx) => {
-    // Persist user's authentication in the session
-    sessionStorage.setItem('is-authenticated', 'true')
-    return res(
-      // Respond with a 200 status code
-      ctx.status(200),
-    )
-  }),
-
-  rest.post('http://localhost:3000/api/logout', (req, res, ctx) => {
-    // Persist user's authentication in the session
-    sessionStorage.setItem('is-authenticated', 'false')
-    return res(
-      // Respond with a 200 status code
-      ctx.status(200),
-    )
-  }),
-
-  rest.get('http://localhost:3000/api/user', (req, res, ctx) => {
-    // Check if the user is authenticated in this session
-    const isAuthenticated = sessionStorage.getItem('is-authenticated')
-
-    if (!isAuthenticated || isAuthenticated === null || isAuthenticated === 'false') {
-      // If not authenticated, respond with a 403 error
-      return res(
-        ctx.status(403),
-        ctx.json({
-          errorMessage: 'Not authorized',
-        }),
-      )
+  rest.post(authEndpoint, async (req, res, ctx) => {
+    const userInput = await req.json()
+    // login with valid credentials
+    if (userInput.email === 'valid@email.com' && userInput.password === 'validpassword') {
+      return res(ctx.status(200), ctx.json({ access_token: 'test_token', token_type: 'bearer' }))
     }
-
-    // If authenticated, return a mocked user details
-    return res(
-      ctx.status(200),
-      ctx.json({
-        username: 'admin',
-      }),
-    )
+    // login with invalid credentials
+    return res(ctx.status(401), ctx.json({ error: 'メールアドレスかパスワードが間違っています。' }))
   }),
+
+  // You would also add handlers for sign up and sign out here...
 ]

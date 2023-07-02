@@ -1,38 +1,74 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# TaskFlow
 
-## Getting Started
+就職用ポートフォリオの１つとして作成した Web アプリケーションです。フロントエンドは [Next.js](https://nextjs.org/), バックエンドは [Supabase](https://supabase.com/), デプロイ先として [Vercel](https://vercel.com/) 、また CI/CD ツールとして [Github Actions](https://github.co.jp/features/actions) を使用しています。
 
-First, run the development server:
+## どんなアプリ？
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+**フローチャート形式でタスクを管理**できるアプリです。キャンバス上に自由にタスクを配置して、**タスクの分岐、タスク間の関係、タスクのグループ**を表現することができます。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 何のために？
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+よくあるリスト形式のタスク管理アプリでは、タスク間の関係を表現することができません。そのため、自分が取り組んでいるタスクの位置付けや、そもそもの目的を見失ってしまうことがあります。
+このアプリを使用することで、**全体を俯瞰し、各ステップの進捗度、問題点などを整理して把握できる**ようになることを期待しています。
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## 主な機能
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+- Supabase の認証システムを利用してユーザ登録、ログイン、ログアウトができる
+- 登録されたユーザは以下の３つの要素を使用して、フローチャート形式でタスクを管理することができる
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+  1. タスクノード
 
-## Learn More
+     タスクを書き込む。キャンバス上に自由に配置でき、タイトル、背景色、ステータス、締切、URL、メモを設定できる。
 
-To learn more about Next.js, take a look at the following resources:
+  2. エッジ
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+     タスクノードからドラッグ&ドロップで他のタスクと結びつける。テキストとアニメーションを設定できる。キャンバス上にドロップすると新たなタスクノードを生成できる。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+  3. グループノード
 
-## Deploy on Vercel
+     タスクノードをグループ化することができる。テキスト、背景色、サイズを設定できる。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- ユーザは上記要素を含むキャンバス（ワークスペース）を複数作成することができる
+- ワークスペースにはタイトルと説明文を設定することができ、更新、削除することができる
+- 未登録ユーザは上記アプリのデモ版を試用することができる
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## 使用した技術について
+
+### Next.js
+
+Next.js は React をベースとしたフロントエンドフレームワークです。
+ページごとに SSG や SSR といった最適なレンダリングの方法を選択できることが最大の特長で、これにより SEO および UX の向上が期待できます。
+
+### TypeScript
+
+TypeScript は静的型付けを可能にした JavaScript の上位互換です。
+静的型付けにより、コードの安全性が向上し、バグが発見しやすくなります。また JavaScript ベースであるため学習コストが低いのも特長です。
+
+### フロントエンドで使用しているライブラリ
+
+- mui 5.13.2 : UI パーツ
+- heroicons 2.0.13 : アイコン
+- tanstack/react-query 4.29.5 : キャッシュデータの管理
+- tailwind css 3.3.2 : CSS スタイリング
+- eslint 8.40.0 : コード品質チェック
+- prettier 2.8.8 : コードフォーマット
+- reactflow : フローチャート生成
+- react-hook-form : フォーム処理
+- yup : フォームバリデーション
+- zustand : グローバルな状態管理
+- ( jest 29.5.0 : ユニットテスト )
+- ( msw : テスト時の API モック )
+
+### Supabase
+
+Supabase はリアルタイムのデータベース、認証、ストレージ、サーバーレス機能などを提供する BaaS です。
+データベースシステムとして NoSQL を使用する Firebase に対し、Supabase では PostgreSQL を使用しているため、より複雑なリレーショナルデータを扱うことができ、トランザクション処理を行うことが可能です。
+
+### Vercel
+
+Vercel はウェブアプリケーションの構築とデプロイのためのプラットフォームです。
+github のアカウントと紐づけることにより、main ブランチへの push をトリガーにして自動的にアプリケーションがビルドされてデプロイされます。また、main ブランチ以外への push によりプレビューデプロイが実行され、アプリケーションのプレビューおよびプレビューページへのコメントが可能になります。
+
+### Github Actions
+
+GitHub Actions は、ビルド、テスト、デプロイのパイプラインを自動化できる CI/CD のプラットフォームです。github への push や merge をトリガーにして、テストを実行し、Vercel CLI を使用することでビルドおよびデプロイを自動化できます。
