@@ -31,7 +31,7 @@ type Props = {
 const FormDialog: FC<Props> = ({ workspaceData, isDelete }) => {
   const queryClient = useQueryClient()
 
-  const user: User | undefined = queryClient.getQueryData(['sessionUser'])
+  const user: User | undefined = queryClient.getQueryData(['auth'])
   const [open, setOpen] = useState(false)
   const { createWorkspaceMutation, updateWorkspaceMutation, deleteWorkspaceMutation } =
     useMutateWorkspace()

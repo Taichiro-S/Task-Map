@@ -6,7 +6,7 @@ import { WorkspaceData } from 'types/types'
 import { Spinner, WorkspaceFormDialog } from 'components'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
-import { useQuerySessionUser, useQueryWorkspace } from 'hooks'
+import { useQueryAuth, useQueryWorkspace } from 'hooks'
 import LockIcon from '@mui/icons-material/Lock'
 import PublicIcon from '@mui/icons-material/Public'
 import { formatDateTime } from 'utils/dateTimeFormat'
@@ -19,18 +19,14 @@ type Props = {
 
 const WorkspaceCard: FC<Props> = ({ workspaceData }) => {
   const router = useRouter()
-  const {
-    data: sessionUser,
-    error: sessionUserError,
-    isLoading: sessionUserIsLoading,
-  } = useQuerySessionUser()
+  const { data: authUser, error: authUserError, isLoading: authUserIsLoading } = useQueryAuth()
   const queryClient = useQueryClient()
   const handleClick = async () => {
     router.push(`/workspace/${workspaceData.user_id}/${workspaceData.id}`)
   }
   const update_at = formatDateTime(workspaceData.updated_at)
-  if (sessionUserIsLoading) return <Spinner />
-  if (sessionUserError) return <div>error</div>
+  if (authUserIsLoading) return <Spinner />
+  if (authUserError) return <div>error</div>
   // console.log(workspaceData)
   return (
     <Card sx={{ width: '100%', maxWidth: 600, minWidth: 400 }}>

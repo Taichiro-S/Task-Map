@@ -25,7 +25,7 @@ import { shallow } from 'zustand/shallow'
 import 'reactflow/dist/style.css'
 import { FlowState, useFlowStore } from 'stores/flowStore'
 import {
-  useQuerySessionUser,
+  useQueryAuth,
   useNodeDrag,
   useNodeDrop,
   useNodeConnect,
@@ -59,11 +59,7 @@ const Flow = () => {
   const [isMiniMapOpen, setIsMiniMapOpen] = useState<boolean>(true)
   const [isSideBarOpen, setIsSideBarOpen] = useState(false)
 
-  const {
-    data: sessionUser,
-    error: sessionUserError,
-    isLoading: sessionUserIsLoading,
-  } = useQuerySessionUser()
+  const { data: authUser, error: authUserError, isLoading: authUserIsLoading } = useQueryAuth()
   const {
     data: flowDatas,
     error: flowError,
@@ -89,13 +85,13 @@ const Flow = () => {
       const workspaceQueryId = router.query.workspaceId as string
       setUserId(userQueryId)
       setWorkspaceId(workspaceQueryId)
-      if (!sessionUserIsLoading && !sessionUser) {
+      if (!authUserIsLoading && !authUser) {
         router.push('/')
-      } else if (sessionUser && sessionUser.id !== userQueryId) {
+      } else if (authUser && authUser.id !== userQueryId) {
         router.push('/dashboard')
       }
     }
-  }, [router, sessionUser, sessionUserIsLoading])
+  }, [router, authUser, authUserIsLoading])
 
   useEffect(() => {
     if (flowDatas) {
@@ -110,8 +106,8 @@ const Flow = () => {
       ? workspaceDatas.find((workspace) => workspace.id === workspaceId)?.title
       : ''
   // const panOnDrag = [1, 2]
-  if (sessionUserError || flowError || workspaceError) {
-    console.error(sessionUserError, flowError)
+  if (authUserError || flowError || workspaceError) {
+    console.error(authUserError, flowError)
     return (
       <Layout title="Flow">
         <p>サーバーエラー</p>
@@ -119,7 +115,7 @@ const Flow = () => {
     )
   }
 
-  if (sessionUserIsLoading || flowIsLoading || workspaceIsLoading) {
+  if (authUserIsLoading || flowIsLoading || workspaceIsLoading) {
     return (
       <Layout title="Flow">
         <Spinner />

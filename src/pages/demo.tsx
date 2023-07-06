@@ -11,7 +11,7 @@ import { shallow } from 'zustand/shallow'
 import 'reactflow/dist/style.css'
 import { FlowState, useFlowStore } from 'stores/flowStore'
 
-import { useQuerySessionUser, useNodeDrag, useNodeDrop, useNodeConnect } from 'hooks/index'
+import { useNodeDrag, useNodeDrop, useNodeConnect } from 'hooks/index'
 import {
   nodeTypes,
   nodeOrigin,

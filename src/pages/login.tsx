@@ -115,6 +115,14 @@ const Login: NextPage = () => {
             </Link>
           </span>
         </div>
+        <div className="m-2 mt-4">
+          <span className="text-sm text-neutral-600">
+            パスワードを忘れた方は
+            <Link href="/forgotPassword">
+              <span className="text-blue-400 hover:text-blue-600">こちら</span>
+            </Link>
+          </span>
+        </div>
 
         <Link href="/">
           <HomeIcon className="h-6 w-6 m-2 mt-4 flex justify-center cursor-pointer text-gray-500 hover:text-blue-500" />
