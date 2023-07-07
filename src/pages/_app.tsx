@@ -9,6 +9,7 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { AuthChangeEvent, Session } from '@supabase/supabase-js'
 import { Zen_Maru_Gothic, Zen_Kaku_Gothic_New, Kosugi_Maru } from 'next/font/google'
+import { PagesForOnlyGuestUser } from 'constants/pathName'
 
 if (process.env.NEXT_PUBLIC_ENV === 'development') {
   require('../mocks')
@@ -39,11 +40,12 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter()
   const checkUser = async () => {
     const user = (await supabase.auth.getUser()).data.user
-    if (!user && (router.pathname === '/account' || router.pathname === '/dashboard')) {
-      return await router.push('/')
+    if (!user && !PagesForOnlyGuestUser.includes(router.pathname)) {
+      // console.log('user', user)
+      return router.push('/')
     }
-    if (user && (router.pathname === '/login' || router.pathname === '/signup')) {
-      return await router.push('/dashboard')
+    if (user && PagesForOnlyGuestUser.includes(router.pathname)) {
+      return router.push('/dashboard')
     }
   }
 

@@ -39,12 +39,14 @@ const Signup: NextPage = () => {
   const onSubmit = async (data: SignupUserData) => {
     // console.log('signup', data)
     signupMutation.mutate(
-      { email: data.email, password: data.password },
+      { name: data.name, email: data.email, password: data.password },
       {
         onSuccess: () => {
           successToast(SIGNUP_SUCCESS)
+          router.push('/waitingForVerification')
         },
         onError: (error: Error) => {
+          console.log(error)
           if (error.message.includes('User already registered')) {
             errorToast(USER_ALREADY_REGISTERED)
           } else {
@@ -64,7 +66,16 @@ const Signup: NextPage = () => {
         </div>
         <CustomCard>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="m-2">
+            <div className="m-4">
+              <CustomTextField
+                id="name"
+                label="ユーザ名"
+                {...register('name')}
+                helperText={errors?.name?.message}
+                error={!!errors?.name}
+              />
+            </div>
+            <div className="m-4">
               <CustomTextField
                 id="email"
                 label="メールアドレス"
@@ -73,7 +84,7 @@ const Signup: NextPage = () => {
                 error={!!errors?.email}
               />
             </div>
-            <div className="m-2">
+            <div className="m-4">
               <CustomTextField
                 id="password"
                 label="パスワード"
@@ -83,7 +94,7 @@ const Signup: NextPage = () => {
                 error={!!errors?.password}
               />
             </div>
-            <div className="m-2">
+            <div className="m-4">
               <CustomTextField
                 id="repassword"
                 label="パスワード再入力"
@@ -93,7 +104,7 @@ const Signup: NextPage = () => {
                 error={!!errors?.repassword}
               />
             </div>
-            <div className="m-2 ">
+            <div className="m-4 ">
               <Button
                 startIcon={<LoginIcon />}
                 variant="outlined"
@@ -105,7 +116,7 @@ const Signup: NextPage = () => {
             </div>
           </form>
         </CustomCard>
-        <div className="m-2 mt-4">
+        <div className="m-4 mt-4">
           <span className="text-sm text-neutral-600">
             アカウントをお持ちの方は
             <Link href="/login">
@@ -114,7 +125,7 @@ const Signup: NextPage = () => {
           </span>
         </div>
         <Link href="/">
-          <HomeIcon className="h-6 w-6 m-2 mt-4 flex justify-center cursor-pointer text-gray-500 hover:text-blue-500" />
+          <HomeIcon className="h-6 w-6 m-4 flex justify-center cursor-pointer text-gray-500 hover:text-blue-500" />
         </Link>
       </Layout>
     </>

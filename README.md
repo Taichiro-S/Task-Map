@@ -1,6 +1,7 @@
 # TaskFlow
 
-就職用ポートフォリオの１つとして作成した Web アプリケーションです。フロントエンドは [Next.js](https://nextjs.org/), バックエンドは [Supabase](https://supabase.com/), デプロイ先として [Vercel](https://vercel.com/) 、また CI/CD ツールとして [Github Actions](https://github.co.jp/features/actions) を使用しています。
+タスク管理のための Web アプリケーションです。フロントエンドは [Next.js](https://nextjs.org/), バックエンドは [Supabase](https://supabase.com/), デプロイ先として [Vercel](https://vercel.com/) 、また CI/CD ツールとして [Github Actions](https://github.co.jp/features/actions) を使用しています。
+[こちら](https://taskflow-phi.vercel.app/demo)からデモをお試しいただけます。
 
 ## どんなアプリ？
 
@@ -32,43 +33,67 @@
 - ワークスペースにはタイトルと説明文を設定することができ、更新、削除することができる
 - 未登録ユーザは上記アプリのデモ版を試用することができる
 
+## 非機能について
+
+- Next.js の SSG / SSR / CSF を利用して適切なページレンダリングを行い、UX および SEO の向上を試みています。
+- Supabase の RLS ( Row Level Security ) を適切に設定し、悪意のあるユーザによる情報の漏洩や改ざんを防ぎます。
+-
+
 ## 使用した技術について
 
-### Next.js
+### [Next.js](https://nextjs.org/)
 
 Next.js は React をベースとしたフロントエンドフレームワークです。
 ページごとに SSG や SSR といった最適なレンダリングの方法を選択できることが最大の特長で、これにより SEO および UX の向上が期待できます。
 
-### TypeScript
+### [TypeScript](https://www.typescriptlang.org/)
 
 TypeScript は静的型付けを可能にした JavaScript の上位互換です。
 静的型付けにより、コードの安全性が向上し、バグが発見しやすくなります。また JavaScript ベースであるため学習コストが低いのも特長です。
 
 ### フロントエンドで使用しているライブラリ
 
-- mui 5.13.2 : UI パーツ
-- heroicons 2.0.13 : アイコン
-- tanstack/react-query 4.29.5 : キャッシュデータの管理
-- tailwind css 3.3.2 : CSS スタイリング
-- eslint 8.40.0 : コード品質チェック
-- prettier 2.8.8 : コードフォーマット
-- reactflow : フローチャート生成
-- react-hook-form : フォーム処理
-- yup : フォームバリデーション
-- zustand : グローバルな状態管理
-- ( jest 29.5.0 : ユニットテスト )
-- ( msw : テスト時の API モック )
+- **_[React Flow](https://reactflow.dev/)_** ( 11.7.0 ) : フローチャート生成
+  ノードとエッジからなるフローチャートを作図するためのライブラリです。カスタマイズが容易で、シンプルかつ高機能なフローチャートを簡単に生成できます。このアプリの核となる機能を担っています。
 
-### Supabase
+- **_[TanStack Query](https://tanstack.com/query/latest)_** ( 4.29.5 ) : キャッシュデータの管理
+  データベース等から取得したデータをキャッシュして管理するためのライブラリです。ページネーション、無限スクロール、プリフェッチ等多くの用途に対応しています。またデータ更新のためのフックも用意されています。
+
+- **_[MUI](https://mui.com/)_** ( 5.13.2 ) : UI パーツ
+  UI を構成するためのパーツのライブラリです。Web アプリケーションで使用する大体のコンポーネントを揃えており、また [styled](https://mui.com/system/styled/) を使用することで容易にカスタムが可能です。[Material-tailwind](https://www.material-tailwind.com/) というのもあるそうです（最近知りました...）。
+
+- **_[zustand](https://docs.pmnd.rs/zustand/getting-started/introduction)_** ( 4.1.4 ) : グローバルな状態管理
+  コンパクトでシンプルな Store ベースの状態管理ライブラリです。
+
+- **_[Tailwind CSS](https://tailwindcss.com/)_** ( 3.3.2 ) : CSS スタイリング
+  ユーティリティクラスを組み合わせてスタイリングを行います。JSX コンポーネントに className という形でスタイルを直接当てることができ、また VSCode の拡張機能を使えばクラス名を自動補完できます。
+
+- **_[ESlint](https://eslint.org/)_** ( 8.40.0 ) : コード品質チェック
+  JavaScript の静的解析ツールです。プラグインを導入して TypeScript にも対応させることが可能です。コーディング規約を定めてコマンドを実行することでコードチェックできるため、チームでの開発において力を発揮します。後述の prettier でフォーマットのルールを定めて併用することが可能です。
+
+- **_[prettier](https://prettier.io/)_** ( 2.8.8 ) : コードフォーマット
+  定めたルールに基づいて、コードをフォーマットします。VSCode の設定で保存時に自動でフォーマットを実行することで、常にコードを美しく保つことができます。こちらもチームでの開発で力を発揮しそうです。
+
+- **_[React Hook Form](https://www.react-hook-form.com/)_** (7.43.9) : フォーム処理
+  フォームに入力された値を一括で管理でき、後述の yup と組み合わせて詳細なバリデーションが可能です。
+- **_[yup](https://github.com/jquense/yup/tree/master)_** ( 1.2.0 ) : フォームバリデーション
+  React Hook Form と組み合わせて、フォームのバリデーションを行うことができます。React Hook Form よりも詳細なバリデーションルールの設定が可能です。
+- **_[Jest](https://jestjs.io/ja/)_** ( 29.5.0 ) : ユニットテスト
+  JavaScript のためのテストフレームワークです。React では react-testing-library を使用してコンポーネントを render し、ユニットテストを行うことができます。本プロジェクトでは、Next.js にデフォルトで組み込まれている nextJest を使用しています。nextJest ではコンパイラとして Rust を使用しており、従来の Babel よりもテストの実行時間が短縮できます。
+
+- **_[MSW](https://mswjs.io/)_** ( 1.2.1 ) : テスト時の API モック
+  リクエストハンドラでレスポンスを設定することで、サーバまたはブラウザから送信された API リクエストを intercept して、設定されたレスポンスを返します。ソースコードを変更する必要がなく、`jest.mock`よりも実際に近い形でテストを行うことができます。
+
+### [Supabase](https://supabase.com/)
 
 Supabase はリアルタイムのデータベース、認証、ストレージ、サーバーレス機能などを提供する BaaS です。
 データベースシステムとして NoSQL を使用する Firebase に対し、Supabase では PostgreSQL を使用しているため、より複雑なリレーショナルデータを扱うことができ、トランザクション処理を行うことが可能です。
 
-### Vercel
+### [Vercel](https://vercel.com/)
 
 Vercel はウェブアプリケーションの構築とデプロイのためのプラットフォームです。
 github のアカウントと紐づけることにより、main ブランチへの push をトリガーにして自動的にアプリケーションがビルドされてデプロイされます。また、main ブランチ以外への push によりプレビューデプロイが実行され、アプリケーションのプレビューおよびプレビューページへのコメントが可能になります。
 
-### Github Actions
+### [Github Actions](https://github.co.jp/features/actions)
 
 GitHub Actions は、ビルド、テスト、デプロイのパイプラインを自動化できる CI/CD のプラットフォームです。github への push や merge をトリガーにして、テストを実行し、Vercel CLI を使用することでビルドおよびデプロイを自動化できます。

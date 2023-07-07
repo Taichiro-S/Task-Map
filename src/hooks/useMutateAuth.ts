@@ -19,9 +19,9 @@ export const useMutateAuth = () => {
         throw new Error('Failed to login')
       }
     },
-    onSuccess: async (_, variables: { email: string; password: string }) => {
+    onSuccess: async () => {
       const user = (await supabase.auth.getUser()).data.user
-      queryClient.setQueryData(['sessionUser'], user)
+      queryClient.setQueryData(['auth'], user)
     },
     onError: (error: Error) => {
       throw new Error('Failed to login', error)
@@ -30,6 +30,7 @@ export const useMutateAuth = () => {
 
   const signupMutation = useMutation({
     mutationFn: async ({
+      name,
       email,
       password,
     }: Omit<SignupUserData, 'repassword' | 'showPassword'>) => {
@@ -38,13 +39,18 @@ export const useMutateAuth = () => {
         password,
       })
       if (authUserError || !authUserData) {
-        throw new Error(`Failed to signup : ${authUserError?.message}`)
+        throw authUserError || new Error('Failed to signup')
       }
-      await supabase.from('users').insert({ auth_id: authUserData.user?.id })
+      const { error: userError } = await supabase
+        .from('users')
+        .insert({ auth_id: authUserData.user?.id, name: name })
+      if (userError) {
+        throw userError
+      }
     },
     onSuccess: async () => {
       const user = (await supabase.auth.getUser()).data.user
-      queryClient.setQueryData(['sessionUser'], user)
+      queryClient.setQueryData(['auth'], user)
     },
     onError: (error: Error) => {
       throw new Error('Failed to signup', error)

@@ -1,18 +1,25 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from 'utils/supabase'
-import { User } from '@supabase/supabase-js'
+import { UserData } from 'types/types'
+import { getAuthUser } from 'hooks'
 
-export const useQueryUser = () => {
-  const getUser = async () => {
-    const sessionUser = (await supabase.auth.getSession()).data.session?.user
-    if (sessionUser) {
-      return sessionUser
-    }
-    const user = (await supabase.auth.getUser()).data.user
-    return user
+export const getUser = async () => {
+  const authUser = await getAuthUser()
+  if (!authUser) {
+    throw new Error('User is not logged in')
   }
-
-  return useQuery<User | null | undefined, Error>(['user'], getUser, {
+  const { data: user, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('auth_id', authUser.id)
+    .single()
+  if (error || !user) {
+    throw new Error(`Error fetching user: ${error?.message}`)
+  }
+  return user as UserData
+}
+export const useQueryUser = () => {
+  return useQuery<UserData | null | undefined, Error>(['user'], () => getUser(), {
     staleTime: Infinity,
   })
 }

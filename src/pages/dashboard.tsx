@@ -1,40 +1,34 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { Layout, Spinner, WorkspaceFormDialog, WorkspaceCard } from 'components'
-import { useQuerySessionUser, useQueryWorkspace, useMutateWorkspace } from 'hooks'
+import { useQueryAuth, useQueryWorkspace, useMutateWorkspace } from 'hooks'
 import { NextPage } from 'next'
 import router from 'next/router'
 import React, { useEffect } from 'react'
 import { useFlowStore } from 'stores/flowStore'
-import { successToast } from 'utils/toast'
 
 const Dashboard: NextPage = () => {
   const queryClient = useQueryClient()
-  const {
-    data: sessionUser,
-    error: sessionUserError,
-    isLoading: sessionUserIsLoading,
-  } = useQuerySessionUser()
+  const { data: authUser, error: authUserError, isLoading: authUserIsLoading } = useQueryAuth()
   const {
     data: workspaceDatas,
     error: workspaceError,
     isLoading: workspaceIsLoading,
-    refetch: refetchWorkspace,
   } = useQueryWorkspace()
   const resetFlow = useFlowStore((state) => state.resetFlow)
   useEffect(() => {
-    if (!sessionUserIsLoading && !sessionUser) {
-      console.log('sessionUser', sessionUser)
+    if (!authUserIsLoading && !authUser) {
+      // console.log('authUser', authUser)
       // successToast('セッションの有効期限が切れました')
       router.push('/')
     }
-  }, [sessionUser, sessionUserIsLoading])
+  }, [authUser, authUserIsLoading])
 
   useEffect(() => {
     queryClient.removeQueries({ queryKey: ['flows'], exact: true })
     resetFlow()
   }, [])
 
-  if (sessionUserIsLoading || workspaceIsLoading) {
+  if (authUserIsLoading || workspaceIsLoading) {
     return (
       <Layout title="Dashboard">
         <Spinner />
@@ -42,7 +36,7 @@ const Dashboard: NextPage = () => {
     )
   }
 
-  if (sessionUserError || workspaceError) {
+  if (authUserError || workspaceError) {
     return (
       <Layout title="Dashboard">
         <div>データの読み込みに失敗しました</div>

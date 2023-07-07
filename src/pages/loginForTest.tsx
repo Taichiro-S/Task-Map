@@ -1,3 +1,9 @@
+/*
+  MSW を使用した Supabase API のモックテストを行うためのページ
+  signin は pass した
+
+*/
+
 import type { NextPage } from 'next'
 import { useState } from 'react'
 import { supabase } from 'utils/supabase'

@@ -1,6 +1,7 @@
 import * as yup from 'yup'
 
 export const signupSchema = yup.object().shape({
+  name: yup.string().max(25, '最大25文字です。').required('ユーザ名は必須項目です。'),
   email: yup
     .string()
     .lowercase()

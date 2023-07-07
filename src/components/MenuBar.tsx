@@ -1,4 +1,4 @@
-import { useMutateFlow, useQuerySessionUser } from 'hooks'
+import { useMutateFlow, useQueryAuth } from 'hooks'
 import { DragEvent, FC, memo, useEffect, useState } from 'react'
 import { errorToast, updateWithSuccessToast, updateWithErrorToast } from 'utils/toast'
 import SaveAltIcon from '@mui/icons-material/SaveAlt'
@@ -7,11 +7,7 @@ import { useTemporalStore } from 'stores/temporalStore'
 import Tooltip from '@mui/material/Tooltip'
 
 const MenuBar: FC<{ workspaceId: string | null }> = ({ workspaceId }) => {
-  const {
-    data: sessionUser,
-    error: sessionUserError,
-    isLoading: sessionUserIsLoading,
-  } = useQuerySessionUser()
+  const { data: authUser, error: authUserError, isLoading: authUserIsLoading } = useQueryAuth()
   const { saveFlowMutation } = useMutateFlow()
   const { undo, redo, pause, resume, futureStates, pastStates, clear } = useTemporalStore(
     (state) => state,
@@ -26,12 +22,12 @@ const MenuBar: FC<{ workspaceId: string | null }> = ({ workspaceId }) => {
 
   const handleSave = () => {
     setIsSaving(true)
-    if (!sessionUser || sessionUser === null || workspaceId === null) {
+    if (!authUser || authUser === null || workspaceId === null) {
       setIsSaving(false)
       return errorToast('保存するためにはログインする必要があります')
     }
     saveFlowMutation.mutate(
-      { user_id: sessionUser.id, workspaceId: workspaceId },
+      { user_id: authUser.id, workspaceId: workspaceId },
       {
         onSuccess: () => {
           updateWithSuccessToast('保存しました', 'flows')

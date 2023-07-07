@@ -76,6 +76,7 @@ export type NodeInputProps = {
 }
 
 export type SignupUserData = {
+  name: string
   email: string
   password: string
   repassword: string
@@ -87,4 +88,21 @@ export type LoginUserData = {
   password: string
   remember?: string
   showPassword: boolean
+}
+
+export type UserData = {
+  id: string
+  created_at: Date
+  updated_at: Date
+  name?: string
+  avatar_url?: string
+}
+
+export type UpdatedUserData = {
+  auth_id: string
+  email: string
+  password?: string
+  user_id: string
+  name?: string
+  avatar_url?: string
 }

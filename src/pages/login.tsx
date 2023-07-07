@@ -37,19 +37,20 @@ const Login: NextPage = () => {
     mode: 'onSubmit',
     resolver: yupResolver(loginSchema),
   })
+
   const onSubmit = async (data: LoginUserData) => {
     // console.log('login', data)
     loginMutation.mutate(
       { email: data.email, password: data.password },
       {
         onSuccess: () => {
-          successToast(LOGIN_SUCCESS)
+          successToast('ログインしました')
         },
         onError: (error: Error) => {
           if (error.message.includes('Invalid login credentials')) {
-            errorToast(INVALID_LOGIN_CREDENTIALS)
+            errorToast('メールアドレスかパスワードが間違っています')
           } else {
-            errorToast(LOGIN_ERROR)
+            errorToast('ログインに失敗しました')
           }
         },
       },
@@ -111,6 +112,14 @@ const Login: NextPage = () => {
           <span className="text-sm text-neutral-600">
             アカウントをお持ちでない方は
             <Link href="/signup">
+              <span className="text-blue-400 hover:text-blue-600">こちら</span>
+            </Link>
+          </span>
+        </div>
+        <div className="m-2 mt-4">
+          <span className="text-sm text-neutral-600">
+            パスワードを忘れた方は
+            <Link href="/forgotPassword">
               <span className="text-blue-400 hover:text-blue-600">こちら</span>
             </Link>
           </span>

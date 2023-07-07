@@ -1,4 +1,4 @@
-import { useQuerySessionUser } from 'hooks'
+import { useQueryAuth } from 'hooks'
 import { FC, memo, useState } from 'react'
 import { useFlowStore } from 'stores/flowStore'
 import Card from '@mui/material/Card'
@@ -16,11 +16,7 @@ type Props = {
 const SideBar: FC<Props> = (props) => {
   const { workspaceId, isSideBarOpen, setIsSideBarOpen } = props
   const nodes = useFlowStore((state) => state.nodes)
-  const {
-    data: sessionUser,
-    error: sessionUserError,
-    isLoading: sessionUserIsLoading,
-  } = useQuerySessionUser()
+  const { data: authUser, error: authUserError, isLoading: authUserIsLoading } = useQueryAuth()
 
   return (
     <div className="w-full h-full p-2 bg-neutral-50 rounded-2xl drop-shadow-md relative overflow-auto">
