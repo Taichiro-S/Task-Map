@@ -1,34 +1,25 @@
 import { createClient } from '@supabase/supabase-js'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextApiRequest, NextApiResponse } from 'next'
 
 export const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL as string,
   process.env.SUPABASE_SERVICE_ROLE_KEY as string,
 )
 
-export const config = {
-  runtime: 'edge',
-}
-
-// const res = (req: any) => new Response('Hello world!')
-
-// export default res
-
-const deleteUser = async (req: NextRequest, res: NextResponse) => {
-  if (req.method !== 'DELETE') return new Response(null, { status: 404, statusText: 'Not Found' })
+const deleteUser = async (req: NextApiRequest, res: NextApiResponse) => {
+  if (req.method !== 'DELETE') return res.status(404).json({ message: 'Not Found' })
 
   try {
-    const id = req.nextUrl.searchParams.get('id')
+    const id = req.query.id
     // return new Response(JSON.stringify({ id }), { status: 200 })
-    if (!id) return new Response(null, { status: 400, statusText: 'Bad Request' })
+    if (!id || Array.isArray(id)) return res.status(400).json({ message: 'Bad Request' })
     const { error } = await supabaseAdmin.auth.admin.deleteUser(id)
     if (error) {
-      return new Response(JSON.stringify(error), { status: 501 })
+      return res.status(501).json({ message: error.message })
     }
-    return new Response('OK', { status: 200 })
+    return res.status(200).json({ message: 'OK' })
   } catch (e) {
-    // console.log(e)
-    return new Response(null, { status: 400, statusText: 'Bad Request' })
+    return res.status(400).json({ message: 'Bad Request' })
   }
 }
 
