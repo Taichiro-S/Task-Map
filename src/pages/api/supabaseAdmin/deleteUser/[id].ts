@@ -15,7 +15,7 @@ const deleteUser = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!id || Array.isArray(id)) return res.status(400).json({ message: 'Bad Request' })
     const { error } = await supabaseAdmin.auth.admin.deleteUser(id)
     if (error) {
-      return res.status(501).json({ message: error.message })
+      return res.status(500).json(error)
     }
     return res.status(200).json({ message: 'OK' })
   } catch (e) {
