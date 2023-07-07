@@ -1,12 +1,7 @@
 import { supabase } from '../utils/supabase'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { UpdatedUserData } from 'types/types'
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL as string,
-  process.env.SUPABASE_SERVICE_ROLE_KEY as string,
-)
+import { api } from 'utils/axios'
 
 type Passwords = {
   password: string
@@ -37,7 +32,7 @@ export const useMutateUser = () => {
       }
 
       const path = `avatars/${uploadedAvatar.filename}`
-      console.log(oldFilePath, uploadedAvatar.userId, path)
+      // console.log(oldFilePath, uploadedAvatar.userId, path)
 
       if (oldFilePath.length === 0) {
         const { data: uploadedFile, error: uploadError } = await supabase.storage
@@ -64,11 +59,11 @@ export const useMutateUser = () => {
       }
 
       // アップロードした画像のURL取得
-      const { data: filepath, error: urlError } = await supabase.storage
+      const { data: filepath, error: filePathError } = await supabase.storage
         .from('profiles')
         .createSignedUrl(path, 600)
-      if (urlError || !filepath) {
-        throw urlError || new Error('Failed to get avatar url')
+      if (filePathError || !filepath) {
+        throw filePathError || new Error('Failed to get avatar url')
       }
       const imageUrl = filepath.signedUrl
 
@@ -78,7 +73,7 @@ export const useMutateUser = () => {
         .update({
           avatar_url: imageUrl,
         })
-        .eq('id', uploadedAvatar.userId)
+        .eq('auth_id', uploadedAvatar.userId)
         .select()
 
       if (updatedUserError || !updatedUser) {
@@ -173,16 +168,27 @@ export const useMutateUser = () => {
         throw new Error('not-authenticated')
       }
       const authJson = JSON.parse(auth)
-      const userId = authJson?.user?.id
-      console.log(userId)
-      const { data, error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
-        password: newPassword,
-      })
-      if (error || !data) {
-        throw error || new Error('Failed to update password')
+      const id = authJson?.user?.id
+      try {
+        await api
+          .post(`/api/supabaseAdmin/resetPassword/${id}`, {
+            newPassword: newPassword,
+          })
+          .then((res) => {
+            // console.log(res)
+            return res
+          })
+      } catch (e) {
+        throw e
       }
+      // const { data, error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+      //   password: newPassword,
+      // })
+      // if (error || !data) {
+      //   throw error || new Error('Failed to update password')
+      // }
     },
-    onSuccess: async () => {},
+    onSuccess: () => {},
     onError: (error: Error) => {
       throw error
     },
@@ -190,14 +196,28 @@ export const useMutateUser = () => {
 
   const deleteUserMutation = useMutation({
     // cascade delete で user も削除する
-    mutationFn: async (authId: string) => {
-      await supabase.auth.signOut()
-      const { error: authUserError } = await supabaseAdmin.auth.admin.deleteUser(authId)
-      if (authUserError) {
-        throw authUserError
+    mutationFn: async (id: string) => {
+      const { data: avatar, error: avatarError } = await supabase.storage
+        .from('profiles')
+        .remove([`avatar/${id}`])
+
+      if (avatarError || !avatar) {
+        throw avatarError || new Error('Failed to delete avatar image')
       }
+      await supabase.auth.signOut()
+      try {
+        await api.delete(`/api/supabaseAdmin/deleteUser/${id}`).then((res) => {
+          return res
+        })
+      } catch (e) {
+        throw e
+      }
+      // const { error: authUserError } = await supabaseAdmin.auth.admin.deleteUser(authId)
+      // if (authUserError) {
+      //   throw authUserError
+      // }
     },
-    onSuccess: async () => {
+    onSuccess: () => {
       queryClient.clear()
     },
     onError: (error: Error) => {

@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-export const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_MOCK_API_ENDOPOINT,
+export const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_APP_ENV,
   responseType: 'json',
   headers: {
     'Content-Type': 'application/json',

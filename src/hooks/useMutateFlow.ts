@@ -50,7 +50,7 @@ export const useMutateFlow = () => {
     mutationFn: async ({ user_id, workspaceId }: { user_id: string; workspaceId: string }) => {
       const nodes = useFlowStore.getState().nodes
       const edges = useFlowStore.getState().edges
-      console.log(nodes, edges)
+      // console.log(nodes, edges)
 
       const nodeDatas = mapNodesToNodeDatas(nodes, user_id, workspaceId)
       const edgeDatas = mapEdgesToEdgeDatas(edges, user_id, workspaceId)
@@ -104,14 +104,11 @@ export const useMutateFlow = () => {
 
       // Delete the nodes from the database
       for (const nodeToDelete of nodesToDelete) {
-        const { error: nodeDeleteError } = await supabase
-          .from('nodes')
-          .delete()
-          .match({
-            node_nanoid: nodeToDelete.node_nanoid,
-            user_id: user_id,
-            workspace_id: workspaceId,
-          })
+        const { error: nodeDeleteError } = await supabase.from('nodes').delete().match({
+          node_nanoid: nodeToDelete.node_nanoid,
+          user_id: user_id,
+          workspace_id: workspaceId,
+        })
 
         if (nodeDeleteError) {
           throw new Error(`${nodeDeleteError.message}: ${nodeDeleteError.details}`)
@@ -119,14 +116,11 @@ export const useMutateFlow = () => {
       }
       // Delete the edges from the database
       for (const edgeToDelete of edgesToDelete) {
-        const { error: edgeDeleteError } = await supabase
-          .from('edges')
-          .delete()
-          .match({
-            edge_nanoid: edgeToDelete.edge_nanoid,
-            user_id: user_id,
-            workspace_id: workspaceId,
-          })
+        const { error: edgeDeleteError } = await supabase.from('edges').delete().match({
+          edge_nanoid: edgeToDelete.edge_nanoid,
+          user_id: user_id,
+          workspace_id: workspaceId,
+        })
 
         if (edgeDeleteError) {
           throw new Error(`${edgeDeleteError.message}: ${edgeDeleteError.details}`)

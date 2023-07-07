@@ -76,7 +76,6 @@ type UserInput = Omit<UpdatedUserData, 'auth_id' | 'user_id' | 'password' | 'ava
 const Account: NextPage = () => {
   const { data: authUser, error: authUserError, isLoading: authUserIsLoading } = useQueryAuth()
   const { data: user, error: userError, isLoading: userIsLoading } = useQueryUser()
-  console.log(user)
   const [open, setOpen] = useState<boolean>(false)
   const [resetPasswordDisabled, setResetPasswordDisabled] = useState<boolean>(false)
   const [updatePasswordDisabled, setUpdatePasswordDisabled] = useState<boolean>(false)
@@ -110,7 +109,7 @@ const Account: NextPage = () => {
   })
 
   const onSubmitPassword = (data: UpdatedPassword) => {
-    console.log(data)
+    // console.log(data)
     setUpdatePasswordDisabled(true)
     updatePasswordMutation.mutate(data, {
       onSuccess: () => {
@@ -140,28 +139,27 @@ const Account: NextPage = () => {
   })
 
   const onUpload = (data: UploadedFile) => {
+    setUploadImageDisabled(true)
     if (isValidImageFile(data.file) !== 'valid') {
       setFileUploadError(isValidImageFile(data.file))
       return
     }
     // const id = uuid()
     // const filename = `${id}.${data.file?.name}`
-    const filename = user!.id
+    const filename = authUser!.id
     const uploadedFile = {
       avatar: data.file!,
       filename,
-      userId: user!.id,
+      userId: authUser!.id,
     }
-    console.log(data)
+    // console.log(data)
     uploadAvatarMutation.mutate(uploadedFile, {
       onSuccess: () => {
         successToast('画像をアップロードしました。')
-        setUploadImageDisabled(true)
         resetImage()
       },
       onError: (error: Error) => {
         errorToast('画像のアップロードに失敗しました。')
-        setUploadImageDisabled(true)
         resetImage()
       },
     })
@@ -170,9 +168,11 @@ const Account: NextPage = () => {
   const handleDeleteUser = async () => {
     deleteUserMutation.mutate(authUser!.id, {
       onSuccess: () => {
+        setOpen(false)
         successToast('ユーザーを削除しました。')
       },
       onError: (error: Error) => {
+        setOpen(false)
         errorToast('ユーザーの削除に失敗しました。')
       },
     })
@@ -193,7 +193,7 @@ const Account: NextPage = () => {
 
   const onSubmit = (userInput: UserInput) => {
     setUserUpdateDisabled(true)
-    console.log('submit', userInput)
+    // console.log('submit', userInput)
     const updatedUserdata: UpdatedUserData = {
       auth_id: authUser!.id,
       user_id: user!.id,
@@ -213,7 +213,7 @@ const Account: NextPage = () => {
     })
   }
   const handleChangeFile = (file: File | null) => {
-    console.log(file)
+    // console.log(file)
     if (isValidImageFile(file) === 'valid') {
       setUploadImageDisabled(false)
       setFileUploadError(undefined)
@@ -254,8 +254,8 @@ const Account: NextPage = () => {
                   width: '100px',
                   height: '100px',
                   background: 'transparent',
-                  border: 1,
-                  borderColor: 'grey.800',
+                  border: 4,
+                  borderColor: 'grey.400',
                 }}
               >
                 <Image

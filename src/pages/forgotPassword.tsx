@@ -54,7 +54,7 @@ const ForgotPassword: NextPage = () => {
 
   const onSubmit = async (data: UserInput) => {
     const { email } = data
-    console.log(email)
+    // console.log(email)
     setButtonDisabled(true)
     mailForResetPasswordMutation.mutate(email, {
       onSuccess: () => {
