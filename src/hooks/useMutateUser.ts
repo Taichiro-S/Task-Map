@@ -227,13 +227,9 @@ export const useMutateUser = () => {
           return res
         })
       } catch (e: any) {
-        console.log('delete error', e.messege)
+        console.log('delete error', e)
         throw e
       }
-      // const { error: authUserError } = await supabaseAdmin.auth.admin.deleteUser(authId)
-      // if (authUserError) {
-      //   throw authUserError
-      // }
     },
     onSuccess: () => {
       queryClient.clear()

@@ -13,10 +13,11 @@ const deleteUser = async (req: NextApiRequest, res: NextApiResponse) => {
     const id = req.query.id
     // return new Response(JSON.stringify({ id }), { status: 200 })
     if (!id || Array.isArray(id)) return res.status(400).json({ message: 'Bad Request' })
-    const { error } = await supabaseAdmin.auth.admin.deleteUser(id)
-    if (error) {
-      return res.status(500).json(error)
-    }
+    return res.status(200).json(id)
+    // const { error } = await supabaseAdmin.auth.admin.deleteUser(id)
+    // if (error) {
+    //   return res.status(501).json(error)
+    // }
     return res.status(200).json({ message: 'OK' })
   } catch (e) {
     return res.status(400).json({ message: 'Bad Request' })
