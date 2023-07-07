@@ -197,21 +197,37 @@ export const useMutateUser = () => {
   })
 
   const deleteUserMutation = useMutation({
-    // cascade delete で user も削除する
     mutationFn: async (id: string) => {
+      // avatar 画像があるか確認
       const { data: avatar, error: avatarError } = await supabase.storage
         .from('profiles')
-        .remove([`avatar/${id}`])
-
+        .list('avatars', {
+          limit: 1,
+          offset: 0,
+          search: id,
+        })
       if (avatarError || !avatar) {
-        throw avatarError || new Error('Failed to delete avatar image')
+        throw avatarError || new Error('Failed to get avatar url')
+      }
+      if (avatar.length !== 0) {
+        // avatar 画像を削除
+        const { data: avatarDelete, error: avatarDeleteError } = await supabase.storage
+          .from('profiles')
+          .remove([`avatar/${id}`])
+
+        if (avatarDeleteError || !avatarDelete) {
+          throw avatarDeleteError || new Error('Failed to delete avatar image')
+        }
       }
       await supabase.auth.signOut()
+      // cascade delete で user も削除される
       try {
         await api.delete(`/api/supabaseAdmin/deleteUser/${id}`).then((res) => {
+          console.log(res)
           return res
         })
-      } catch (e) {
+      } catch (e: any) {
+        console.log('delete error', e.messege)
         throw e
       }
       // const { error: authUserError } = await supabaseAdmin.auth.admin.deleteUser(authId)
