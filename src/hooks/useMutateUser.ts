@@ -209,15 +209,17 @@ export const useMutateUser = () => {
       if (avatarError || !avatar) {
         throw avatarError || new Error('Failed to get avatar url')
       }
+      console.log('has avatar', avatar, avatar.length, avatarError)
       if (avatar.length !== 0) {
         // avatar 画像を削除
         const { data: avatarDelete, error: avatarDeleteError } = await supabase.storage
           .from('profiles')
-          .remove([`avatar/${id}`])
+          .remove([`avatars/${id}`])
 
         if (avatarDeleteError || !avatarDelete) {
           throw avatarDeleteError || new Error('Failed to delete avatar image')
         }
+        console.log('delete avatar', avatarDelete, avatarDeleteError)
       }
       await supabase.auth.signOut()
       // cascade delete で user も削除される
