@@ -19,7 +19,7 @@ export const useMutateAuth = () => {
         throw new Error('Failed to login')
       }
     },
-    onSuccess: async (_, variables: { email: string; password: string }) => {
+    onSuccess: async () => {
       const user = (await supabase.auth.getUser()).data.user
       queryClient.setQueryData(['auth'], user)
     },

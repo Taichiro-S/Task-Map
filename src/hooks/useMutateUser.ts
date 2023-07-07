@@ -134,8 +134,10 @@ export const useMutateUser = () => {
       const appUrl = process.env.NEXT_PUBLIC_APP_URL as string
       console.log(appUrl)
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        // redirectTo: `${appUrl}/resetPassword`,
-        redirectTo: 'https://taskflow-taichiro-s.vercel.app/resetPassword',
+        // production deployment または ローカルの場合
+        redirectTo: `${appUrl}/resetPassword`,
+        // preview deployment の場合
+        // redirectTo: 'https://taskflow-taichiro-s.vercel.app/resetPassword',
       })
       if (error) {
         throw error
