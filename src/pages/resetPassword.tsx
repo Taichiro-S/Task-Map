@@ -1,5 +1,5 @@
 import { Layout } from 'components'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Card from '@mui/material/Card'
 import styled from '@emotion/styled'
 import TextField from '@mui/material/TextField'
@@ -33,6 +33,7 @@ type Password = {
 
 const ResetPassword = () => {
   const router = useRouter()
+  const [resetDisabled, setResetDisabled] = useState<boolean>(false)
   const { resetPasswordMutation } = useMutateUser()
   // const { data: authUser, error: authUserError, isLoading: authUserIsLoading } = useQueryAuth()
   // // const [ email, setEmail ] = useState<string | undefined>('')
@@ -51,14 +52,17 @@ const ResetPassword = () => {
     resolver: yupResolver(resetPasswordSchema),
   })
   const onSubmit = async (data: Password) => {
+    setResetDisabled(true)
     // console.log('login', data)
     const { password } = data
     resetPasswordMutation.mutate(password, {
       onSuccess: () => {
+        setResetDisabled(false)
         successToast('パスワードをリセットしました')
         return router.push('/dashboard')
       },
       onError: (error: Error) => {
+        setResetDisabled(false)
         errorToast('パスワードのリセットに失敗しました')
       },
     })
@@ -89,6 +93,7 @@ const ResetPassword = () => {
               variant="outlined"
               type="submit"
               style={{ width: '100%' }}
+              disabled={resetDisabled}
             >
               パスワードをリセットする
             </Button>

@@ -43,13 +43,13 @@ const Login: NextPage = () => {
       { email: data.email, password: data.password },
       {
         onSuccess: () => {
-          successToast(LOGIN_SUCCESS)
+          successToast('ログインしました')
         },
         onError: (error: Error) => {
           if (error.message.includes('Invalid login credentials')) {
-            errorToast(INVALID_LOGIN_CREDENTIALS)
+            errorToast('メールアドレスかパスワードが間違っています')
           } else {
-            errorToast(LOGIN_ERROR)
+            errorToast('ログインに失敗しました')
           }
         },
       },

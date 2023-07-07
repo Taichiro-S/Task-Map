@@ -23,6 +23,7 @@ import UploadIcon from '@mui/icons-material/Upload'
 import { MAX_FILE_SIZE, ALLOWED_MINE_TYPES } from 'constants/imageFile'
 import uuid from 'uuid4'
 import Avatar from '@mui/material/Avatar'
+import { useRouter } from 'next/router'
 const MuiFileInputStyled = styled(MuiFileInput)``
 const CustomCard = styled(Card)`
   width: 330px;
@@ -74,6 +75,7 @@ function isValidFileSize(file: File | null): boolean {
 type UserInput = Omit<UpdatedUserData, 'auth_id' | 'user_id' | 'password' | 'avatar_url'>
 
 const Account: NextPage = () => {
+  const router = useRouter()
   const { data: authUser, error: authUserError, isLoading: authUserIsLoading } = useQueryAuth()
   const { data: user, error: userError, isLoading: userIsLoading } = useQueryUser()
   const [open, setOpen] = useState<boolean>(false)
@@ -144,8 +146,6 @@ const Account: NextPage = () => {
       setFileUploadError(isValidImageFile(data.file))
       return
     }
-    // const id = uuid()
-    // const filename = `${id}.${data.file?.name}`
     const filename = authUser!.id
     const uploadedFile = {
       avatar: data.file!,
@@ -169,11 +169,12 @@ const Account: NextPage = () => {
     deleteUserMutation.mutate(authUser!.id, {
       onSuccess: () => {
         setOpen(false)
-        successToast('ユーザーを削除しました。')
+        successToast('アカウントを削除しました。')
+        return router.push('/')
       },
       onError: (error: Error) => {
         setOpen(false)
-        errorToast('ユーザーの削除に失敗しました。')
+        errorToast('アカウントの削除に失敗しました。')
       },
     })
   }
