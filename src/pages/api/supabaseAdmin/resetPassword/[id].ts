@@ -1,5 +1,10 @@
-import { supabaseAdmin } from 'utils/supabase'
+import { createClient } from '@supabase/supabase-js'
 import type { NextApiRequest, NextApiResponse } from 'next'
+
+export const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL as string,
+  process.env.SUPABASE_SERVICE_ROLE_KEY as string,
+)
 
 const resetPassword = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') return res.status(404).json({ message: 'Not Found' })

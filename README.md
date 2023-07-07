@@ -1,6 +1,6 @@
 # TaskFlow
 
-就職用ポートフォリオの１つとして作成した Web アプリケーションです。フロントエンドは [Next.js](https://nextjs.org/), バックエンドは [Supabase](https://supabase.com/), デプロイ先として [Vercel](https://vercel.com/) 、また CI/CD ツールとして [Github Actions](https://github.co.jp/features/actions) を使用しています。
+タスク管理のための Web アプリケーションです。フロントエンドは [Next.js](https://nextjs.org/), バックエンドは [Supabase](https://supabase.com/), デプロイ先として [Vercel](https://vercel.com/) 、また CI/CD ツールとして [Github Actions](https://github.co.jp/features/actions) を使用しています。
 [こちら](https://taskflow-phi.vercel.app/demo)からデモをお試しいただけます。
 
 ## どんなアプリ？
@@ -69,20 +69,20 @@ TypeScript は静的型付けを可能にした JavaScript の上位互換です
   ユーティリティクラスを組み合わせてスタイリングを行います。JSX コンポーネントに className という形でスタイルを直接当てることができ、また VSCode の拡張機能を使えばクラス名を自動補完できます。
 
 - **_[ESlint](https://eslint.org/)_** ( 8.40.0 ) : コード品質チェック
-  JavaScript の静的解析ツールで、プラグインを導入して TypeScript にも対応させることが可能です。コーディング規約を定めてコマンドを実行することでコードチェックできるため、チームでの開発の際に力を発揮します。後述の prettier でフォーマットのルールを定めて併用することが可能です。
+  JavaScript の静的解析ツールです。プラグインを導入して TypeScript にも対応させることが可能です。コーディング規約を定めてコマンドを実行することでコードチェックできるため、チームでの開発において力を発揮します。後述の prettier でフォーマットのルールを定めて併用することが可能です。
 
 - **_[prettier](https://prettier.io/)_** ( 2.8.8 ) : コードフォーマット
-  VSCode の設定で、保存時にコードのフォーマットを実行することで、コードを美しく整形できます。こちらもチームでの開発で力を発揮しそうです。
+  定めたルールに基づいて、コードをフォーマットします。VSCode の設定で保存時に自動でフォーマットを実行することで、常にコードを美しく保つことができます。こちらもチームでの開発で力を発揮しそうです。
 
 - **_[React Hook Form](https://www.react-hook-form.com/)_** (7.43.9) : フォーム処理
-  フォームに入力された値を一括で管理でき、後述の yup と組み合わせてバリデーションが可能です。
+  フォームに入力された値を一括で管理でき、後述の yup と組み合わせて詳細なバリデーションが可能です。
 - **_[yup](https://github.com/jquense/yup/tree/master)_** ( 1.2.0 ) : フォームバリデーション
   React Hook Form と組み合わせて、フォームのバリデーションを行うことができます。React Hook Form よりも詳細なバリデーションルールの設定が可能です。
 - **_[Jest](https://jestjs.io/ja/)_** ( 29.5.0 ) : ユニットテスト
-  JavaScript のためのテストフレームワークです。React では、 react-testing-library を使用してコンポーネントを render し、ユニットテストを行うことができます。本プロジェクトでは、Next.js にデフォルトで組み込まれている nextJest を使用しています。nextJest ではコンパイラとして Rust を使用しており、Babel よりもテストの実行時間を短くできるようです。
+  JavaScript のためのテストフレームワークです。React では react-testing-library を使用してコンポーネントを render し、ユニットテストを行うことができます。本プロジェクトでは、Next.js にデフォルトで組み込まれている nextJest を使用しています。nextJest ではコンパイラとして Rust を使用しており、従来の Babel よりもテストの実行時間が短縮できます。
 
 - **_[MSW](https://mswjs.io/)_** ( 1.2.1 ) : テスト時の API モック
-  サーバまたはブラウザで API リクエストを送信し、リクエストハンドラでレスポンスを設定して、実際の API リクエストを intercept して、レスポンスを返します。ソースコードを変更する必要がなく、`jest.mock`よりも実際に近い形でテストを行うことができます。
+  リクエストハンドラでレスポンスを設定することで、サーバまたはブラウザから送信された API リクエストを intercept して、設定されたレスポンスを返します。ソースコードを変更する必要がなく、`jest.mock`よりも実際に近い形でテストを行うことができます。
 
 ### [Supabase](https://supabase.com/)
 
