@@ -35,9 +35,9 @@
 
 ## 非機能について
 
-- Next.js の SSG / SSR / CSF
-- Supabase の RLS ( Row Level Security )
-- Github actions を用いた CI/CD
+- Next.js の SSG / SSR / CSF を利用して適切なページレンダリングを行い、UX および SEO の向上を試みています。
+- Supabase の RLS ( Row Level Security ) を適切に設定し、悪意のあるユーザによる情報の漏洩や改ざんを防ぎます。
+-
 
 ## 使用した技術について
 
