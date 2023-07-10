@@ -46,9 +46,16 @@ const Signup: NextPage = () => {
           router.push('/waitingForVerification')
         },
         onError: (error: Error) => {
-          console.log(error)
-          if (error.message.includes('User already registered')) {
+          if (
+            error.message.includes('User already registered') ||
+            error.message ===
+              'insert or update on table "users" violates foreign key constraint "users_auth_id_fkey"'
+          ) {
             errorToast(USER_ALREADY_REGISTERED)
+          } else if (
+            error.message === 'duplicate key value violates unique constraint "users_auth_id_key"'
+          ) {
+            errorToast('メールアドレスが承認されていません。メールをご確認ください')
           } else {
             errorToast(SIGNUP_ERROR)
           }
