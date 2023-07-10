@@ -59,19 +59,13 @@ export const useMutateUser = () => {
       }
 
       // アップロードした画像のURL取得
-      const { data: filepath, error: filePathError } = await supabase.storage
-        .from('profiles')
-        .createSignedUrl(path, 600)
-      if (filePathError || !filepath) {
-        throw filePathError || new Error('Failed to get avatar url')
-      }
-      const imageUrl = filepath.signedUrl
+      const { data: avatarUrl } = supabase.storage.from('profiles').getPublicUrl(path)
 
       // 画像のURLをDBに保存
       const { data: updatedUser, error: updatedUserError } = await supabase
         .from('users')
         .update({
-          avatar_url: imageUrl,
+          avatar_url: avatarUrl.publicUrl,
         })
         .eq('auth_id', uploadedAvatar.userId)
         .select()

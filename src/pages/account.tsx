@@ -238,6 +238,7 @@ const Account: NextPage = () => {
       </Layout>
     )
   }
+  console.log(user.avatar_url)
   return (
     <>
       <Layout title="Account">
