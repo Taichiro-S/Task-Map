@@ -24,7 +24,7 @@ export const useNodeDrag = () => {
   }
 
   const handleNodeDragStart = (event: MouseEvent | TouchEvent, node: Node) => {
-    // console.log('node dragg started')
+    // console.log('node drag started')
     setIsNodeDragged(true)
     setNodeSelection(node.id, false)
   }
@@ -38,11 +38,13 @@ export const useNodeDrag = () => {
     // console.log('node dragg stopped')
     setIsNodeDragged(false)
     setNodeSelection(node.id, false)
+    // group node はグループ化しない
     if (node.type === 'grouping') {
       //   console.log('grouping node dragged')
       reArrangeNodes(node)
       return
     }
+    // 全てのグループノードを取得
     const groupingNodes = useFlowStore.getState().nodes.filter((n) => n.type === 'grouping')
     // console.log('all groupingNodes', groupingNodes)
     type NodeCandidate = {
@@ -50,10 +52,12 @@ export const useNodeDrag = () => {
       index: number
     }
     let parentGroupingNodeCandidates: NodeCandidate[] = []
+    // ドロップされる前にグループ化されていなかった場合
     if (node.parentNode === '') {
       //   console.log('no parent')
       const nodePositionXFromPane = node.position.x
       const nodePositionYFromPane = node.position.y
+      //
       for (const groupingNode of groupingNodes) {
         if (
           groupingNode.width === undefined ||
@@ -79,6 +83,7 @@ export const useNodeDrag = () => {
           })
         }
       }
+      // groupingNodeCandidatesの中で一番indexが大きい（＝最前面にある）ものを親ノードとする
       if (parentGroupingNodeCandidates.length !== 0) {
         const parentNode = parentGroupingNodeCandidates.reduce((max, current) =>
           max.index > current.index ? max : current,
@@ -89,6 +94,7 @@ export const useNodeDrag = () => {
           return
         }
       }
+      // ドロップされる前にグループ化されていた場合
     } else {
       for (const groupingNode of groupingNodes) {
         if (node.parentNode === groupingNode.id) {
@@ -101,12 +107,14 @@ export const useNodeDrag = () => {
             groupingNode.height === null
           )
             continue
+          // 元のグループノード上にドロップされた場合
           if (
             0 < nodePositionXFromParentNode &&
             nodePositionXFromParentNode < groupingNode.width &&
             0 < nodePositionYFromParentNode &&
             nodePositionYFromParentNode < groupingNode.height
           ) {
+            // 元のグループノードを候補に加える
             let index = useFlowStore.getState().nodes.indexOf(groupingNode)
             parentGroupingNodeCandidates.push({
               node: groupingNode,
@@ -129,12 +137,14 @@ export const useNodeDrag = () => {
           const leftEdgeOfGroupingNode = groupingNode.position.x
           const topEdgeOfGroupingNode = groupingNode.position.y
           const bottomEdgeOfGroupingNode = groupingNode.position.y + groupingNode.height
+          // 別のグループノード上にドロップされた場合
           if (
             nodePositionXFromOldParentNode > leftEdgeOfGroupingNode &&
             nodePositionXFromOldParentNode < rightEdgeOfGroupingNode &&
             nodePositionYFromOldParentNode > topEdgeOfGroupingNode &&
             nodePositionYFromOldParentNode < bottomEdgeOfGroupingNode
           ) {
+            // グループノードを候補に加える
             let index = useFlowStore.getState().nodes.indexOf(groupingNode)
             parentGroupingNodeCandidates.push({
               node: groupingNode,
@@ -143,7 +153,7 @@ export const useNodeDrag = () => {
           }
         }
       }
-
+      // groupingNodeCandidatesの中で一番indexが大きい（＝最前面にある）ものを親ノードとする
       if (parentGroupingNodeCandidates.length !== 0) {
         const parentNode = parentGroupingNodeCandidates.reduce((max, current) =>
           max.index > current.index ? max : current,

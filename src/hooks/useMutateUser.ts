@@ -24,7 +24,7 @@ export const useMutateUser = () => {
         .list('avatars', {
           limit: 1,
           offset: 0,
-          search: uploadedAvatar.userId,
+          search: uploadedAvatar.filename,
         })
 
       if (oldFilePathError || !oldFilePath) {

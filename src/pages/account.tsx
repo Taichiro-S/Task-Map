@@ -146,7 +146,7 @@ const Account: NextPage = () => {
       setFileUploadError(isValidImageFile(data.file))
       return
     }
-    const filename = authUser!.id
+    const filename = authUser!.id + '_' + uuid() + '_' + data.file!.name
     const uploadedFile = {
       avatar: data.file!,
       filename,
@@ -238,7 +238,6 @@ const Account: NextPage = () => {
       </Layout>
     )
   }
-  console.log(user.avatar_url)
   return (
     <>
       <Layout title="Account">
