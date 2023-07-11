@@ -1,7 +1,9 @@
 # TaskFlow
 
-タスク管理のための Web アプリケーションです。フロントエンドを [Next.js](https://nextjs.org/), バックエンドを [Supabase](https://supabase.com/) で構築し、デプロイ先として [Vercel](https://vercel.com/) 、また CI/CD ツールとして [Github Actions](https://github.co.jp/features/actions) を使用しています。
-[こちら](https://taskflow-phi.vercel.app/)で公開しています。ユーザ登録も可能ですが、デモ版は登録なしでお試しいただけます。
+タスク管理のための Web アプリケーションです。フロントエンドを [Next.js](https://nextjs.org/), バックエンドを [Supabase](https://supabase.com/) で構築し、デプロイ先として [Vercel](https://vercel.com/) 、また CI/CD ツールとして [Github Actions](https://github.co.jp/features/actions) を使用しています。  
+</br>
+[こちら](https://taskflow-phi.vercel.app/)で公開しています。  
+ユーザ登録も可能ですが、デモ版は登録なしでお試しいただけます。  
 予告なしに非公開とする場合もありますのでご了承ください。
 
 #### 📕 目次
@@ -161,9 +163,9 @@ GitHub Actions は、ビルド、テスト、デプロイのパイプライン�
 
 ### 画面・機能設計
 
-画面遷移、各ページでのユーザ操作、処理内容、画面出力をまとめました。
-Figma で作成しています。
-詳しく見たい方は[こちら](https://www.figma.com/file/SJH51KicrfwhFlOgemvZGk/TaskFlow-pages?type=whiteboard&node-id=18-364&t=cApsvPJoAVR0wGJV-4)から
+画面遷移、各ページでのユーザ操作、処理内容、画面出力をまとめました。  
+Figma で作成しています。  
+詳しく見たい方は[こちら](https://www.figma.com/file/SJH51KicrfwhFlOgemvZGk/TaskFlow-pages?type=whiteboard&node-id=18-364&t=cApsvPJoAVR0wGJV-4)から  
 <img width="6624" alt="TaskFlow-pages" src="https://github.com/Taichiro-S/TaskFlow/assets/119518065/5c8d3812-cfa6-44a6-ac72-d134e3c6f57e">
 
 ### ER 図
