@@ -107,7 +107,7 @@ const Flow = () => {
       : ''
   // const panOnDrag = [1, 2]
   if (authUserError || flowError || workspaceError) {
-    console.error(authUserError, flowError)
+    // console.error(authUserError, flowError)
     return (
       <Layout title="Flow">
         <p>サーバーエラー</p>

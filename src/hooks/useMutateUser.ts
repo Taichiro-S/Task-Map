@@ -126,7 +126,7 @@ export const useMutateUser = () => {
         throw new Error('Email is required')
       }
       const appUrl = process.env.NEXT_PUBLIC_APP_URL as string
-      console.log(appUrl)
+      // console.log(appUrl)
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         // production deployment または ローカルの場合
         redirectTo: `${appUrl}/resetPassword`,
